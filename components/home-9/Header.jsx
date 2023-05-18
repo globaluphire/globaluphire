@@ -38,7 +38,7 @@ const Header = () => {
             </div>
             {/* End .logo-box */}
 
-            <HeaderNavContent />
+            {/* <HeaderNavContent /> */}
             {/* <!-- Main Menu End--> */}
           </div>
           {/* End .nav-outer */}
@@ -53,12 +53,6 @@ const Header = () => {
               >
                 Login / Register
               </a>
-              <Link
-                href="/employers-dashboard/post-jobs"
-                className="theme-btn btn-style-five"
-              >
-                Job Post
-              </Link>
             </div>
           </div>
         </div>

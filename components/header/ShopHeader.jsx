@@ -47,7 +47,7 @@ const ShopHeader = () => {
           </div>
           {/* End .logo-box */}
 
-          <HeaderNavContent />
+          {/* <HeaderNavContent /> */}
           {/* <!-- Main Menu End--> */}
         </div>
         {/* End .nav-outer */}

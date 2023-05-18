@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import candidatesMenuData from "../../data/candidatesMenuData";
-import HeaderNavContent from "./HeaderNavContent";
+// import HeaderNavContent from "./HeaderNavContent";
 import { isActiveLink } from "../../utils/linkActiveChecker";
 import { useRouter } from "next/router";
 
@@ -50,7 +50,7 @@ const DashboardCandidatesHeader = () => {
                         </div>
                         {/* End .logo-box */}
 
-                        <HeaderNavContent />
+                        {/* <HeaderNavContent /> */}
                         {/* <!-- Main Menu End--> */}
                     </div>
                     {/* End .nav-outer */}

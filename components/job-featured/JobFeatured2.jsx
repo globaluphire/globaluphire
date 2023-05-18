@@ -16,7 +16,7 @@ const JobFeatured2 = () => {
                 <img src={item.logo} alt="item brand" />
               </span>
               <h4>
-                <Link href={`/job-single-v1/${item.id}`}>{item.jobTitle}</Link>
+                <Link href={`/job-single-v2/${item.id}`}>{item.jobTitle}</Link>
               </h4>
 
               <ul className="job-info">
