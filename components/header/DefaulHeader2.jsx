@@ -31,7 +31,10 @@ const DefaulHeader2 = () => {
           <div className="logo-box">
             <div className="logo">
               <Link href="/">
-                <img src="/images/logo.svg" alt="brand" />
+                <img  src="images/logo.svg"
+                  alt="brand"
+                  width={154}
+                  height={50} />
               </Link>
             </div>
           </div>
@@ -44,9 +47,9 @@ const DefaulHeader2 = () => {
 
         <div className="outer-box">
           {/* <!-- Add Listing --> */}
-          <Link href="/candidates-dashboard/cv-manager" className="upload-cv">
+          {/* <Link href="/candidates-dashboard/cv-manager" className="upload-cv">
             Upload your CV
-          </Link>
+          </Link> */}
           {/* <!-- Login/Register --> */}
           <div className="btn-box">
             <a
@@ -57,12 +60,12 @@ const DefaulHeader2 = () => {
             >
               Login / Register
             </a>
-            <Link
+            {/* <Link
               href="/employers-dashboard/post-jobs"
               className="theme-btn btn-style-one"
             >
               Job Post
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

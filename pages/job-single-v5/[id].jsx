@@ -143,25 +143,25 @@ const JobSingleDynamicV1 = () => {
                 <JobDetailsDescriptions />
                 {/* End jobdetails content */}
 
-                <div className="other-options">
+                {/* <div className="other-options">
                   <div className="social-share">
                     <h5>Share this job</h5>
                     <SocialTwo />
                   </div>
-                </div>
+                </div> */}
                 {/* <!-- Other Options --> */}
 
-                <div className="related-jobs">
+                {/* <div className="related-jobs">
                   <div className="title-box">
                     <h3>Related Jobs</h3>
                     <div className="text">
                       2020 jobs live - 293 added today.
                     </div>
-                  </div>
+                  </div> */}
                   {/* End title box */}
 
-                  <RelatedJobs />
-                </div>
+                  {/* <RelatedJobs /> */}
+                {/* </div> */}
                 {/* <!-- Related Jobs --> */}
               </div>
               {/* End .content-column */}

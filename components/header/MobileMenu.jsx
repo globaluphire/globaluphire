@@ -12,7 +12,10 @@ const MobileMenu = () => {
                         <div className="logo-box">
                             <div className="logo">
                                 <Link href="/">
-                                    <img src="/images/logo.svg" alt="brand" />
+                                    <img  src="images/logo.svg"
+                                        alt="brand"
+                                        width={154}
+                                        height={50} />
                                 </Link>
                             </div>
                         </div>
