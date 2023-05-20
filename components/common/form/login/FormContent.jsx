@@ -1,22 +1,127 @@
 import Link from "next/link";
 import LoginWithSocial from "./LoginWithSocial";
+import { auth } from "../firebase";
+import { useState } from "react";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch } from "react-redux";
+import { supabase } from "../../../../config/supabaseClient";
+import { setUserData } from "../../../../features/candidate/candidateSlice";
+
+const signInWithEmailAndPassword = async (email, password, dispatch) => {
+  try {
+    const userCredential = await auth.signInWithEmailAndPassword(
+      email,
+      password
+    );
+    const user = userCredential.user;
+    // localStorage.setItem("userId", userId);
+    const fetchUser = await supabase.from('users').select().ilike('user_id', user.uid)
+    let userData = {}
+    userData = fetchUser.data[0]
+
+
+    dispatch(setUserData( {name: userData.name, id: userData.user_id, email: userData.email, role: userData.role}))
+    document.getElementById("close-button").click()
+    // open toast
+    toast.success('Successfully logged in!', {
+        position: "bottom-right",
+        autoClose: 8000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
+  } catch (err) {
+    toast.error('Please check your email address and password then try again!', {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
+  }
+};
+
+const resetPassword = async (email) => {
+    if(email){
+      try {
+        await auth.sendPasswordResetEmail(email);
+        // open toast
+        toast.success('Password reset link has been sent to your email address. Please check your inbox!', {
+            position: "bottom-right",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
+      } catch (err) {
+        toast.error('Error on reset password request, Please try after some time or contact tech support!', {
+            position: "bottom-right",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
+      }
+    } else {
+        toast.error('Please fill your email address mention in form before click Forgot Password button', {
+            position: "top-center",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
+    }
+};
 
 const FormContent = () => {
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  
+  const dispatch = useDispatch()
   return (
     <div className="form-inner">
-      <h3>Login to Superio</h3>
+      <h3>Login to Tracer Hire</h3>
 
       {/* <!--Login Form--> */}
       <form method="post">
         <div className="form-group">
-          <label>Username</label>
-          <input type="text" name="username" placeholder="Username" required />
+          <label>Email Address</label>
+          <input
+            type="email"
+            name="tracer-hire-email"
+            placeholder="Your Email Address"
+            value={loginEmail}
+            onChange={(e) => setLoginEmail(e.target.value)}
+            required
+          />
         </div>
-        {/* name */}
 
         <div className="form-group">
           <label>Password</label>
-          <input type="password" name="password" placeholder="Password" />
+          <input
+            type="password"
+            name="tracer-hire-password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            placeholder="Password"
+            required
+          />
         </div>
         {/* password */}
 
@@ -28,7 +133,13 @@ const FormContent = () => {
                 <span className="custom-checkbox"></span> Remember me
               </label>
             </div>
-            <a href="#" className="pwd">
+            <a
+              // href="#"
+              className="pwd"
+              onClick={() => {
+                resetPassword(loginEmail);
+              }}
+            >
               Forgot password?
             </a>
           </div>
@@ -40,6 +151,10 @@ const FormContent = () => {
             className="theme-btn btn-style-one"
             type="submit"
             name="log-in"
+            onClick={(e) => {
+              e.preventDefault();
+              signInWithEmailAndPassword(loginEmail, loginPassword, dispatch);
+            }}
           >
             Log In
           </button>

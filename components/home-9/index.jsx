@@ -14,6 +14,7 @@ import LoginPopup from "../common/form/login/LoginPopup";
 import MobileMenu from "../header/MobileMenu";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
+import DashboardHeader from "../header/DashboardHeader";
 
 const index = () => {
   const user = useSelector((state) => state.candidate.user);
