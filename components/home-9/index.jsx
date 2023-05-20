@@ -12,14 +12,18 @@ import Block5 from "../block/Block5";
 import JobFeatured12 from "../job-featured/JobFeatured12";
 import LoginPopup from "../common/form/login/LoginPopup";
 import MobileMenu from "../header/MobileMenu";
+import { useSelector } from "react-redux";
+import { useMemo } from "react";
 
 const index = () => {
+  const user = useSelector((state) => state.candidate.user);
+  const showLoginButton = useMemo(() => !user?.id, [user]);
   return (
     <>
       <LoginPopup />
       {/* End Login Popup Modal */}
 
-      <Header />
+      {showLoginButton ? <Header /> : <DashboardHeader />}
       {/* <!--End Main Header --> */}
 
       <MobileMenu />

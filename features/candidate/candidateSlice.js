@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { setEncryptedItem } from './../../utils/encryptedStorage';
 
 const initialState = {
     category: [
@@ -90,6 +91,12 @@ const initialState = {
             value: "doctorate-degree",
         },
     ],
+    user: {
+        name: '',
+        id: '',
+        role: ''
+    },
+    loggedIn: false
 };
 
 export const candidateSlice = createSlice({
@@ -159,6 +166,11 @@ export const candidateSlice = createSlice({
                 };
             });
         },
+        setUserData: (state, { payload }) => {
+            state.user = payload
+            state.loggedIn = payload.id ? true : false
+            setEncryptedItem('user', JSON.stringify(state.user))
+        },
     },
 });
 
@@ -169,5 +181,6 @@ export const {
     clearDatePost,
     clearExperience,
     clearQualification,
+    setUserData,
 } = candidateSlice.actions;
 export default candidateSlice.reducer;
