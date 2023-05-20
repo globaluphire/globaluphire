@@ -137,7 +137,7 @@ const FormContent = () => {
         <label>Your Name</label>
         <input
           type="text"
-          name="tracer-hire-name"
+          name="Global-UpHire-name"
           placeholder="Enter first and last name"
           value={name}
           onChange={(e) => {
@@ -152,7 +152,7 @@ const FormContent = () => {
         <label>Email Address</label>
         <input
           type="email"
-          name="tracer-hire-email"
+          name="Global-UpHire-email"
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
