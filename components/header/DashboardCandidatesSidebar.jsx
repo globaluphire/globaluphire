@@ -6,6 +6,7 @@ import { isActiveLink } from "../../utils/linkActiveChecker";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { menuToggle } from "../../features/toggle/toggleSlice";
+import { logout } from "../../utils/logout";
 
 const DashboardCandidatesSidebar = () => {
     const { menu } = useSelector((state) => state.toggle);
@@ -40,7 +41,11 @@ const DashboardCandidatesSidebar = () => {
                             key={item.id}
                             onClick={menuToggleHandler}
                         >
-                            <Link href={item.routePath}>
+                            <Link href={item.routePath} onClick={(e) => {
+                                if(item.name == 'Logout'){
+                                    logout(dispatch)
+                                }
+                            }}>
                                 <i className={`la ${item.icon}`}></i>{" "}
                                 {item.name}
                             </Link>
@@ -49,7 +54,7 @@ const DashboardCandidatesSidebar = () => {
                 </ul>
                 {/* End navigation */}
 
-                <div className="skills-percentage">
+                {/* <div className="skills-percentage">
                     <h4>Skills Percentage</h4>
                     <p>
                         `Put value for <strong>Cover Image</strong> field to
@@ -68,9 +73,9 @@ const DashboardCandidatesSidebar = () => {
                             value={percentage}
                             text={`${percentage}%`}
                         />
-                    </div>{" "}
+                    </div>{" "} */}
                     {/* <!-- Pie Graph --> */}
-                </div>
+                {/* </div> */}
             </div>
         </div>
     );
