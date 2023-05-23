@@ -36,7 +36,7 @@ const DashboardHeader = () => {
     <header
       className={`main-header header-shaddow  ${navbar ? "fixed-header " : ""}`}
     >
-      <div className="auto-container">
+      <div className="container-fluid">
         {/* <!-- Main box --> */}
         <div className="main-box">
           {/* <!--Nav Outer --> */}
@@ -44,22 +44,13 @@ const DashboardHeader = () => {
             <div className="logo-box">
               <div className="logo">
                 <Link href="/">
-                    { !navbar ? 
-                        <Image
-                            alt="brand"
-                            src="/images/logo-2.svg"
-                            width={154}
-                            height={50}
-                            priority
-                        /> :
-                            <Image
-                                alt="brand"
-                                src="/images/logo.svg"
-                                width={154}
-                                height={50}
-                                priority
-                            />
-                    }
+                  <Image
+                    alt="brand"
+                    src="/images/logo.svg"
+                    width={154}
+                    height={50}
+                    priority
+                  />
                 </Link>
               </div>
             </div>
