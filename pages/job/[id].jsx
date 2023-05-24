@@ -1,32 +1,104 @@
 import dynamic from "next/dynamic";
-import jobs from "../../data/job-featured";
 import LoginPopup from "../../components/common/form/login/LoginPopup";
 import FooterDefault from "../../components/footer/common-footer";
 import DefaulHeader from "../../components/header/DefaulHeader";
 import MobileMenu from "../../components/header/MobileMenu";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Seo from "../../components/common/Seo";
 import RelatedJobs from "../../components/job-single-pages/related-jobs/RelatedJobs";
 import SocialTwo from "../../components/job-single-pages/social/SocialTwo";
 import JobDetailsDescriptions from "../../components/job-single-pages/shared-components/JobDetailsDescriptions";
 import ApplyJobModalContent from "../../components/job-single-pages/shared-components/ApplyJobModalContent";
+import JobOverView from "../../components/job-single-pages/job-overview/JobOverView";
+// import ApplyInstantView from "../../components/job-single-pages/job-overview/ApplyInstantView";
+import JobSkills from "../../components/job-single-pages/shared-components/JobSkills";
+import CompnayInfo from "../../components/job-single-pages/shared-components/CompanyInfo";
+import MapJobFinder from "../../components/job-listing-pages/components/MapJobFinder";
+import { collection, doc, getDoc, query, where, getDocs } from "firebase/firestore";
+import { db } from "../../components/common/form/firebase";
+import Social from "../../components/footer/common-footer/Social";
+import DefaulHeader2 from "../../components/header/DefaulHeader2";
+import { useSelector } from "react-redux";
+import DashboardHeader from "../../components/header/DashboardHeader";
+// import Footer from "../../components/home-15/Footer"
+import { ToastContainer, toast } from 'react-toastify';
+import { supabase } from "../../config/supabaseClient";
 
 const JobSingleDynamicV1 = () => {
+  const [isUserApplied, setIsUserApplied] = useState([]);
+  const user = useSelector(state => state.candidate.user)
+  const showLoginButton = useMemo(() => !user?.id, [user])
   const router = useRouter();
   const [company, setCompany] = useState({});
   const id = router.query.id;
 
-  useEffect(() => {
-    if (!id) <h1>Loading...</h1>;
-    else setCompany(jobs.find((item) => item.id == id));
+  const fetchCompany = async () => {
+    try{
+      if (id) {
+        let { data: jobs, error } = await supabase
+            .from('jobs')
+            .select("*")
 
-    return () => {};
+            // Filters
+            .eq('job_id', id)
+
+        if (jobs) {
+          setCompany(jobs[0])
+        }
+      }
+    } catch(e) {
+      toast.error('System is unavailable.  Please try again later or contact tech support!', {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      console.warn(e)
+    }
+  };
+
+  const fetchPostForLoggedInUser = async () => {
+    // TODO: skip this check for employer login
+    if (id && !showLoginButton) {
+        let { data: application, error } = await supabase
+            .from('applications')
+            .select("*")
+
+            // Filters
+            .eq('email', user.email)
+            .eq('job_id', id)
+
+        if (application?.length > 0) {
+            setIsUserApplied(true);
+        } else {
+            setIsUserApplied(false);
+        }
+    } else {
+        setIsUserApplied(false);
+    }
+  };
+
+  useEffect(() => {
+    setIsUserApplied(false);
+    fetchCompany();
+    fetchPostForLoggedInUser();
   }, [id]);
+
+  // useEffect(() => {
+  //   if (!id) <h1>Loading...</h1>;
+  //   else setCompany(jobs.find((item) => item.id == id));
+
+  //   return () => {};
+  // }, [id]);
 
   return (
     <>
-      <Seo pageTitle="Job Single Dyanmic V1" />
+      <Seo pageTitle="Job" />
 
       {/* <!-- Header Span --> */}
       <span className="header-span"></span>
@@ -34,7 +106,7 @@ const JobSingleDynamicV1 = () => {
       <LoginPopup />
       {/* End Login Popup Modal */}
 
-      <DefaulHeader />
+      { showLoginButton ?  <DefaulHeader2 /> : <DashboardHeader/>}
       {/* <!--End Main Header --> */}
 
       <MobileMenu />
@@ -47,10 +119,10 @@ const JobSingleDynamicV1 = () => {
             <div className="job-block-seven style-three">
               <div className="inner-box">
                 <div className="content">
-                  <span className="company-logo">
+                  {/* <span className="company-logo">
                     <img src={company?.logo} alt="logo" />
-                  </span>
-                  <h4>{company?.jobTitle}</h4>
+                  </span> */}
+                  <h4>{company?.job_title}</h4>
 
                   <ul className="job-info">
                     <li>
@@ -140,7 +212,7 @@ const JobSingleDynamicV1 = () => {
           <div className="auto-container">
             <div className="row">
               <div className="content-column col-lg-8 offset-2 col-md-12 col-sm-12">
-                <JobDetailsDescriptions />
+                <JobDetailsDescriptions  company={company} />
                 {/* End jobdetails content */}
 
                 {/* <div className="other-options">
