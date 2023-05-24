@@ -160,7 +160,7 @@ const JobListingsTable = () => {
             <input
               className="chosen-single form-input chosen-container mx-3"
               type="text"
-              name="tracer-hire-job_title"
+              name="globaluphire-job_title"
               placeholder="Search by Job Title"
               value={searchField}
               onChange={(e) => {
