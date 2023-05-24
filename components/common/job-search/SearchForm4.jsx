@@ -69,7 +69,7 @@ const SearchForm4 = () => {
     dispatch(addLocation(sAddress))
     // TODO: fetch data from firebase and then route to next page
     
-    Router.push("/job-list-v2") 
+    Router.push("/job-list") 
   }
   
 

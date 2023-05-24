@@ -13,18 +13,18 @@ const JobType = () => {
     };
 
     return (
-        <ul className="switchbox">
+        <ul className="ui-checkbox">
             {jobTypeList?.map((item) => (
                 <li key={item.id}>
-                    <label className="switch">
+                    <label>
                         <input
-                            type="checkbox"
+                            type="radio"
                             value={item.value}
-                            checked={item.isChecked || false}
+                            checked={item.isChecked}
                             onChange={(e) => jobTypeHandler(e, item.id)}
                         />
-                        <span className="slider round"></span>
-                        <span className="title">{item.name}</span>
+                        <span></span>
+                        <p>{item.name}</p>
                     </label>
                 </li>
             ))}

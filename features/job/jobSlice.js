@@ -2,8 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     latestJob: [],
-    category: [
-        {
+    category: [{
             id: 1,
             name: "Residential",
             value: "residential",
@@ -24,69 +23,75 @@ const initialState = {
             value: "apartments",
         },
     ],
-    jobTypeList: [
-        {
+    jobTypeList: [{
             id: 1,
-            name: "Freelancer",
-            value: "freelancer",
+            name: "Full Time",
+            value: "Full Time",
             isChecked: false,
         },
         {
             id: 2,
-            name: "Full Time",
-            value: "full-time",
+            name: "Part Time",
+            value: "Part Time",
             isChecked: false,
         },
         {
             id: 3,
-            name: "Part Time",
-            value: "part-time",
+            name: "Both",
+            value: "Both",
             isChecked: false,
         },
         {
             id: 4,
-            name: "Temporary",
-            value: "temporary",
+            name: "Per Diem",
+            value: "Per Diem",
             isChecked: false,
         },
     ],
-    datePost: [
-        { id: 1, name: "All", value: "all", isChecked: false },
-        { id: 2, name: "Last Hour", value: "last-hour", isChecked: false },
+    datePost: [{
+            id: 1,
+            name: "All",
+            value: "all",
+            isChecked: false
+        },
         {
-            id: 3,
+            id: 2,
             name: "Last 24 Hour",
             value: "last-24-hour",
             isChecked: false,
         },
-        { id: 4, name: "Last 7 Days", value: "last-7-days", isChecked: false },
         {
-            id: 5,
+            id: 3,
+            name: "Last 7 Days",
+            value: "last-7-days",
+            isChecked: false
+        },
+        {
+            id: 4,
             name: "Last 14 Days",
             value: "last-14-days",
             isChecked: false,
         },
         {
-            id: 6,
+            id: 5,
             name: "Last 30 Days",
             value: "last-30-days",
             isChecked: false,
         },
     ],
     experienceLavel: [
-        { id: 1, name: "Fresh", value: "fresh", isChecked: false },
-        { id: 2, name: "1 Year", value: "1-year", isChecked: false },
-        { id: 3, name: "2 Year", value: "2-year", isChecked: false },
-        { id: 4, name: "3 Year", value: "3-year", isChecked: false },
-        {
-            id: 5,
-            name: "4 Year",
-            value: "4-year",
-            isChecked: false,
-        },
+        { id: 1, name: "1 Year", value: "1 year", isChecked: false },
+        { id: 2, name: "2 Years", value: "2 years", isChecked: false },
+        { id: 3, name: "3 Years", value: "3 years", isChecked: false },
+        { id: 4, name: "4 Years", value: "4 years", isChecked: false },
+        { id: 5, name: "5 Years", value: "5 years", isChecked: false },
+        { id: 6, name: "6 Years", value: "6 years", isChecked: false },
+        { id: 7, name: "7 Years", value: "7 years", isChecked: false },
+        { id: 8, name: "8 Years", value: "8 years", isChecked: false },
+        { id: 9, name: "9 Years", value: "9 years", isChecked: false },
+        { id: 10, name: "10+ Years", value: "10+ years", isChecked: false },
     ],
-    tags: [
-        {
+    tags: [{
             id: 1,
             name: "App",
             value: "app",
@@ -117,6 +122,7 @@ const initialState = {
             value: "react",
         },
     ],
+    recentJobs: []
 };
 
 export const jobSlice = createSlice({
@@ -196,6 +202,9 @@ export const jobSlice = createSlice({
                 };
             });
         },
+        setRecentJobs: (state, { payload }) => {
+            state.recentJobs = payload.jobs
+        }
     },
 });
 
@@ -207,5 +216,6 @@ export const {
     clearDatePostToggle,
     experienceLavelCheck,
     clearExperienceToggle,
+    setRecentJobs
 } = jobSlice.actions;
 export default jobSlice.reducer;

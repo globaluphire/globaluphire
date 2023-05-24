@@ -1,5 +1,6 @@
 import Link from "next/link";
-import jobs from "../../../data/job-featured";
+// import jobs from "../../../data/job-featured";
+import JobSelect from "../components/JobSelect";
 import { useDispatch, useSelector } from "react-redux";
 import {
     addCategory,
@@ -19,8 +20,66 @@ import {
     clearExperienceToggle,
     clearJobTypeToggle,
 } from "../../../features/job/jobSlice";
+import { db } from "../../common/form/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { supabase } from "../../../config/supabaseClient";
 
 const FilterJobsBox = () => {
+    const router = useRouter();
+    const [jobs, setJobs] = useState([]);
+    const searchTerm = useSelector((state) => state.search.searchTerm)
+    const searchAddress = useSelector((state) => state.search.searchAddress)
+
+    const searchJobsWithTermAndAddress = async () => {
+        await supabase.from('jobs').select()
+        .eq('status', 'Published')
+        .ilike('job_title', '%'+searchTerm+'%')
+        .ilike('job_address', '%'+searchAddress+'%')
+        .then((res) => {
+          setJobs(res.data)
+        })
+      };
+    
+      const searchJobsWithTerm = async () => {
+        await supabase.from('jobs').select()
+        .eq('status', 'Published')
+        .ilike('job_title', '%'+searchTerm+'%')
+        .then((res) => {
+          setJobs(res.data)
+        })
+      };
+    
+      const searchJobsWithAddress = async () => {
+        await supabase.from('jobs').select()
+        .eq('status', 'Published')
+        .ilike('job_address', '%'+searchAddress+'%')
+        .then((res) => {
+          setJobs(res.data)
+        })
+      };
+    
+      const searchJobs = async () => {
+        console.log("No search call");
+        await supabase.from('jobs').select()
+        .eq('status', 'Published')
+        .then((res) => {
+          setJobs(res.data)
+        })
+      };
+    
+      useEffect(() => {
+        if(searchAddress == "" && searchTerm == '') 
+          searchJobs()
+        else if(searchAddress == "") 
+          searchJobsWithTerm()
+        else if(searchTerm == "") 
+          searchJobsWithAddress()
+        else 
+          searchJobsWithTermAndAddress()
+      }, [searchAddress, searchTerm]);
+
     const { jobList, jobSort } = useSelector((state) => state.filter);
     const {
         keyword,
@@ -32,6 +91,8 @@ const FilterJobsBox = () => {
         experience,
         salary,
         tag,
+        jobTypeSelect,
+        experienceSelect
     } = jobList || {};
 
     const { sort, perPage } = jobSort;
@@ -108,61 +169,68 @@ const FilterJobsBox = () => {
         sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
     let content = jobs
-        ?.filter(keywordFilter)
-        ?.filter(locationFilter)
-        ?.filter(destinationFilter)
-        ?.filter(categoryFilter)
-        ?.filter(jobTypeFilter)
-        ?.filter(datePostedFilter)
-        ?.filter(experienceFilter)
-        ?.filter(salaryFilter)
-        ?.filter(tagFilter)
-        ?.sort(sortFilter)
-        .slice(perPage.start, perPage.end !== 0 ? perPage.end : 11)
+        // ?.filter(keywordFilter)
+        // ?.filter(locationFilter)
+        // ?.filter(destinationFilter)
+        // ?.filter(categoryFilter)
+        // ?.filter(jobTypeFilter)
+        // ?.filter(datePostedFilter)
+        // ?.filter(experienceFilter)
+        // ?.filter(salaryFilter)
+        // ?.filter(tagFilter)
+        // ?.sort(sortFilter)
+        // .slice(perPage.start, perPage.end !== 0 ? perPage.end : 11)
         ?.map((item) => (
-            <div className="job-block" key={item.id}>
+            <div className="job-block" key={item.job_id}>
                 <div className="inner-box">
                     <div className="content">
-                        <span className="company-logo">
+                        {/* <span className="company-logo">
                             <img src={item.logo} alt="item brand" />
-                        </span>
+                        </span> */}
                         <h4>
-                            <Link href={`/job-single-v5/${item.id}`}>
-                                {item.jobTitle}
+                            <Link href={`/job-single-v5/${item.job_id}`}>
+                                {item.job_title}
                             </Link>
                         </h4>
-
+                        
+                        { item?.job_address ?                        
+                            <p className="mb-2"><i className="flaticon-map-locator"></i>{" "}{item?.job_address}</p>
+                        : '' }
                         <ul className="job-info">
-                            <li>
+                            {/* <li>
                                 <span className="icon flaticon-briefcase"></span>
                                 {item.company}
-                            </li>
+                            </li> */}
                             {/* compnay info */}
-                            <li>
-                                <span className="icon flaticon-map-locator"></span>
-                                {item.location}
-                            </li>
+                            { item?.job_type ?
+                                <li className="time">
+                                <span className="flaticon-clock-3"></span>{" "}
+                                {item?.job_type}
+                                </li>
+                            : '' }
                             {/* location info */}
-                            <li>
+                            {/* <li>
                                 <span className="icon flaticon-clock-3"></span>{" "}
                                 {item.time}
-                            </li>
+                            </li> */}
                             {/* time info */}
-                            <li>
-                                <span className="icon flaticon-money"></span>{" "}
-                                {item.salary}
-                            </li>
+                            { item?.salary ?
+                                <li className="privacy">
+                                <i className="flaticon-money"></i>{" "}
+                                ${item?.salary} {item?.salary_rate}
+                                </li>
+                            : '' }
                             {/* salary info */}
                         </ul>
                         {/* End .job-info */}
 
-                        <ul className="job-other-info">
+                        {/* <ul className="job-other-info">
                             {item?.jobType?.map((val, i) => (
                                 <li key={i} className={`${val.styleClass}`}>
                                     {val.type}
                                 </li>
                             ))}
-                        </ul>
+                        </ul> */}
                         {/* End .job-other-info */}
                     </div>
                 </div>
@@ -198,6 +266,48 @@ const FilterJobsBox = () => {
         dispatch(addSort(""));
         dispatch(addPerPage({ start: 0, end: 0 }));
     };
+
+    const fnCall = async () => {
+        let searchDate = null
+        let d = new Date()
+        switch(datePosted){
+          case 'last-24-hour': 
+            d.setDate(d.getDate() - 1)
+            searchDate = d.toISOString()
+            break
+          case 'last-7-days': 
+            d.setDate(d.getDate() - 7)
+            searchDate = d.toISOString()
+            break 
+          case 'last-14-days': 
+            d.setDate(d.getDate() - 14)
+            searchDate = d.toISOString()
+            break
+          case 'last-30-days': 
+            d.setDate(d.getDate() - 30)
+            searchDate = d.toISOString()
+            break
+        }
+        let query = supabase.from('jobs').select().eq('status', 'Published')
+        if(jobTypeSelect) query = query.eq("job_type", jobTypeSelect)
+        if(searchDate) query = query.gte("created_at", searchDate)
+        query = query.eq('status', 'Published')
+        query = query.order('created_at',  { ascending: sort == 'des' })
+  
+        const {data, error} = await query
+        if(data) setJobs(data)
+      
+    }
+    useEffect(() => {
+      fnCall()
+    }, [jobTypeSelect, sort, datePosted])
+  
+    // 
+    const [currentPage, setCurrentPage] = useState(1)
+    const handlePageChange = (currentPage) => {
+      setCurrentPage(currentPage)
+      console.log(currentPage)
+    }
 
     return (
         <>
@@ -272,10 +382,10 @@ const FilterJobsBox = () => {
                         <option
                             value={JSON.stringify({
                                 start: 0,
-                                end: 15,
+                                end: 10,
                             })}
                         >
-                            15 per page
+                            10 per page
                         </option>
                         <option
                             value={JSON.stringify({
