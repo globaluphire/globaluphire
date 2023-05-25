@@ -166,6 +166,26 @@ Buttons Styles
   padding: 15px 35px;
 }
 
+/* Btn Style Nine */
+.btn-style-nine {
+  position: relative;
+  text-align: center;
+  white-space: nowrap;
+  color: #ffffff;
+  background-color: #01A66F;
+  font-size: 15px;
+  line-height: 20px;
+  border-radius: 8px;
+  font-weight: 400;
+  padding: 18px 35px 15px 35px;
+}
+
+.btn-style-nine:hover {
+  color: #ffffff;
+  background-color: #159947;
+  cursor: not-allowed;
+}
+
 .theme-btn.large {
   padding: 20px 50px;
   font-size: 16px;

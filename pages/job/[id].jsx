@@ -24,6 +24,7 @@ import DashboardHeader from "../../components/header/DashboardHeader";
 // import Footer from "../../components/home-15/Footer"
 import { ToastContainer, toast } from 'react-toastify';
 import { supabase } from "../../config/supabaseClient";
+import ApplyInstantView from "../../components/job-single-pages/job-overview/ApplyInstantView";
 
 const JobSingleDynamicV1 = () => {
   const [isUserApplied, setIsUserApplied] = useState([]);
@@ -161,19 +162,31 @@ const JobSingleDynamicV1 = () => {
                 </div>
                 {/* End .content */}
 
-                <div className="btn-box">
-                  <a
-                    href="#"
-                    className="theme-btn btn-style-one"
-                    data-bs-toggle="modal"
-                    data-bs-target="#applyJobModal"
-                  >
-                    Apply For Job
-                  </a>
-                  {/* <button className="bookmark-btn">
-                    <i className="flaticon-bookmark"></i>
-                  </button> */}
-                </div>
+                { !showLoginButton && isUserApplied ?
+                    <span className="btn-box theme-btn btn-style-nine">
+                        ✓ Applied
+                      {/* <button className="bookmark-btn">
+                        <i className="flaticon-bookmark"></i>
+                      </button> */}
+                    </span>
+
+                    : ''}
+
+                { !showLoginButton && !isUserApplied ?
+                    <div className="btn-box">
+                      <a
+                        href="#"
+                        className="theme-btn btn-style-one"
+                        data-bs-toggle="modal"
+                        data-bs-target="#applyJobModal"
+                      >
+                        Apply For Job
+                      </a>
+                      {/* <button className="bookmark-btn">
+                          <i className="flaticon-bookmark"></i>
+                        </button> */}
+                    </div>
+                    : ''}
                 {/* End apply for job btn */}
 
                 {/* <!-- Modal --> */}
@@ -196,7 +209,7 @@ const JobSingleDynamicV1 = () => {
                       </div>
                       {/* End modal-header */}
 
-                      <ApplyJobModalContent />
+                      <ApplyJobModalContent company={company} />
                       {/* End PrivateMessageBox */}
                     </div>
                     {/* End .send-private-message-wrapper */}
@@ -214,6 +227,13 @@ const JobSingleDynamicV1 = () => {
           <div className="auto-container">
             <div className="row">
               <div className="content-column col-lg-8 offset-2 col-md-12 col-sm-12">
+                { showLoginButton ?
+                  <div className="sidebar-widget">
+                    {/* <!-- Job Overview --> */}
+                    <h4 className="widget-title">APPLY AS A GUEST</h4>
+                    <ApplyInstantView company={company} />
+                  </div>
+                : '' }
                 <JobDetailsDescriptions  company={company} />
                 {/* End jobdetails content */}
 

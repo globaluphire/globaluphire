@@ -3,9 +3,9 @@ export default function handler(req, res) {
         const mail = require('@sendgrid/mail');
         mail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY)
         const msg = {
-            to: 'support@tracerhire.com', // Change to your recipient
-            from: 'support@tracerhire.com', // Change to your verified sender,
-            subject: `[TracerHire] New application for ${req.body.jobTitle}: ${req.body.name} ${req.body.time}`,
+            to: 'support@globaluphire.com', // Change to your recipient
+            from: 'support@globaluphire.com', // Change to your verified sender,
+            subject: `[Global UpHire] New application for ${req.body.jobTitle}: ${req.body.name} ${req.body.time}`,
             attachments: req.body.attachments,
             html: `
             <html>
