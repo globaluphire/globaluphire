@@ -126,7 +126,7 @@ const SearchForm4 = () => {
         <div className="form-group col-lg-4 col-md-12 col-sm-12 text-right">
           <button
             type="submit"
-            className="theme-btn btn-style-two"
+            className="theme-btn btn-style-one"
             onClick={searchFunction}
           >
             Find Jobs

@@ -18,8 +18,8 @@ const WidgetTopFilterBox = () => {
        {/* </select> */}
 
       {/* TODO: add search filters */}
-       <input type="text" placeholder="search by job title" />
-       <input type="text" placeholder="search by applicants" />
+       {/* <input type="text" placeholder="search by job title" />
+       <input type="text" placeholder="search by applicants" /> */}
 
     </div>
   );

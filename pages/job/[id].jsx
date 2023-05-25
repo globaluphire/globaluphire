@@ -25,6 +25,7 @@ import DashboardHeader from "../../components/header/DashboardHeader";
 import { ToastContainer, toast } from 'react-toastify';
 import { supabase } from "../../config/supabaseClient";
 import ApplyInstantView from "../../components/job-single-pages/job-overview/ApplyInstantView";
+import Header from "../../components/home-9/Header";
 
 const JobSingleDynamicV1 = () => {
   const [isUserApplied, setIsUserApplied] = useState([]);
@@ -107,7 +108,7 @@ const JobSingleDynamicV1 = () => {
       <LoginPopup />
       {/* End Login Popup Modal */}
 
-      { showLoginButton ?  <DefaulHeader2 /> : <DashboardHeader/>}
+      {showLoginButton ? <Header /> : <DashboardHeader />}
       {/* <!--End Main Header --> */}
 
       <MobileMenu />
@@ -225,15 +226,22 @@ const JobSingleDynamicV1 = () => {
 
         <div className="job-detail-outer">
           <div className="auto-container">
-            <div className="row">
-              <div className="content-column col-lg-8 offset-2 col-md-12 col-sm-12">
-                { showLoginButton ?
-                  <div className="sidebar-widget">
+            
+            { showLoginButton ?
+                <div className="row">
+                  <div className="sidebar-widget col-md-4">
                     {/* <!-- Job Overview --> */}
                     <h4 className="widget-title">APPLY AS A GUEST</h4>
                     <ApplyInstantView company={company} />
                   </div>
-                : '' }
+                  <div className="content-column col-md-8">
+                    <JobDetailsDescriptions  company={company} />
+                  </div>
+                  </div>
+                : 
+                <div className="row">
+                  <div className="content-column col-lg-8 offset-2 col-md-12 col-sm-12">
+                
                 <JobDetailsDescriptions  company={company} />
                 {/* End jobdetails content */}
 
@@ -258,8 +266,9 @@ const JobSingleDynamicV1 = () => {
                 {/* </div> */}
                 {/* <!-- Related Jobs --> */}
               </div>
+              </div>
+                  }              
               {/* End .content-column */}
-            </div>
           </div>
         </div>
         {/* <!-- job-detail-outer--> */}

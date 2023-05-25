@@ -4,6 +4,7 @@ import { isActiveLink } from "../../utils/linkActiveChecker";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { menuToggle } from "../../features/toggle/toggleSlice";
+import { logout } from "../../utils/logout";
 
 const DashboardEmployerSidebar = () => {
     const router = useRouter();
@@ -37,7 +38,11 @@ const DashboardEmployerSidebar = () => {
                             key={item.id}
                             onClick={menuToggleHandler}
                         >
-                            <Link href={item.routePath}>
+                            <Link href={item.routePath} onClick={(e) => {
+                                if(item.name == 'Logout'){
+                                    logout(dispatch)
+                                }
+                            }}>
                                 <i className={`la ${item.icon}`}></i>{" "}
                                 {item.name}
                             </Link>

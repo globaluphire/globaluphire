@@ -413,12 +413,12 @@ const FilterJobsBox = () => {
                 </div>
             </div>
             {/* End top filter bar box */}
-            {content}
+            {content}   
             {/* <!-- List Show More --> */}
             <div className="ls-show-more">
-                <p>Show 36 of 497 Jobs</p>
+                <p>Show {content?.length} of 50 Jobs</p>
                 <div className="bar">
-                    <span className="bar-inner" style={{ width: "40%" }}></span>
+                    <span className="bar-inner" style={{ width: `${content.length * 100 /50}%` }}></span>
                 </div>
                 <button className="show-more">Show More</button>
             </div>

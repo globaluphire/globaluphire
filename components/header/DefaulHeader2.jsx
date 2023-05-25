@@ -20,7 +20,7 @@ const DefaulHeader2 = () => {
   return (
     // <!-- Main Header-->
     <header
-      className={`main-header  ${
+      className={`main-header header-style-two alternate2 ${
         navbar ? "fixed-header animated slideInDown" : ""
       }`}
     >
@@ -31,7 +31,7 @@ const DefaulHeader2 = () => {
           <div className="logo-box">
             <div className="logo">
               <Link href="/">
-                <img  src="images/logo.svg"
+                <img  src="images/logo-2.svg"
                   alt="brand"
                   width={154}
                   height={50} />
