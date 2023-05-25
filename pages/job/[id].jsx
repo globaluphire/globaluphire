@@ -125,36 +125,38 @@ const JobSingleDynamicV1 = () => {
                   <h4>{company?.job_title}</h4>
 
                   <ul className="job-info">
-                    <li>
+                    {/* <li>
                       <span className="icon flaticon-briefcase"></span>
                       {company?.company}
-                    </li>
+                    </li> */}
                     {/* compnay info */}
                     <li>
-                      <span className="icon flaticon-map-locator"></span>
-                      {company?.location}
+                      <span className="icon flaticon-map-locator"></span>{" "}
+                      {company?.job_address}
                     </li>
                     {/* location info */}
                     <li>
                       <span className="icon flaticon-clock-3"></span>{" "}
-                      {company?.time}
+                      {company?.job_type}
                     </li>
                     {/* time info */}
-                    <li>
-                      <span className="icon flaticon-money"></span>{" "}
-                      {company?.salary}
-                    </li>
+                    {company?.salary ? 
+                      <li>
+                        <span className="icon flaticon-money"></span>{" "}
+                        {company?.salary}
+                      </li> 
+                    : ""}
                     {/* salary info */}
                   </ul>
                   {/* End .job-info */}
 
-                  <ul className="job-other-info">
+                  {/* <ul className="job-other-info">
                     {company?.jobType?.map((val, i) => (
                       <li key={i} className={`${val.styleClass}`}>
                         {val.type}
                       </li>
                     ))}
-                  </ul>
+                  </ul> */}
                   {/* End .job-other-info */}
                 </div>
                 {/* End .content */}
@@ -168,9 +170,9 @@ const JobSingleDynamicV1 = () => {
                   >
                     Apply For Job
                   </a>
-                  <button className="bookmark-btn">
+                  {/* <button className="bookmark-btn">
                     <i className="flaticon-bookmark"></i>
-                  </button>
+                  </button> */}
                 </div>
                 {/* End apply for job btn */}
 

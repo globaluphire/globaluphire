@@ -16,9 +16,9 @@ const CopyrightFooter = () => {
             </a> */}
             . All Right Reserved.
           </div>
-          <div className="social-links">
+          {/* <div className="social-links">
             <Social />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

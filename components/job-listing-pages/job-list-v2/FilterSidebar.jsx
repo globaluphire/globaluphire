@@ -29,28 +29,28 @@ const FilterSidebar = () => {
                 </div>
                 {/* <!-- Checkboxes Ouer --> */}
 
-                <div className="checkbox-outer">
+                {/* <div className="checkbox-outer">
                     <h4>Experience Level</h4>
                     <ExperienceLevel />
-                </div>
+                </div> */}
                 {/* <!-- Checkboxes Ouer --> */}
 
-                <div className="filter-block">
+                {/* <div className="filter-block">
                     <h4>Salary</h4>
 
                     <SalaryRangeSlider />
-                </div>
+                </div> */}
                 {/* <!-- Filter Block --> */}
 
-                <div className="filter-block">
+                {/* <div className="filter-block">
                     <h4>Tags</h4>
                     <Tag />
-                </div>
+                </div> */}
                 {/* <!-- Filter Block --> */}
             </div>
             {/* Filter Outer */}
 
-            <CallToActions />
+            {/* <CallToActions /> */}
             {/* <!-- End Call To Action --> */}
         </div>
     );

@@ -9,7 +9,7 @@ const initialState = {
             max: 100,
         },
         category: "",
-        jobType: [],
+        jobType: "",
         jobTypeSelect: "",
         datePosted: "",
         experience: [],
@@ -47,14 +47,7 @@ export const filterSlice = createSlice({
             state.jobList.category = payload;
         },
         addJobType: (state, { payload }) => {
-            const isExist = state.jobList.jobType.includes(payload);
-            if (!isExist) {
-                state.jobList.jobType.push(payload);
-            } else {
-                state.jobList.jobType = state.jobList.jobType.filter(
-                    (item) => item !== payload
-                );
-            }
+            state.jobList.jobType = payload
         },
         clearJobType: (state) => {
             state.jobList.jobType = [];

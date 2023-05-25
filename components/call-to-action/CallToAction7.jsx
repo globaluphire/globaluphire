@@ -15,12 +15,24 @@ const CallToAction7 = () => {
         </div>
         {/* End sec-title */}
 
-        <div className="btn-box">
-          <Link href="/register" className="theme-btn btn-style-three">
+        {/* <div className="btn-box"> */}
+        <div className="outer-box">
+            <div className="btn-box">
+              <a
+                href="#"
+                className="theme-btn btn-style-three call-modal"
+                data-bs-toggle="modal"
+                data-bs-target="#loginPopupModal"
+              >
+                Create an Account
+              </a>
+            </div>
+          </div>
+          {/* <Link href="/register" className="theme-btn btn-style-three">
             Create an Account
-          </Link>
+          </Link> */}
         </div>
-      </div>
+      {/* </div> */}
     </section>
   );
 };

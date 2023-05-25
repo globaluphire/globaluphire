@@ -193,14 +193,16 @@ const FilterJobsBox = () => {
                             </Link>
                         </h4>
                         
-                        { item?.job_address ?                        
-                            <p className="mb-2"><i className="flaticon-map-locator"></i>{" "}{item?.job_address}</p>
-                        : '' }
+                        
                         <ul className="job-info">
                             {/* <li>
                                 <span className="icon flaticon-briefcase"></span>
                                 {item.company}
                             </li> */}
+
+                            { item?.job_address ?                        
+                                <li className="mb-2"><i className="flaticon-map-locator"></i>{" "}{item?.job_address}</li>
+                            : '' }
                             {/* compnay info */}
                             { item?.job_type ?
                                 <li className="time">

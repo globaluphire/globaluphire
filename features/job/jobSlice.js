@@ -149,12 +149,9 @@ export const jobSlice = createSlice({
         },
         jobTypeCheck: (state, { payload }) => {
             state?.jobTypeList?.map((item) => {
+                item.isChecked = false;
                 if (item.id === payload) {
-                    if (item.isChecked) {
-                        item.isChecked = false;
-                    } else {
-                        item.isChecked = true;
-                    }
+                    item.isChecked = true;
                 }
                 return {
                     ...item,
