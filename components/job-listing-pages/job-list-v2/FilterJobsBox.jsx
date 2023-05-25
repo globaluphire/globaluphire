@@ -269,6 +269,7 @@ const FilterJobsBox = () => {
         dispatch(addPerPage({ start: 0, end: 0 }));
     };
 
+    console.log(jobTypeSelect)
     const fnCall = async () => {
         let searchDate = null
         let d = new Date()
@@ -302,6 +303,8 @@ const FilterJobsBox = () => {
     }
     useEffect(() => {
       fnCall()
+      console.log(jobTypeSelect)
+      console.log(2)
     }, [jobTypeSelect, sort, datePosted])
   
     // 

@@ -5,7 +5,7 @@ const Seo = ({ pageTitle }) => (
     <Head>
       <title>
         {pageTitle &&
-          `${pageTitle} || Global UpHire}`}
+          `${pageTitle} | Global UpHire`}
       </title>
       <meta
         name="viewport"

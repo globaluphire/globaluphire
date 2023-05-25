@@ -5,8 +5,14 @@ import MobileMenu from "../../header/MobileMenu";
 import FilterJobsBox from "./FilterJobsBox";
 import JobSearchForm from "./JobSearchForm";
 import FilterSidebar from "./FilterSidebar";
+import DashboardHeader from "../../header/DashboardHeader";
+import { useSelector } from "react-redux";
+import { useMemo } from "react";
+import Header from "../../home-9/Header";
 
 const index = () => {
+  const user = useSelector((state) => state.candidate.user);
+  const showLoginButton = useMemo(() => !user?.id, [user]);
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -15,7 +21,7 @@ const index = () => {
       <LoginPopup />
       {/* End Login Popup Modal */}
 
-      <DefaulHeader2 />
+      {showLoginButton ? <Header /> : <DashboardHeader />}
       {/* End Header with upload cv btn */}
 
       <MobileMenu />
