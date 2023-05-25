@@ -1,13 +1,18 @@
 import Link from "next/link";
 import Slider from "react-slick";
 import jobFeatured from "../../data/job-featured";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { supabase } from "../../config/supabaseClient";
+import { setRecentJobs } from "../../features/job/jobSlice";
 
 const JobFeatured12 = () => {
   const settings = {
     dots: true,
     speed: 1400,
     slidesToShow: 3,
-    slidesToScroll: 3,
+    slidesToScroll: 1,
     autoplay: false,
     responsive: [
       {
@@ -37,31 +42,48 @@ const JobFeatured12 = () => {
     ],
   };
 
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const recentJobs = useSelector((state) => state.job.recentJobs)
+
+  useEffect(() => {
+    if(recentJobs.length == 0){
+      supabase.from('jobs')
+        .select()
+        .eq('status', 'Published')
+        .limit(10)
+        .order('created_at', {ascending: false})
+      .then((res) => {
+        if(res.status == 200) dispatch(setRecentJobs({jobs: res.data}))
+      })     
+    }
+  }, [])
+
   return (
     <>
       <Slider {...settings} arrows={false}>
-        {jobFeatured.slice(11, 20).map((item) => (
-          <div className="job-block-three mb-0" key={item.id}>
+        {recentJobs?.map((item) => (
+          <div className="job-block-three mb-0" key={item.job_id}>
             <div className="inner-box">
               <div className="content">
-                <span className="company-logo">
+                {/* <span className="company-logo">
                   <img src={item.logo} alt="brand" />
-                </span>
+                </span> */}
                 <h4>
-                  <Link href={`/job-single-v4/${item.id}`}>
-                    {item.jobTitle}
+                  <Link href={`/job-single-v4/${item.job_id}`}>
+                    {item.job_title}
                   </Link>
                 </h4>
 
                 <ul className="job-info">
-                  <li>
+                  {/* <li>
                     <span className="icon flaticon-briefcase"></span>
                     {item.company}
-                  </li>
+                  </li> */}
                   {/* compnay info */}
                   <li>
                     <span className="icon flaticon-map-locator"></span>
-                    {item.location}
+                    {item.job_address}
                   </li>
                   {/* location info */}
                 </ul>
@@ -69,18 +91,18 @@ const JobFeatured12 = () => {
               </div>
               {/* End content */}
 
-              <ul className="job-other-info">
+              {/* <ul className="job-other-info">
                 {item.jobType.map((val, i) => (
                   <li key={i} className={`${val.styleClass}`}>
                     {val.type}
                   </li>
                 ))}
-              </ul>
+              </ul> */}
               {/* End .job-other-info */}
 
-              <button className="bookmark-btn">
+              {/* <button className="bookmark-btn">
                 <span className="flaticon-bookmark"></span>
-              </button>
+              </button> */}
             </div>
           </div>
         ))}

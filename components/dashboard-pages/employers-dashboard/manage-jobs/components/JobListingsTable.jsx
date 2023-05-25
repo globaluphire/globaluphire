@@ -232,20 +232,20 @@ const JobListingsTable = () => {
                             <ul className="job-info">
                               { item?.job_type ?
                                   <li>
-                                    <span className="icon flaticon-clock-3"></span>
+                                    <i className="flaticon-clock-3"></i>{" "}
                                     {item?.job_type}
                                   </li>
                                   : '' }
                               { item?.job_address ?
                                   <li>
-                                    <span className="icon flaticon-map-locator"></span>
+                                    <span className="flaticon-map-locator"></span>{" "}
                                     {item?.job_address}
                                   </li>
                                   : '' }
                               {/* location info */}
                               { item?.salary ?
                                   <li>
-                                    <span className="icon flaticon-money"></span>{" "}
+                                    <span className="flaticon-money"></span>{" "}
                                    ${item?.salary} {item?.salary_rate}
                                   </li>
                                   : '' }
