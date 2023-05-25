@@ -7,6 +7,8 @@ import { Provider } from "react-redux";
 import { store } from "../app/store";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { getDecryptedItem } from "../utils/encryptedStorage";
+import { setUserData } from "../features/candidate/candidateSlice";
 
 if (typeof window !== "undefined") {
   require("bootstrap/dist/js/bootstrap");
@@ -20,6 +22,14 @@ function MyApp({ Component, pageProps }) {
       duration: 1400,
       once: true,
     });
+    try {
+      const user = JSON.parse(getDecryptedItem('user'))
+      if(user.id){
+        store.dispatch(setUserData(user))
+      }
+    } catch(e) {
+      console.warn(e)
+    }
   }, []);
 
   return (
