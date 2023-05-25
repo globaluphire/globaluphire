@@ -204,7 +204,7 @@ const ApplyJobModalContent = ({company}) => {
           <label>License Number<span className="required"> (required)</span></label>
           <input
             type="text"
-            name="tracer-hire-license_number"
+            name="globaluphire-license_number"
             value={licenseNumber}
             onChange={(e) => {
               setLicenseNumber(e.target.value);

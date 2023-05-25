@@ -185,7 +185,7 @@ const ApplyInstantView = ({ company }) => {
           <label>First Name<span className="required"> (required)</span></label>
           <input
             type="text"
-            name="tracer-hire-first_name"
+            name="globaluphire-first_name"
             placeholder="Enter first name"
             value={firstName}
             onChange={(e) => {
@@ -200,7 +200,7 @@ const ApplyInstantView = ({ company }) => {
           <label>Last Name<span className="required"> (required)</span></label>
           <input
             type="text"
-            name="tracer-hire-last_name"
+            name="globaluphire-last_name"
             placeholder="Enter last name"
             value={lastName}
             onChange={(e) => {
@@ -215,7 +215,7 @@ const ApplyInstantView = ({ company }) => {
           <label>Email Address<span className="required"> (required)</span></label>
           <input
             type="email"
-            name="tracer-hire-email"
+            name="globaluphire-email"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -232,7 +232,7 @@ const ApplyInstantView = ({ company }) => {
           <label>License Number<span className="required"> (required)</span></label>
           <input
             type="text"
-            name="tracer-hire-license_number"
+            name="globaluphire-license_number"
             value={licenseNumber}
             onChange={(e) => {
               setLicenseNumber(e.target.value);
