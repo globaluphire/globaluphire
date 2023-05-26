@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { supabase } from "../../../../../config/supabaseClient";
 import dynamic from "next/dynamic";
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
@@ -181,6 +182,25 @@ const PostBoxForm = () => {
 
   const searchInput = useRef(null);
 
+  const [singleSelections, setSingleSelections] = useState([]);
+  const addresses = [
+    "601 Evergreen Rd., Woodburn, OR 97071",
+    "160 NE Conifer Blvd., Corvallis, OR 97330",
+    "1735 Adkins St., Eugene, OR 97401",
+    "1201 McLean Blvd., Eugene, OR 97405",
+    "1166 E 28th Ave., Eugene, OR 97403",
+    "740 NW Hill Pl., Roseburg, OR 97471",
+    "525 W Umpqua St., Roseburg, OR 97471",
+    "2075 NW Highland Avenue, Grants Pass, OR 97526",
+    "2201 NW Highland Avenue, Grants Pass, OR 97526",
+    "2901 E Barnett Rd., Medford, OR 97504",
+    "4062 Arleta Ave NE, Keizer,	OR 97303",
+    "1677 Pensacola Street, Honolulu, HI 96822"
+  ]
+
+  useEffect(() => {
+    jobData.completeAddress = singleSelections[0]
+  }, [singleSelections])
   // init google map script
   const initMapScript = () => {
     // if script already loaded
@@ -539,7 +559,7 @@ const PostBoxForm = () => {
         </div>
  */}
 
-        <div className="form-group col-lg-12 col-md-12">
+        {/* <div className="form-group col-lg-12 col-md-12">
           <label>Complete Address <span className="optional">(optional)</span></label>
           <input
             type="text"
@@ -553,7 +573,20 @@ const PostBoxForm = () => {
             }}
             placeholder="Address"
           />
+        </div> */}
+
+        <div className="form-group col-lg-12 col-md-12">
+        <label>Complete Address <span className="optional">(optional)</span></label>
+        <Typeahead
+          onChange={setSingleSelections}
+          id="completeAddress"
+          className="form-group"
+          placeholder="Address"
+          options={addresses}
+          selected={singleSelections}
+        />
         </div>
+
         {/* <!-- Input --> */}
         <div className="form-group col-lg-12 col-md-12">
           <label>City, State <span className="required">(required)</span></label>

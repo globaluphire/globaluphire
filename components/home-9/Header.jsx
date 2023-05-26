@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import HeaderNavContent from "../header/HeaderNavContent";
+import Image from "next/image";
 
 const Header = () => {
   const [navbar, setNavbar] = useState(false);
@@ -32,10 +33,12 @@ const Header = () => {
             <div className="logo-box">
               <div className="logo">
                 <Link href="/">
-                  <img  src="images/logo-2.svg"
+                  <Image src="/images/logo-2.svg"
                     alt="brand"
                     width={174}
-                    height={70} />
+                    height={70}
+                    priority  
+                  />
                 </Link>
               </div>
             </div>
@@ -50,7 +53,7 @@ const Header = () => {
             <div className="btn-box">
               <a
                 href="#"
-                className="theme-btn btn-style-six call-modal"
+                className="theme-btn btn-style-one call-modal"
                 data-bs-toggle="modal"
                 data-bs-target="#loginPopupModal"
               >
