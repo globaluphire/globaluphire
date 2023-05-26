@@ -1,5 +1,6 @@
 export default function handler(req, res) {
     if(req.method == "POST") {
+        console.log(req.body)
         const mail = require('@sendgrid/mail');
         mail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY)
         const msg = {
@@ -76,6 +77,10 @@ export default function handler(req, res) {
                   <li>
                     <b>Applicant Name: </b>
                     <span>${req.body.name}</span>
+                  </li>
+                  <li>
+                    <b>Applied In Center: </b>
+                    <span>${req.body.jobCompAdd}</span>
                   </li>
                 </ul>
                 <p>Note: Please login with your employer credentials to access link</p>
