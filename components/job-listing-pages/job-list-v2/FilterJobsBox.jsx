@@ -25,60 +25,84 @@ import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../../../config/supabaseClient";
+import { setSearchFields } from "../../../features/search/searchSlice";
 
 const FilterJobsBox = () => {
     const router = useRouter();
     const [jobs, setJobs] = useState([]);
     const searchTerm = useSelector((state) => state.search.searchTerm)
     const searchAddress = useSelector((state) => state.search.searchAddress)
+    const pageSize = useSelector((state) => state.filter.jobSort.perPage.end)
+    const [totalRecords, setTotalRecords] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
+    const handlePageChange = (currentPage) => {
+      setCurrentPage(currentPage)
+    }
 
-    const searchJobsWithTermAndAddress = async () => {
-        await supabase.from('jobs').select()
-        .eq('status', 'Published')
-        .ilike('job_title', '%'+searchTerm+'%')
-        .ilike('job_address', '%'+searchAddress+'%')
-        .then((res) => {
-          setJobs(res.data)
-        })
-      };
+    // const searchJobsWithTermAndAddress = async () => {
+    //     await supabase.from('jobs').select('*', { count: 'exact', head: true })
+    //     .eq('status', 'Published')
+    //     .ilike('job_title', '%'+searchTerm+'%')
+    //     .ilike('job_address', '%'+searchAddress+'%')
+    //     .then((res) => {
+    //       setJobs(res.data)
+    //     })
+    //   };
     
-      const searchJobsWithTerm = async () => {
-        await supabase.from('jobs').select()
-        .eq('status', 'Published')
-        .ilike('job_title', '%'+searchTerm+'%')
-        .then((res) => {
-          setJobs(res.data)
-        })
-      };
+    //   const searchJobsWithTerm = async () => {
+    //     await supabase.from('jobs').select('*', { count: 'exact', head: true })
+    //     .eq('status', 'Published')
+    //     .ilike('job_title', '%'+searchTerm+'%')
+    //     .then((res) => {
+    //       setJobs(res.data)
+    //     })
+    //   };
     
-      const searchJobsWithAddress = async () => {
-        await supabase.from('jobs').select()
-        .eq('status', 'Published')
-        .ilike('job_address', '%'+searchAddress+'%')
-        .then((res) => {
-          setJobs(res.data)
-        })
-      };
+    //   const searchJobsWithAddress = async () => {
+    //     await supabase.from('jobs').select('*', { count: 'exact', head: true })
+    //     .eq('status', 'Published')
+    //     .ilike('job_address', '%'+searchAddress+'%')
+    //     .then((res) => {
+    //       setJobs(res.data)
+    //     })
+    //   };
     
-      const searchJobs = async () => {
-        console.log("No search call");
-        await supabase.from('jobs').select()
-        .eq('status', 'Published')
-        .then((res) => {
-          setJobs(res.data)
+
+    const searchJobs = async () => {
+
+        let query = supabase.from('jobs').select('*', {count: 'exact'})
+        if(searchAddress) query = query.ilike('job_address', '%'+searchAddress+'%')
+        if(searchTerm) query = query.ilike('job_title', '%'+searchTerm+'%')
+        query = query.eq('status', 'Published')
+        query = query.order('created_at',  { ascending: sort == 'des' })
+        if(pageSize <= totalRecords) query = query.range((currentPage - 1) * pageSize, (currentPage * pageSize) - 1)
+
+        query.then(res => {
+            if(jobs.length + res.data.length > totalRecords) setJobs(res.data)
+            else setJobs([...jobs, ...res.data])
+          setTotalRecords(res.count)
         })
-      };
+    }
+
+    //   const searchJobs = async () => {
+    //     await supabase.from('jobs').select('*', { count: 'exact', head: true })
+    //     .eq('status', 'Published')
+    //     .then((res) => {
+    //       setJobs(res.data)
+    //       setTotalRecords(res.count)
+    //     })
+    //   };
     
       useEffect(() => {
-        if(searchAddress == "" && searchTerm == '') 
+        // if(searchAddress == "" && searchTerm == '') 
           searchJobs()
-        else if(searchAddress == "") 
-          searchJobsWithTerm()
-        else if(searchTerm == "") 
-          searchJobsWithAddress()
-        else 
-          searchJobsWithTermAndAddress()
-      }, [searchAddress, searchTerm]);
+        // else if(searchAddress == "") 
+        //   searchJobsWithTerm()
+        // else if(searchTerm == "") 
+        //   searchJobsWithAddress()
+        // else 
+        //   searchJobsWithTermAndAddress()
+      }, [searchAddress, searchTerm, pageSize, currentPage]);
 
     const { jobList, jobSort } = useSelector((state) => state.filter);
     const {
@@ -266,10 +290,10 @@ const FilterJobsBox = () => {
         dispatch(addSalary({ min: 0, max: 20000 }));
         dispatch(addTag(""));
         dispatch(addSort(""));
-        dispatch(addPerPage({ start: 0, end: 0 }));
+        dispatch(addPerPage({ start: 0, end: 10 }));
+        dispatch(setSearchFields({ searchTerm: "", searchAddress: "" }))
     };
 
-    console.log(jobTypeSelect)
     const fnCall = async () => {
         let searchDate = null
         let d = new Date()
@@ -296,22 +320,21 @@ const FilterJobsBox = () => {
         if(searchDate) query = query.gte("created_at", searchDate)
         query = query.eq('status', 'Published')
         query = query.order('created_at',  { ascending: sort == 'des' })
-  
+        if(pageSize <= totalRecords || totalRecords == 0) query = query.range((currentPage - 1) * pageSize, (currentPage * pageSize) - 1)
+
         const {data, error} = await query
-        if(data) setJobs(data)
-      
+        if(data) {
+            if(jobs.length + data.length > totalRecords) setJobs([...jobs, ...data])
+            else setJobs(data)
+        }
     }
     useEffect(() => {
       fnCall()
-      console.log(jobTypeSelect)
-      console.log(2)
     }, [jobTypeSelect, sort, datePosted])
   
     // 
-    const [currentPage, setCurrentPage] = useState(1)
-    const handlePageChange = (currentPage) => {
-      setCurrentPage(currentPage)
-      console.log(currentPage)
+    const showMoreJobs = () => {
+        handlePageChange(currentPage + 1)
     }
 
     return (
@@ -350,7 +373,7 @@ const FilterJobsBox = () => {
                     tag !== "" ||
                     sort !== "" ||
                     perPage.start !== 0 ||
-                    perPage.end !== 0 ? (
+                    perPage.end !== 10 ? (
                         <button
                             onClick={clearAll}
                             className="btn btn-danger text-nowrap me-2"
@@ -376,14 +399,6 @@ const FilterJobsBox = () => {
                         className="chosen-single form-select ms-3 "
                         value={JSON.stringify(perPage)}
                     >
-                        <option
-                            value={JSON.stringify({
-                                start: 0,
-                                end: 0,
-                            })}
-                        >
-                            All
-                        </option>
                         <option
                             value={JSON.stringify({
                                 start: 0,
@@ -416,11 +431,13 @@ const FilterJobsBox = () => {
             {content}   
             {/* <!-- List Show More --> */}
             <div className="ls-show-more">
-                <p>Show {content?.length} of 50 Jobs</p>
+                <p>Show {content?.length} of {totalRecords} Jobs</p>
                 <div className="bar">
-                    <span className="bar-inner" style={{ width: `${content.length * 100 /50}%` }}></span>
+                    <span className="bar-inner" style={{ width: `${content?.length * 100 / totalRecords}%` }}></span>
                 </div>
-                <button className="show-more">Show More</button>
+                {
+                    content?.length == totalRecords ? '' : <button className="show-more" onClick={showMoreJobs}>Show More</button>
+                }
             </div>
         </>
     );
