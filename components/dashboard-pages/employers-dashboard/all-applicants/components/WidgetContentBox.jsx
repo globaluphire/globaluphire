@@ -327,6 +327,7 @@ const WidgetContentBox = () => {
                             <th>Name</th>
                             <th>Applied On</th>
                             <th>Job Title</th>
+                            <th>Location</th>
                             <th>Status</th>
                             <th>Notes</th>
                             <th>Actions</th>
@@ -357,7 +358,10 @@ const WidgetContentBox = () => {
                                         <span>{applicant.created_at}</span>
                                     </td>
                                     <td>
-                                    {applicant.job_title}
+                                        {applicant.job_title}
+                                    </td>
+                                    <td>
+                                        {applicant.job_comp_add}
                                     </td>
                                     <td>
                                         <select className="chosen-single form-select" 
