@@ -400,7 +400,7 @@ const ApplicantWidgetContentBox = () => {
                                 onChange={(e) => {
                                     setNoteText(e.target.value)
                                 }}
-                                style={{border: '1px solid #ccc', padding: '10px'}}></textarea>
+                                style={{resize: 'vertical', overflowY: 'scroll', border: '1px solid #ccc', padding: '10px'}}></textarea>
                             <br/>
                             <div className="form-group text-center">
                                 <button
