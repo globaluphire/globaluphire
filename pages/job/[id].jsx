@@ -203,6 +203,7 @@ const JobSingleDynamicV1 = () => {
                         <h3 className="title">Apply for this job</h3>
                         <button
                           type="button"
+                          id="applyJobCloseButton"
                           className="closed-modal"
                           data-bs-dismiss="modal"
                           aria-label="Close"

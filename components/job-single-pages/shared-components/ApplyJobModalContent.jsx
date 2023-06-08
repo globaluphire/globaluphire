@@ -92,7 +92,8 @@ const ApplyJobModalContent = ({company}) => {
                     doc_size: selectedFile.size,
                     doc_typ: selectedFile.type,
                     job_id: jobId,
-                    doc_dwnld_url: docURL
+                    doc_dwnld_url: docURL,
+                    status: 'New'
                   }
                 ])
 
@@ -129,7 +130,7 @@ const ApplyJobModalContent = ({company}) => {
                   url: '/api/mail',
                   data: {
                     name: user.name,
-                    redirectionUrl: `https://immensecareer.com`,
+                    redirectionUrl: `https://globaluphire.com`,
                     time: time.toLocaleString('en-US'),
                     jobId: jobId,
                     jobTitle: company.job_title,
@@ -155,6 +156,10 @@ const ApplyJobModalContent = ({company}) => {
                 progress: undefined,
                 theme: "colored",
               });
+
+              // close popup
+              document.getElementById('applyJobCloseButton').click();
+
             }
           }
         }

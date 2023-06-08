@@ -10,7 +10,21 @@ const ApplicantWidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const router = useRouter();
     const id = router.query.id;
-  
+
+    const [applicationStatus, setApplicationStatus] = useState('');
+    const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
+    const [noteText, setNoteText] = useState('');
+    const [applicationId, setApplicationId] = useState('');
+
+    async function updateApplicationStatus (applicationStatus, applicationId) {
+        // save updated applicant status
+        const { data, error } = await supabase
+            .from('applications')
+            .update({ status: applicationStatus })
+            .eq('application_id', applicationId)
+
+        fetchedAllApplicantsView()
+    }
     
     const dateFormat = (val) => {
       const date = new Date(val)
@@ -20,18 +34,28 @@ const ApplicantWidgetContentBox = () => {
     const fetchedAllApplicantsView = async () => {
       try{
         if (id) {
-          let { data: allApplicantsView, error } = await supabase
-              .from('applicants_view')
-              .select("*")
-  
-              // Filters
-              .eq('job_id', id)
-              .order('created_at',  { ascending: false });
-  
-          if (allApplicantsView) {
-              allApplicantsView.forEach( i => i.created_at = dateFormat(i.created_at))
-              setFetchedAllApplicantsData(allApplicantsView)
-          }
+            // call reference to get applicantStatus options
+            let { data, error: e } = await supabase
+                .from('reference')
+                .select("*")
+                .eq('ref_nm',  'applicantStatus');
+
+            if (data) {
+                setApplicationStatusReferenceOptions(data)
+            }
+
+            let { data: allApplicantsView, error } = await supabase
+                .from('applicants_view')
+                .select("*")
+
+                // Filters
+                .eq('job_id', id)
+                .order('created_at',  { ascending: false });
+
+            if (allApplicantsView) {
+                allApplicantsView.forEach( i => i.created_at = dateFormat(i.created_at))
+                setFetchedAllApplicantsData(allApplicantsView)
+            }
         }
       } catch(e) {
         toast.error('System is unavailable.  Please try again later or contact tech support!', {
@@ -76,51 +100,14 @@ const ApplicantWidgetContentBox = () => {
         }
     }
 
-    const Qualified = async (applicationId, status) => {
-        if (status != 'Qualified') {
-          const { data, error } = await supabase
-              .from('applications')
-              .update({ status: 'Qualified' })
-              .eq('application_id', applicationId)
-    
-          // open toast
-          toast.success('Applicant status marked as Qualified.  Please let Applicant know about your decision!', {
-            position: "bottom-right",
-            autoClose: false,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-    
-          // fetching for refresh the data
-          fetchedAllApplicantsView();
-        } else {
-          // open toast
-          toast.error('Applicant status is already marked as Qualified!', {
-            position: "bottom-right",
-            autoClose: false,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-          });
-        }
-    }
-    
-    const NotQualified = async (applicationId, status) => {
-        if (status != 'Not Qualified') {
-            const { data, error } = await supabase
-                .from('applications')
-                .update({ status: 'Not Qualified' })
-                .eq('application_id', applicationId)
+    const addNotes = async () => {
+        const { data, error } = await supabase
+            .from('applications')
+            .update({ 'notes': noteText})
+            .eq('application_id', applicationId)
 
-            // open toast
-            toast.success('Applicant status marked as Not Qualified.  Please let Applicant know about your decision!', {
+        // open toast
+        toast.success('Applicant notes has been saved!', {
             position: "bottom-right",
             autoClose: false,
             hideProgressBar: false,
@@ -129,60 +116,127 @@ const ApplicantWidgetContentBox = () => {
             draggable: true,
             progress: undefined,
             theme: "colored",
-            });
+        });
 
-            // fetching for refresh the data
-            fetchedAllApplicantsView();
-        } else {
-            // open toast
-            toast.error('Applicant status is already marked as Not Qualified!', {
-            position: "bottom-right",
-            autoClose: false,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            });
-        }
+        // fetching for refresh the data
+        fetchedAllApplicantsView();
+
+        // close popup
+        document.getElementById('notesCloseButton').click();
+
+        // reset NoteText
+        setNoteText('');
+        setApplicationId('');
+        
     }
 
-    const ResetStatus = async (applicationId, status) => {
-        if (status != null) {
-            const { data, error } = await supabase
-                .from('applications')
-                .update({ status: null })
-                .eq('application_id', applicationId)
+    // const Qualified = async (applicationId, status) => {
+    //     if (status != 'Qualified') {
+    //       const { data, error } = await supabase
+    //           .from('applications')
+    //           .update({ status: 'Qualified' })
+    //           .eq('application_id', applicationId)
+    
+    //       // open toast
+    //       toast.success('Applicant status marked as Qualified.  Please let Applicant know about your decision!', {
+    //         position: "bottom-right",
+    //         autoClose: false,
+    //         hideProgressBar: false,
+    //         closeOnClick: true,
+    //         pauseOnHover: true,
+    //         draggable: true,
+    //         progress: undefined,
+    //         theme: "colored",
+    //       });
+    
+    //       // fetching for refresh the data
+    //       fetchedAllApplicantsView();
+    //     } else {
+    //       // open toast
+    //       toast.error('Applicant status is already marked as Qualified!', {
+    //         position: "bottom-right",
+    //         autoClose: false,
+    //         hideProgressBar: false,
+    //         closeOnClick: true,
+    //         pauseOnHover: true,
+    //         draggable: true,
+    //         progress: undefined,
+    //         theme: "colored",
+    //       });
+    //     }
+    // }
+    
+    // const NotQualified = async (applicationId, status) => {
+    //     if (status != 'Not Qualified') {
+    //         const { data, error } = await supabase
+    //             .from('applications')
+    //             .update({ status: 'Not Qualified' })
+    //             .eq('application_id', applicationId)
 
-            // open toast
-            toast.success('Applicant status reset successfully.', {
-                position: "bottom-right",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
+    //         // open toast
+    //         toast.success('Applicant status marked as Not Qualified.  Please let Applicant know about your decision!', {
+    //         position: "bottom-right",
+    //         autoClose: false,
+    //         hideProgressBar: false,
+    //         closeOnClick: true,
+    //         pauseOnHover: true,
+    //         draggable: true,
+    //         progress: undefined,
+    //         theme: "colored",
+    //         });
 
-            // fetching for refresh the data
-            fetchedAllApplicantsView();
-        } else {
-            // open toast
-            toast.error('Applicant status is already reset!', {
-                position: "bottom-right",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-        }
-    }
+    //         // fetching for refresh the data
+    //         fetchedAllApplicantsView();
+    //     } else {
+    //         // open toast
+    //         toast.error('Applicant status is already marked as Not Qualified!', {
+    //         position: "bottom-right",
+    //         autoClose: false,
+    //         hideProgressBar: false,
+    //         closeOnClick: true,
+    //         pauseOnHover: true,
+    //         draggable: true,
+    //         progress: undefined,
+    //         theme: "colored",
+    //         });
+    //     }
+    // }
+
+    // const ResetStatus = async (applicationId, status) => {
+    //     if (status != null) {
+    //         const { data, error } = await supabase
+    //             .from('applications')
+    //             .update({ status: null })
+    //             .eq('application_id', applicationId)
+
+    //         // open toast
+    //         toast.success('Applicant status reset successfully.', {
+    //             position: "bottom-right",
+    //             autoClose: false,
+    //             hideProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: true,
+    //             draggable: true,
+    //             progress: undefined,
+    //             theme: "colored",
+    //         });
+
+    //         // fetching for refresh the data
+    //         fetchedAllApplicantsView();
+    //     } else {
+    //         // open toast
+    //         toast.error('Applicant status is already reset!', {
+    //             position: "bottom-right",
+    //             autoClose: false,
+    //             hideProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: true,
+    //             draggable: true,
+    //             progress: undefined,
+    //             theme: "colored",
+    //         });
+    //     }
+    // }
 
     return (
         <div className="tabs-box">
@@ -213,7 +267,7 @@ const ApplicantWidgetContentBox = () => {
             {/* End filter top bar */}
 
             {/* Start table widget content */}
-            {fetchedAllApplicants.length == 0 ? <p style={{ fontSize: '1rem', fontWeight: '500' }}><center>No applicant applied to this job!</center></p>: 
+            {fetchedAllApplicants.length == 0  && applicationStatusReferenceOptions != null ? <p style={{ fontSize: '1rem', fontWeight: '500' }}><center>No applicant applied to this job!</center></p>: 
             <div className="widget-content">
             <div className="table-outer">
                 <table className="default-table manage-job-table">
@@ -223,6 +277,7 @@ const ApplicantWidgetContentBox = () => {
                     <th>Applied On</th>
                     <th>Job Title</th>
                     <th>Status</th>
+                    <th>Notes</th>
                     <th>Actions</th>
                     </tr>
                 </thead>
@@ -253,12 +308,34 @@ const ApplicantWidgetContentBox = () => {
                         <td>
                         {applicant.job_title}
                         </td>
-                        { applicant.status == "Qualified" ?
-                            <td className="status">Qualified</td>
-                            : applicant.status == "Not Qualified" ?
-                            <td className="status" style={{ color: 'red' }}>Not Qualified</td>
-                            : <td className="pending">New</td>
-                        }
+                        <td>
+                            <select className="chosen-single form-select" 
+                                value={applicant.status}
+                                onChange={(e) => {
+                                    updateApplicationStatus(e.target.value, applicant.application_id)
+                                }}>
+                                {applicationStatusReferenceOptions.map((option) => (
+                                    <option value={option.ref_dspl}>{option.ref_dspl}</option>
+                                ))}
+                            </select>
+                        </td>
+                        <td>
+                            <ul className="option-list">
+                                <li>
+                                    <button data-text="Add, View, Edit, Delete Notes">
+                                    <a
+                                        href="#"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#addNoteModal"
+                                        onClick = { () => { setNoteText (applicant.notes);
+                                            setApplicationId(applicant.application_id) }}
+                                    >
+                                        <span className="la la-eye"></span>
+                                    </a>
+                                    </button>
+                                </li>
+                            </ul>
+                        </td>
                         <td>
                             <div className="option-box">
                                 <ul className="option-list">
@@ -267,7 +344,7 @@ const ApplicantWidgetContentBox = () => {
                                     <span className="la la-file-download"></span>
                                     </button>
                                 </li>
-                                <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
+                                {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
                                     <button data-text="Qualified">
                                     <span className="la la-check"></span>
                                     </button>
@@ -281,7 +358,7 @@ const ApplicantWidgetContentBox = () => {
                                     <button data-text="Reset Status">
                                     <span className="la la-undo-alt"></span>
                                     </button>
-                                </li>
+                                </li> */}
                                 </ul>
                             </div>
                         </td>
@@ -289,6 +366,55 @@ const ApplicantWidgetContentBox = () => {
                     ))}
                 </tbody>
                 </table>
+
+                {/* Add Notes Modal Popup */}
+                <div
+                    className="modal fade"
+                    id="addNoteModal"
+                    tabIndex="-1"
+                    aria-hidden="true"
+                >
+                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    <div className="apply-modal-content modal-content">
+                        <div className="text-center">
+                        <h3 className="title">Add Notes</h3>
+                        <button
+                            type="button"
+                            id="notesCloseButton"
+                            className="closed-modal"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                        </div>
+                        {/* End modal-header */}
+                        <form>
+                            <textarea 
+                                value={noteText}
+                                id="notes"
+                                cols="45"
+                                rows="10"
+                                onChange={(e) => {
+                                    setNoteText(e.target.value)
+                                }}
+                                style={{border: '1px solid #ccc', padding: '10px'}}></textarea>
+                            <br/>
+                            <div className="form-group text-center">
+                                <button
+                                    className="theme-btn btn-style-one"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        addNotes();
+                                    }}
+                                >
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                        {/* End PrivateMessageBox */}
+                    </div>
+                    {/* End .send-private-message-wrapper */}
+                    </div>
+                </div>
             </div>
             </div>
             }
