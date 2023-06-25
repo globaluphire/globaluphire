@@ -48,7 +48,11 @@ const submitJobPost = async (
   user,
   fetchedJobData
 ) => {
-    if (editedJobTitle || editedJobDesc || editedJobType || editedSalary || editedSalaryRate || editedCareer || editedExp || editedAddress) {
+    if (editedJobTitle || editedJobDesc ||
+        editedJobType || editedSalary ||
+        editedSalaryRate || editedCareer ||
+        editedExp || editedAddress ||
+        editedCompleteAddress) {
         try {
 
             const { data, error } = await supabase
@@ -459,12 +463,11 @@ const EditJobView = ({ fetchedJobData }) => {
           }
         </div>
         <div className="form-group col-lg-6 col-md-12">
-          <label>Education<span className="required"> (required)</span></label>
+          <label>Education<span className="optional"> (optional)</span></label>
           { !editedCareer ?
             <select
                 className="chosen-single form-select"
                 value={fetchedJobData.education}
-                required
                 onChange={(e) => {
                 setEditedJobData((previousState) => ({ 
                     ...previousState,
@@ -482,7 +485,6 @@ const EditJobView = ({ fetchedJobData }) => {
             : <select
                     className="chosen-single form-select"
                     value={editedCareer}
-                    required
                     onChange={(e) => {
                     setEditedJobData((previousState) => ({ 
                         ...previousState,
@@ -607,7 +609,7 @@ const EditJobView = ({ fetchedJobData }) => {
  */}
 
         <div className="form-group col-lg-12 col-md-12">
-          <label>Complete Address <span className="optional">(optional)</span></label>
+          <label>Complete Address <span className="required">(required)</span></label>
           { !editedCompleteAddress ?
             <input
                 type="text"
@@ -620,6 +622,7 @@ const EditJobView = ({ fetchedJobData }) => {
                 }))
                 }}
                 placeholder="Address"
+                required
             />
             : <input
                     type="text"
@@ -632,6 +635,7 @@ const EditJobView = ({ fetchedJobData }) => {
                     }))
                     }}
                     placeholder="Address"
+                    required
                 />
           }
         </div>
@@ -644,12 +648,14 @@ const EditJobView = ({ fetchedJobData }) => {
                 name="globaluphire-address"
                 ref={searchInput}
                 placeholder="City, State"
+                required
             />
             : <input
                 type="text"
                 name="globaluphire-address"
                 ref={searchInput}                    
                 placeholder="City, State"
+                required
               />
           }
         </div>

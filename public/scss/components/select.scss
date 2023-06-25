@@ -137,3 +137,13 @@ b:before {
     border-radius: 0px 0px 8px 8px !important;
     margin-top: -3px;
 }
+
+.required {
+    color: red;
+    font-size: 0.75rem;
+}
+
+.optional {
+    color: grey;
+    font-size: 0.75rem;
+}

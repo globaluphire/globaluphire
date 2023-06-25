@@ -49,55 +49,8 @@ const submitJobPost = async (
   setJobData,
   user
 ) => {
-    if (jobTitle && jobDesc && jobType && address) {
+    if (jobTitle && jobDesc && jobType && address && completeAddress) {
         try {
-            // const res = await auth.createUserWithEmailAndPassword(email, password);
-            // const user = res.user;
-/*
-            console.log(
-              jobTitle,
-              jobDesc,
-              //email,
-              //username,
-              //specialism,
-              jobType,
-              salary,
-              salaryRate,
-              education,
-              exp,
-              //gender,
-              //industy,
-              //qualification,
-              //deadline,
-              country,
-              city,
-              address
-            );
- */
-        // const db = getFirestore();
-
-        // await addDoc(collection(db, "jobs"), {
-        //   jobTitle,
-        //   jobDesc,
-        //   //email,
-        //   //username,
-        //   //specialism,
-        //   jobType,
-        //   salary,
-        //   salaryRate,
-        //   education,
-        //   exp,
-        //   //gender,
-        //   //industy,
-        //   //qualification,
-        //   //deadline,
-        //   //country,
-        //   //city,
-        //   address,
-        //   user: user.id,
-        //   createdOn: new Date()
-        // });
-
         const { data, error } = await supabase
             .from('jobs')
             .insert([
@@ -576,15 +529,16 @@ const PostBoxForm = () => {
         </div> */}
 
         <div className="form-group col-lg-12 col-md-12">
-        <label>Complete Address <span className="optional">(optional)</span></label>
-        <Typeahead
-          onChange={setSingleSelections}
-          id="completeAddress"
-          className="form-group"
-          placeholder="Address"
-          options={addresses}
-          selected={singleSelections}
-        />
+          <label>Complete Address <span className="required">(required)</span></label>
+          <Typeahead
+            onChange={setSingleSelections}
+            id="completeAddress"
+            className="form-group"
+            placeholder="Address"
+            options={addresses}
+            selected={singleSelections}
+            required
+          />
         </div>
 
         {/* <!-- Input --> */}
@@ -595,6 +549,7 @@ const PostBoxForm = () => {
             name="globaluphire-address"
             ref={searchInput}            
             placeholder="City, State"
+            required
           />
         </div>
         

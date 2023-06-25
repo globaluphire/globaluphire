@@ -212,7 +212,7 @@ const ApplyInstantView = ({ company }) => {
           {lastNameError && <div className="required">{lastNameError}</div>}
         </div>
         <div className="form-group">
-          <label>Email Address<span className="required"> (required)</span></label>
+          <label>Email Address</label>
           <input
             type="email"
             name="globaluphire-email"
@@ -222,14 +222,13 @@ const ApplyInstantView = ({ company }) => {
               setEmailError("");
             }}
             placeholder="Enter your email"
-            required
           />
-          {emailError && <div className="required">{emailError}</div>}
+          {emailError && <div>{emailError}</div>}
         </div>
         {/* name */}
 
         <div className="col-lg-12 col-md-12 col-sm-12 form-group">
-          <label>License Number<span className="required"> (required)</span></label>
+          <label>License Number</label>
           <input
             type="text"
             name="globaluphire-license_number"
@@ -240,7 +239,7 @@ const ApplyInstantView = ({ company }) => {
             }}
             placeholder="enter your license number to verify your eligibilty"
           />
-          {licenseNumberError && <div className="required">{licenseNumberError}</div>}
+          {licenseNumberError && <div>{licenseNumberError}</div>}
         </div>
         {/* End .col */}
 

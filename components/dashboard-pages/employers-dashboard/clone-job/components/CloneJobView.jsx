@@ -35,7 +35,15 @@ const submitJobPost = async (
   setClonedJobData,
   user
 ) => {
-    if (fetchedJobData.job_title || fetchedJobData.job_desc || fetchedJobData.job_type || fetchedJobData.salary || fetchedJobData.salary_rate || fetchedJobData.education || fetchedJobData.experience || fetchedJobData.job_address) {
+    if (fetchedJobData.job_title ||
+        fetchedJobData.job_desc ||
+        fetchedJobData.job_type ||
+        fetchedJobData.salary ||
+        fetchedJobData.salary_rate ||
+        fetchedJobData.education ||
+        fetchedJobData.experience ||
+        fetchedJobData.job_comp_add ||
+        fetchedJobData.job_address) {
       try {
         const { data, error } = await supabase
             .from('jobs')
@@ -368,11 +376,10 @@ const CloneJobView = () => {
             </select>
         </div>
         <div className="form-group col-lg-6 col-md-12">
-          <label>Education<span className="required"> (required)</span></label>
+          <label>Education<span className="optinal"> (optional)</span></label>
             <select
                 className="chosen-single form-select"
                 value={fetchedJobData.education}
-                required
                 onChange={(e) => {
                 setFetchedJobData((previousState) => ({ 
                     ...previousState,
@@ -496,7 +503,7 @@ const CloneJobView = () => {
  */}
 
         <div className="form-group col-lg-12 col-md-12">
-          <label>Complete Address <span className="optional">(optional)</span></label>
+          <label>Complete Address <span className="required">(required)</span></label>
             <input
                 type="text"
                 name="immense-career-address"
@@ -508,6 +515,7 @@ const CloneJobView = () => {
                 }))
                 }}
                 placeholder="Address"
+                required
             />
         </div>
         {/* <!-- Input --> */}
