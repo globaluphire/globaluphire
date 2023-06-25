@@ -335,7 +335,7 @@ const WidgetContentBox = () => {
                         </thead>
 
                         <tbody>
-                            {Array.from(fetchedAllApplicants).slice(0, 10).map((applicant) => (
+                            {Array.from(fetchedAllApplicants).map((applicant) => (
                                 <tr key={applicant.application_id}>
                                     <td>
                                     {/* <!-- Job Block --> */}
