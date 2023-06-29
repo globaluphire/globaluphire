@@ -36,17 +36,17 @@ const ApplyInstantView = ({ company }) => {
       setLastNameError("Please enter your last name");
       isValid = false;
     }
-    if (!email) {
-      setEmailError("Please enter your email address");
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError("Please enter a valid email address");
-      isValid = false;
-    }
-    if (!licenseNumber) {
-      setLicenseNumberError("Please enter your License Number");
-      isValid = false;
-    }
+    // if (!email) {
+    //   setEmailError("Please enter your email address");
+    //   isValid = false;
+    // } else if (!/\S+@\S+\.\S+/.test(email)) {
+    //   setEmailError("Please enter a valid email address");
+    //   isValid = false;
+    // }
+    // if (!licenseNumber) {
+    //   setLicenseNumberError("Please enter your License Number");
+    //   isValid = false;
+    // }
     return isValid;
   };
 
@@ -108,7 +108,8 @@ const ApplyInstantView = ({ company }) => {
                     doc_size: guestSelectedFile.size,
                     doc_typ: guestSelectedFile.type,
                     job_id: jobId,
-                    doc_dwnld_url: docURL
+                    doc_dwnld_url: docURL,
+                    status: 'New'
                   }
                 ])
 
@@ -259,10 +260,10 @@ const ApplyInstantView = ({ company }) => {
                 className="uploadButton-button ripple-effect"
                 htmlFor="upload"
               >
-                Upload CV (doc, docx, pdf)
+                Upload CV (doc, docx, pdf)<br/>
                 {guestSelectedFile && <p>Selected file: {guestSelectedFile.name}</p>}
                 {!guestSelectedFile && <label className="required">Please select a file before Apply</label>}
-              </label>
+              </label><br/>
               <label htmlFor="max_upload_size"> Max size 5MB allowed </label>
             </div>
           </div>
@@ -270,15 +271,14 @@ const ApplyInstantView = ({ company }) => {
         {/* End .col */}
 
         <div className="col-lg-12 col-md-12 col-sm-12 form-group">
-          <div className="input-group checkboxes square">
-            <input type="checkbox" name="remember-me" id="rememberMe" />
+          <div className="input-group">
             <label htmlFor="rememberMe" className="remember">
-              <span className="custom-checkbox"></span> You accept our{" "}
+              <span className="custom-checkbox"></span> <i>* By applying into this job you accept our {" "}
               <span data-bs-dismiss="modal">
                 <Link href="/terms">
-                  Terms and Conditions and Privacy Policy
+                  Terms and Conditions & Privacy Policy
                 </Link>
-              </span>
+              </span></i>
             </label>
           </div>
         </div>
