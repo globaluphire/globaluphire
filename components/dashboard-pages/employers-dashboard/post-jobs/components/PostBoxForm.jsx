@@ -46,7 +46,7 @@ const addJobFields = {
 }
 
 const submitJobPost = async (
-  { jobTitle, jobDesc, jobType, salary, salaryRate, education, exp, completeAddress, address },
+  { jobTitle, jobDesc, jobType, salary, salaryRate, education, exp, completeAddress, address, facility },
   setJobData,
   user
 ) => {
