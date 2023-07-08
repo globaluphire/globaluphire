@@ -30,6 +30,8 @@ const WidgetContentBox = () => {
         "Corvallis",
         "HillSide Heights",
         "Hale Nani",
+        "Eugene Home Office",
+        "Louisville Home Office",
     ]
 
     async function updateApplicationStatus (applicationStatus, applicationId) {
