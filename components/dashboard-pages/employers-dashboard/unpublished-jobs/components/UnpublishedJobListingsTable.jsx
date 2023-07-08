@@ -9,7 +9,7 @@ import { supabase } from "../../../../../config/supabaseClient";
 import { toast, ToastContainer } from "react-toastify";
 import { Typeahead } from "react-bootstrap-typeahead";
 
-const JobListingsTable = () => {
+const UnpublishedJobListingsTable = () => {
   const [jobs, setjobs] = useState([]);
   const [searchField, setSearchField] = useState('');
   const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
@@ -136,7 +136,7 @@ const JobListingsTable = () => {
     let { data, error } = await supabase
         .from('manage_jobs_view')
         .select()
-        .eq('status', 'Published')
+        .eq('status', 'Unpublished')
         .order('created_at',  { ascending: false });
         data.forEach( job => job.created_at = dateFormat(job.created_at))
         setjobs(data) 
@@ -154,7 +154,7 @@ const JobListingsTable = () => {
     let { data, error } = await supabase
       .from('manage_jobs_view')
       .select()
-      .eq('status', 'Published')
+      .eq('status', 'Unpublished')
       .order('created_at',  { ascending: false });
 
       data.forEach( job => job.created_at = dateFormat(job.created_at))
@@ -169,7 +169,7 @@ const JobListingsTable = () => {
   return (
     <div className="tabs-box">
       <div className="widget-title">
-        <h4>All Published Jobs!</h4>
+        <h4>All Unpublished Jobs!</h4>
 
         
         {jobs.length != 0 ?
@@ -345,4 +345,4 @@ const JobListingsTable = () => {
   );
 };
 
-export default JobListingsTable;
+export default UnpublishedJobListingsTable;

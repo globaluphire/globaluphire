@@ -22,13 +22,20 @@ module.exports = [
   },
   {
       id: 4,
-      name: "Manage Jobs",
+      name: "Published Jobs",
       icon: "la-briefcase",
       routePath: "/employers-dashboard/manage-jobs",
       active: "",
   },
   {
-      id: 5,
+    id: 5,
+    name: "Unpublished Jobs",
+    icon: "la-briefcase",
+    routePath: "/employers-dashboard/unpublished-jobs",
+    active: "",
+},
+  {
+      id: 6,
       name: "All Applicants",
       icon: "la-file-invoice",
       routePath: "/employers-dashboard/all-applicants",
