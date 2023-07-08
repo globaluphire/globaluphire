@@ -41,7 +41,8 @@ const addJobFields = {
   education: "",
   exp: "",
   address: "",
-  completeAddress: ""
+  completeAddress: "",
+  facility: ""
 }
 
 const submitJobPost = async (
@@ -49,7 +50,7 @@ const submitJobPost = async (
   setJobData,
   user
 ) => {
-    if (jobTitle && jobDesc && jobType && address && completeAddress) {
+    if (jobTitle && jobDesc && jobType && address && completeAddress && facility) {
         try {
         const { data, error } = await supabase
             .from('jobs')
@@ -65,6 +66,7 @@ const submitJobPost = async (
                 salary_rate: salaryRate,
                 job_address: address,
                 job_comp_add: completeAddress,
+                facility_name: facility,
               }
         ])
     
@@ -131,11 +133,13 @@ const PostBoxForm = () => {
   // const [address, setAddress] = useState("");
   const user = useSelector(state => state.candidate.user)
   const [jobData, setJobData] = useState(JSON.parse(JSON.stringify(addJobFields)));
-  const { jobTitle, jobDesc, jobType, salary, salaryRate, education, exp, address, completeAddress } = useMemo(() => jobData, [jobData])
+  const { jobTitle, jobDesc, jobType, salary, salaryRate, education, exp, address, completeAddress, facility } = useMemo(() => jobData, [jobData])
 
   const searchInput = useRef(null);
 
   const [singleSelections, setSingleSelections] = useState([]);
+  const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+
   const addresses = [
     "601 Evergreen Rd., Woodburn, OR 97071",
     "160 NE Conifer Blvd., Corvallis, OR 97330",
@@ -152,9 +156,29 @@ const PostBoxForm = () => {
     "1677 Pensacola Street, Honolulu, HI 96822"
   ]
 
+  const facilityNames = [
+    "Keizer",
+    "French P",
+    "Green Valley",
+    "HearthStone",
+    "Highland House",
+    "Rose Haven",
+    "Royal Garden",
+    "South Hills",
+    "Umpqua Valley",
+    "Corvallis",
+    "HillSide Heights",
+    "Hale Nani",
+  ]
+
+  useEffect(() => {
+    jobData.facility = facilitySingleSelections[0]
+  }, [facilitySingleSelections])
+
   useEffect(() => {
     jobData.completeAddress = singleSelections[0]
   }, [singleSelections])
+
   // init google map script
   const initMapScript = () => {
     // if script already loaded
@@ -528,6 +552,19 @@ const PostBoxForm = () => {
             placeholder="Address"
           />
         </div> */}
+
+        <div className="form-group col-lg-12 col-md-12">
+          <label>Facility Name <span className="required">(required)</span></label>
+          <Typeahead
+            onChange={setFacilitySingleSelections}
+            id="facilityName"
+            className="form-group"
+            placeholder="Facility Name"
+            options={facilityNames}
+            selected={facilitySingleSelections}
+            required
+          />
+        </div>
 
         <div className="form-group col-lg-12 col-md-12">
           <label>Complete Address <span className="required">(required)</span></label>
