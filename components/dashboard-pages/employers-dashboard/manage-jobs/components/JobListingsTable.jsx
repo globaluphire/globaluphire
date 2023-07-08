@@ -7,10 +7,13 @@ import { db } from "../../../../common/form/firebase";
 // import jobs from "../../../../../data/job-featured.js";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast, ToastContainer } from "react-toastify";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 const JobListingsTable = () => {
   const [jobs, setjobs] = useState([]);
   const [searchField, setSearchField] = useState('');
+  const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+
   //const [jobStatus, setJobStatus] = useState('');
   const user = useSelector(state => state.candidate.user)
   const router = useRouter();
@@ -26,6 +29,22 @@ const JobListingsTable = () => {
   //   });
   // };
 
+  const facilityNames = [
+    "Keizer",
+    "French P",
+    "Green Valley",
+    "HearthStone",
+    "Highland House",
+    "Rose Haven",
+    "Royal Garden",
+    "South Hills",
+    "Umpqua Valley",
+    "Corvallis",
+    "HillSide Heights",
+    "Hale Nani",
+    "Eugene Home Office",
+    "Louisville Home Office",
+]
   const dateFormat = (val) => {
     const date = new Date(val)
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
@@ -121,7 +140,12 @@ const JobListingsTable = () => {
         data.forEach( job => job.created_at = dateFormat(job.created_at))
         setjobs(data) 
 
-        setjobs(data.filter((job) => job.job_title.toLowerCase().includes(searchField.toLowerCase())))
+        if (searchField) {
+          setjobs(data.filter((job) => job.job_title.toLowerCase().includes(searchField.toLowerCase())))
+        }
+        if (facilitySingleSelections.length > 0) {
+          setjobs(data.filter((job) => job.facility_name?.includes(facilitySingleSelections[0])))
+      }
     };
 
   // Initial Function
@@ -148,13 +172,15 @@ const JobListingsTable = () => {
         
         {jobs.length != 0 ?
           <div className="chosen-outer">
-          {/* <select className="chosen-single form-select chosen-container"> */}
-            {/* <option>All Status</option> */}
-            {/* <option>Last 12 Months</option> */}
-            {/* <option>Last 16 Months</option> */}
-            {/* <option>Last 24 Months</option> */}
-            {/* <option>Last 5 year</option> */}
-          {/* </select> */}
+          <Typeahead
+            onChange={setFacilitySingleSelections}
+            id="facilityName"
+            className="form-group"
+            placeholder="Facility Name"
+            options={facilityNames}
+            selected={facilitySingleSelections}
+            required
+          />
 
           {/* TODO: add search filters */} 
             <input
@@ -206,6 +232,7 @@ const JobListingsTable = () => {
             <thead>
               <tr>
                 <th>Job Title</th>
+                <th>Facility</th>
                 <th>Applications</th>
                 <th>Published On</th>
                 <th>Status</th>
@@ -256,6 +283,9 @@ const JobListingsTable = () => {
                         </div>
                       </div>
                     </div>
+                  </td>
+                  <td>
+                      {item.facility_name}
                   </td>
                   <td className="applied">
                     {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}

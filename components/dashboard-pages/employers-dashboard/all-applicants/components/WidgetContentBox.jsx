@@ -76,7 +76,7 @@ const WidgetContentBox = () => {
             if (searchField) {
                 setFetchedAllApplicantsData(data.filter((applicant) => applicant.name.toLowerCase().includes(searchField.toLowerCase())))
             }
-            if (facilitySingleSelections) {
+            if (facilitySingleSelections.length > 0) {
                 setFetchedAllApplicantsData(data.filter((applicant) => applicant.facility_name?.includes(facilitySingleSelections[0])))
             }
         }
