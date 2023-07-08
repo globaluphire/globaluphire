@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import Applicants from "./Applicants";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 const WidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
@@ -14,6 +15,22 @@ const WidgetContentBox = () => {
     const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
     const [noteText, setNoteText] = useState('');
     const [applicationId, setApplicationId] = useState('');
+    const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+
+    const facilityNames = [
+        "Keizer",
+        "French P",
+        "Green Valley",
+        "HearthStone",
+        "Highland House",
+        "Rose Haven",
+        "Royal Garden",
+        "South Hills",
+        "Umpqua Valley",
+        "Corvallis",
+        "HillSide Heights",
+        "Hale Nani",
+    ]
 
     async function updateApplicationStatus (applicationStatus, applicationId) {
         // save updated applicant status
@@ -54,7 +71,12 @@ const WidgetContentBox = () => {
 
         if(data) {
             data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-            setFetchedAllApplicantsData(data.filter((applicant) => applicant.name.toLowerCase().includes(searchField.toLowerCase())))
+            if (searchField) {
+                setFetchedAllApplicantsData(data.filter((applicant) => applicant.name.toLowerCase().includes(searchField.toLowerCase())))
+            }
+            if (facilitySingleSelections) {
+                setFetchedAllApplicantsData(data.filter((applicant) => applicant.facility_name?.includes(facilitySingleSelections[0])))
+            }
         }
     };
 
@@ -267,13 +289,15 @@ const WidgetContentBox = () => {
 
                 {fetchedAllApplicants.length != 0 && applicationStatusReferenceOptions != null ? 
                     <div className="chosen-outer">
-                    {/* <select className="chosen-single form-select chosen-container"> */}
-                        {/* <option>All Status</option> */}
-                        {/* <option>Last 12 Months</option> */}
-                        {/* <option>Last 16 Months</option> */}
-                        {/* <option>Last 24 Months</option> */}
-                        {/* <option>Last 5 year</option> */}
-                    {/* </select> */}
+                    <Typeahead
+                        onChange={setFacilitySingleSelections}
+                        id="facilityName"
+                        className="form-group"
+                        placeholder="Facility Name"
+                        options={facilityNames}
+                        selected={facilitySingleSelections}
+                        required
+                    />
 
                     {/* TODO: add search filters */}
                     <input
@@ -327,7 +351,7 @@ const WidgetContentBox = () => {
                             <th>Name</th>
                             <th>Applied On</th>
                             <th>Job Title</th>
-                            <th>Location</th>
+                            <th>Facility</th>
                             <th>Status</th>
                             <th>Notes</th>
                             <th>Actions</th>
@@ -361,7 +385,7 @@ const WidgetContentBox = () => {
                                         {applicant.job_title}
                                     </td>
                                     <td>
-                                        {applicant.job_comp_add}
+                                        {applicant.facility_name}
                                     </td>
                                     <td>
                                         <select className="chosen-single form-select" 
