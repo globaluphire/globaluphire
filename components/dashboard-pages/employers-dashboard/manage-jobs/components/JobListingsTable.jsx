@@ -171,7 +171,6 @@ const JobListingsTable = () => {
       <div className="widget-title">
         <h4>All Published Jobs!</h4>
 
-        
         {jobs.length != 0 ?
           <div className="chosen-outer">
           <Typeahead
@@ -337,6 +336,7 @@ const JobListingsTable = () => {
               ))}
             </tbody>
           </table>
+          <span className="optional">Total Published Jobs: ({jobs.length})</span>
         </div>
         </div>
       }
