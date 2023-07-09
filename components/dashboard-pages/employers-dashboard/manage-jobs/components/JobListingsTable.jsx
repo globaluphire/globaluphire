@@ -336,7 +336,7 @@ const JobListingsTable = () => {
               ))}
             </tbody>
           </table>
-          <span className="optional">Total Published Jobs: ({jobs.length})</span>
+          <span className="optional">Showing ({jobs.length}) Published Job(s)</span>
         </div>
         </div>
       }

@@ -8,6 +8,7 @@ import { supabase } from "../../../../../config/supabaseClient";
 import Router, { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
@@ -25,7 +26,8 @@ const editedJobFields = {
     editedCareer: "",
     editedExp: "",
     editedAddress: "",
-    editedCompleteAddress: ""
+    editedCompleteAddress: "",
+    editedFacility: ""
 }
 
 // load google map api js
@@ -43,7 +45,7 @@ function loadAsyncScript(src) {
 }
 
 const submitJobPost = async (
-  { editedJobTitle, editedJobDesc, editedJobType, editedSalary, editedSalaryRate, editedCareer, editedExp, editedAddress, editedCompleteAddress },
+  { editedJobTitle, editedJobDesc, editedJobType, editedSalary, editedSalaryRate, editedCareer, editedExp, editedAddress, editedCompleteAddress, editedFacility },
   setEditedJobData,
   user,
   fetchedJobData
@@ -52,7 +54,7 @@ const submitJobPost = async (
         editedJobType || editedSalary ||
         editedSalaryRate || editedCareer ||
         editedExp || editedAddress ||
-        editedCompleteAddress) {
+        editedCompleteAddress || editedFacility) {
         try {
 
             const { data, error } = await supabase
@@ -66,7 +68,6 @@ const submitJobPost = async (
                  salary: editedSalary ? editedSalary : fetchedJobData.salary,
                  salary_rate: editedSalaryRate ? editedSalaryRate : fetchedJobData.salary_rate,
                  job_address: editedAddress ? editedAddress : fetchedJobData.job_address,
-                 job_comp_add: editedCompleteAddress ? editedCompleteAddress : fetchedJobData.job_comp_add,
                  change_dttm: new Date(),
                  update_ver_nbr: fetchedJobData.update_ver_nbr + 1
                 }
@@ -126,7 +127,7 @@ const EditJobView = ({ fetchedJobData }) => {
   console.log(fetchedJobData);
   const user = useSelector(state => state.candidate.user)
   const [editedJobData, setEditedJobData] = useState(JSON.parse(JSON.stringify(editedJobFields)));
-  const { editedJobTitle, editedJobDesc, editedJobType, editedSalary, editedSalaryRate, editedCareer, editedExp, editedAddress, editedCompleteAddress } = useMemo(() => editedJobData, [editedJobData])
+  const { editedJobTitle, editedJobDesc, editedJobType, editedSalary, editedSalaryRate, editedCareer, editedExp, editedAddress, editedCompleteAddress, editedFacility } = useMemo(() => editedJobData, [editedJobData])
 
   const router = useRouter();
   const JobId = router.query.id;
@@ -609,35 +610,44 @@ const EditJobView = ({ fetchedJobData }) => {
  */}
 
         <div className="form-group col-lg-12 col-md-12">
-          <label>Complete Address <span className="required">(required)</span></label>
-          { !editedCompleteAddress ?
-            <input
-                type="text"
-                name="globaluphire-address"
-                value={fetchedJobData.job_comp_add}
-                onChange={(e) => {
-                setEditedJobData((previousState) => ({ 
-                    ...previousState,
-                    editedCompleteAddress: e.target.value
-                }))
-                }}
-                placeholder="Address"
-                required
+          <label>Facility Name <span className="required">(required)</span></label>
+          {/* { !editedFacility ? 
+            <Typeahead
+              onChange={setFacilitySingleSelections}
+              id="facilityName"
+              className="form-group"
+              placeholder="Facility Name"
+              options={facilityNames}
+              selected={fetchedJobData.facility_name}
+              required
             />
-            : <input
-                    type="text"
-                    name="globaluphire-address"
-                    value={editedCompleteAddress}
-                    onChange={(e) => {
-                    setEditedJobData((previousState) => ({ 
-                        ...previousState,
-                        editedCompleteAddress: e.target.value
-                    }))
-                    }}
-                    placeholder="Address"
-                    required
-                />
-          }
+            : <Typeahead
+                onChange={setFacilitySingleSelections}
+                id="facilityName"
+                className="form-group"
+                placeholder="Facility Name"
+                options={facilityNames}
+                selected={editedFacility}
+                required
+              />
+          } */}
+          <input
+            type="text"
+            name="facilityName"
+            placeholder="Facility Name"
+            value={fetchedJobData.facility_name}
+            disabled
+          />
+        </div>
+        <div className="form-group col-lg-12 col-md-12">
+          <label>Complete Address <span className="required">(required)</span></label>
+          <input
+            type="text"
+            name="globaluphire-address"
+            value={fetchedJobData.job_comp_add}
+            placeholder="Address"
+            disabled
+          />
         </div>
         {/* <!-- Input --> */}
         <div className="form-group col-lg-12 col-md-12">

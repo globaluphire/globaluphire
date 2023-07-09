@@ -337,7 +337,7 @@ const UnpublishedJobListingsTable = () => {
               ))}
             </tbody>
           </table>
-          <span className="optional">Total Unpublished Jobs: ({jobs.length})</span>
+          <span className="optional">Showing ({jobs.length}) Unpublished Job(s)</span>
         </div>
         </div>
       }
