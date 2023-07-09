@@ -1,7 +1,16 @@
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useMemo } from "react";
+import { useSelector } from "react-redux";
 import MobileSidebar from "./mobile-sidebar";
+import { supabase } from "../../config/supabaseClient";
+import Router, { useRouter } from "next/router";
 
 const MobileMenu = () => {
+    const user = useSelector((state) => state.candidate.user);
+    const showLoginButton = useMemo(() => !user?.id, [user]);
+
     return (
         // <!-- Main Header-->
         <header className="main-header main-header-mobile">
@@ -12,10 +21,7 @@ const MobileMenu = () => {
                         <div className="logo-box">
                             <div className="logo">
                                 <Link href="/">
-                                    <img  src="images/logo.svg"
-                                        alt="brand"
-                                        width={154}
-                                        height={50} />
+                                    <img src="/images/logo.svg" alt="brand" />
                                 </Link>
                             </div>
                         </div>
@@ -27,27 +33,49 @@ const MobileMenu = () => {
                     {/* End .nav-outer */}
 
                     <div className="outer-box">
-                        <div className="login-box">
-                            <a
-                                href="#"
-                                className="call-modal"
-                                data-bs-toggle="modal"
-                                data-bs-target="#loginPopupModal"
-                            >
-                                <span className="icon icon-user"></span>
-                            </a>
-                        </div>
-                        {/* login popup end */}
+                        {showLoginButton ?
+                            <div className="login-box">
+                                <a
+                                    href="#"
+                                    className="call-modal"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#loginPopupModal"
+                                >
+                                    <span className="icon icon-user"></span>
+                                </a>
+                            </div>
 
-                        <a
-                            href="#"
-                            className="mobile-nav-toggler"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasMenu"
-                        >
-                            <span className="flaticon-menu-1"></span>
-                        </a>
-                        {/* right humberger menu */}
+                            :
+
+                            // <a
+                            //     href="#"
+                            //     className="mobile-nav-toggler"
+                            //     data-bs-toggle="offcanvas"
+                            //     data-bs-target="#offcanvasMenu"
+                            // >
+                            //     <span className="flaticon-menu-1"></span>
+                            // </a>
+                            <div
+                                style={{display:'inline-flex'}}
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasMenu">
+                                
+
+                                <Image
+                                    alt="avatar"
+                                    className="thumb"
+                                    src="/images/icons/user.svg"
+                                    width={15}
+                                    height={15}
+                                    style={{ marginTop: '-5px' }}
+                                />
+                                <span
+                                    style={{ marginLeft: '10px' }}
+                                    className="name dropdown-toggle1">
+                                </span>
+                                <span>{user.name}</span>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
