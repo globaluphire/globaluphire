@@ -610,7 +610,7 @@ const EditJobView = ({ fetchedJobData }) => {
  */}
 
         <div className="form-group col-lg-12 col-md-12">
-          <label>Facility Name <span className="required">(required)</span></label>
+          <label>Facility Name <span className="optional">(read-only)</span></label>
           {/* { !editedFacility ? 
             <Typeahead
               onChange={setFacilitySingleSelections}
@@ -640,7 +640,7 @@ const EditJobView = ({ fetchedJobData }) => {
           />
         </div>
         <div className="form-group col-lg-12 col-md-12">
-          <label>Complete Address <span className="required">(required)</span></label>
+          <label>Complete Address <span className="optional">(read-only)</span></label>
           <input
             type="text"
             name="globaluphire-address"
