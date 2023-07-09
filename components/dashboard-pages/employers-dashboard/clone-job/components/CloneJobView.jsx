@@ -8,6 +8,7 @@ import { supabase } from "../../../../../config/supabaseClient";
 import Router, { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import { Typeahead } from "react-bootstrap-typeahead";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
@@ -43,7 +44,8 @@ const submitJobPost = async (
         fetchedJobData.education ||
         fetchedJobData.experience ||
         fetchedJobData.job_comp_add ||
-        fetchedJobData.job_address) {
+        fetchedJobData.job_address ||
+        fetchedJobData.facility_name) {
       try {
         const { data, error } = await supabase
             .from('jobs')
@@ -59,6 +61,7 @@ const submitJobPost = async (
                 salary_rate: fetchedJobData.salary_rate,
                 job_address: fetchedJobData.job_address,
                 job_comp_add: fetchedJobData.job_comp_add,
+                facility_name: fetchedJobData.facility_name
               }
         ])
 
@@ -117,7 +120,56 @@ const CloneJobView = () => {
   const searchInput = useRef(null);
 
   const [fetchedJobData, setFetchedJobData] = useState({});
-  
+  const [singleSelections, setSingleSelections] = useState([]);
+  const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+
+  const addresses = [
+    "601 Evergreen Rd., Woodburn, OR 97071",
+    "160 NE Conifer Blvd., Corvallis, OR 97330",
+    "1735 Adkins St., Eugene, OR 97401",
+    "1201 McLean Blvd., Eugene, OR 97405",
+    "1166 E 28th Ave., Eugene, OR 97403",
+    "740 NW Hill Pl., Roseburg, OR 97471",
+    "525 W Umpqua St., Roseburg, OR 97471",
+    "2075 NW Highland Avenue, Grants Pass, OR 97526",
+    "2201 NW Highland Avenue, Grants Pass, OR 97526",
+    "2901 E Barnett Rd., Medford, OR 97504",
+    "4062 Arleta Ave NE, Keizer,	OR 97303",
+    "2350 Oakmont Way, Suite 204, Eugene, OR 97401",
+    "1677 Pensacola Street, Honolulu, HI 96822"
+  ]
+
+  const facilityNames = [
+    "Keizer",
+    "French P",
+    "Green Valley",
+    "HearthStone",
+    "Highland House",
+    "Rose Haven",
+    "Royal Garden",
+    "South Hills",
+    "Umpqua Valley",
+    "Corvallis",
+    "HillSide Heights",
+    "Hale Nani",
+    "Eugene Home Office",
+    "Louisville Home Office",
+  ]
+
+  useEffect(() => {
+    setFetchedJobData((previousState) => ({ 
+        ...previousState,
+        facility_name: facilitySingleSelections[0]
+    }))
+  }, [facilitySingleSelections])
+
+  useEffect(() => {
+    setFetchedJobData((previousState) => ({ 
+        ...previousState,
+        job_comp_add: singleSelections[0]
+    }))
+  }, [singleSelections])
+
   const fetchJob = async () => {
     try{
       if (jobId) {
@@ -503,21 +555,31 @@ const CloneJobView = () => {
  */}
 
         <div className="form-group col-lg-12 col-md-12">
-          <label>Complete Address <span className="required">(required)</span></label>
-            <input
-                type="text"
-                name="immense-career-address"
-                value={fetchedJobData.job_comp_add}
-                onChange={(e) => {
-                setFetchedJobData((previousState) => ({ 
-                    ...previousState,
-                    job_comp_add: e.target.value
-                }))
-                }}
-                placeholder="Address"
-                required
-            />
+          <label>Facility Name <span className="required">(required)</span></label>
+          <Typeahead
+            onChange={setFacilitySingleSelections}
+            id="facilityName"
+            className="form-group"
+            placeholder="Facility Name"
+            options={facilityNames}
+            selected={facilitySingleSelections}
+            required
+          />
         </div>
+
+        <div className="form-group col-lg-12 col-md-12">
+          <label>Complete Address <span className="required">(required)</span></label>
+          <Typeahead
+            onChange={setSingleSelections}
+            id="completeAddress"
+            className="form-group"
+            placeholder="Address"
+            options={addresses}
+            selected={singleSelections}
+            required
+          />
+        </div>
+
         {/* <!-- Input --> */}
         <div className="form-group col-lg-12 col-md-12">
           <label>City, State <span className="required">(required)</span></label>
