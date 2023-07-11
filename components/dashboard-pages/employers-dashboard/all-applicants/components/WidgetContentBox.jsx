@@ -123,6 +123,22 @@ const WidgetContentBox = () => {
     }, []);
 
 
+    const setNoteData = async (applicationId) => {
+        // reset NoteText
+        setNoteText('');
+        setApplicationId('');
+
+        const { data, error } = await supabase
+              .from('applicants_view')
+              .select('*')
+              .eq('application_id', applicationId);
+
+        if (data) {
+            setNoteText (data[0].notes);
+            setApplicationId(data[0].application_id)
+        }
+    }
+
     const ViewCV = async (applicationId) => {
         const { data, error } = await supabase
               .from('applicants_view')
@@ -408,8 +424,7 @@ const WidgetContentBox = () => {
                                                     href="#"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#addNoteModal"
-                                                    onClick = { () => { setNoteText (applicant.notes);
-                                                        setApplicationId(applicant.application_id) }}
+                                                    onClick = { () => {setNoteData(applicant.application_id) }}
                                                 >
                                                     <span className="la la-eye"></span>
                                                 </a>
