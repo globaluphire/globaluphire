@@ -448,6 +448,8 @@ const WidgetContentBox = () => {
                         </tbody>
                         </table>
 
+                        <span className="optional">Showing ({fetchedAllApplicants.length}) Applicants Applied</span>
+
                         {/* Add Notes Modal Popup */}
                         <div
                             className="modal fade"
