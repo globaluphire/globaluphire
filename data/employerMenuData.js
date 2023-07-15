@@ -33,13 +33,27 @@ module.exports = [
     icon: "la-briefcase",
     routePath: "/employers-dashboard/unpublished-jobs",
     active: "",
-},
+  },
   {
       id: 6,
       name: "All Applicants",
       icon: "la-file-invoice",
       routePath: "/employers-dashboard/all-applicants",
       active: "",
+  },
+  {
+    id: 7,
+    name: "Rejected Applicants",
+    icon: "la-file-invoice",
+    routePath: "/employers-dashboard/rejected-applications",
+    active: "",
+  },
+  {
+    id: 8,
+    name: "Hired Applicants",
+    icon: "la-file-invoice",
+    routePath: "/employers-dashboard/hired-applications",
+    active: "",
   },
   // {
   //   id: 6,

@@ -5,10 +5,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
-import Applicants from "./Applicants";
 import { Typeahead } from "react-bootstrap-typeahead";
 
-const WidgetContentBox = () => {
+const RejectedApplicationsWidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
     const [searchField, setSearchField] = useState('');
     const [applicationStatus, setApplicationStatus] = useState('');
@@ -69,8 +68,7 @@ const WidgetContentBox = () => {
         let { data, error } = await supabase
             .from('applicants_view')
             .select("*")
-            .neq('status', 'Rejection')
-            .neq('status', 'Hired')
+            .eq('status', 'Rejection')
             .order('created_at',  { ascending: false });
 
         if(data) {
@@ -99,8 +97,7 @@ const WidgetContentBox = () => {
         let { data: allApplicantsView, error } = await supabase
             .from('applicants_view')
             .select("*")
-            .neq('status', 'Rejection')
-            .neq('status', 'Hired')
+            .eq('status', 'Rejection')
             .order('created_at',  { ascending: false });
 
         if (allApplicantsView) {
@@ -307,7 +304,7 @@ const WidgetContentBox = () => {
     return (
         <div className="tabs-box">
             <div className="widget-title">
-                <h4>All Applicants!</h4>
+                <h4>Rejected Applicants!</h4>
 
                 {fetchedAllApplicants.length != 0 && applicationStatusReferenceOptions != null ? 
                     <div className="chosen-outer">
@@ -467,7 +464,7 @@ const WidgetContentBox = () => {
                         </tbody>
                         </table>
 
-                        <span className="optional">Showing ({fetchedAllApplicants.length}) Applicants Applied</span>
+                        <span className="optional">Showing ({fetchedAllApplicants.length}) Applicants got Rejection!</span>
 
                         {/* Add Notes Modal Popup */}
                         <div
@@ -525,4 +522,4 @@ const WidgetContentBox = () => {
     );
 };
 
-export default WidgetContentBox;
+export default RejectedApplicationsWidgetContentBox;
