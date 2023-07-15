@@ -27,11 +27,11 @@ const index = () => {
         </div>
         {/* <!-- Job Search Form --> */}
 
-        <div className="fun-fact-section">
+        {/* <div className="fun-fact-section">
           <div className="row">
             <Funfact2 />
           </div>
-        </div>
+        </div> */}
         {/* <!-- Fun Fact Section --> */}
       </div>
     </section>
