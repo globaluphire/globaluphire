@@ -2,7 +2,8 @@ import Router from "next/router";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { setSearchFields } from "../../../features/search/searchSlice";
-import { addKeyword, addLocation } from "../../../features/filter/filterSlice";
+import { addKeyword, addLocation, addFacility } from "../../../features/filter/filterSlice";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 
 const apiKey = process.env.NEXT_PUBLIC_JOB_PORTAL_GMAP_API_KEY;
@@ -32,6 +33,30 @@ const SearchForm4 = () => {
 
   const searchInput = useRef(null);
   const searchTerm = useRef(null)
+
+  const [searchFacility, setSearchFacility] = useState("");
+  const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+
+  const facilityNames = [
+    "Keizer",
+    "French Prairie",
+    "Green Valley",
+    "HearthStone",
+    "Highland House",
+    "Rose Haven",
+    "Royal Garden",
+    "South Hills",
+    "Umpqua Valley",
+    "Corvallis",
+    "HillSide Heights",
+    "Hale Nani",
+    "Eugene Home Office",
+    "Louisville Home Office",
+  ]
+
+  useEffect(() => {
+    setSearchFacility(facilitySingleSelections[0])
+  }, [facilitySingleSelections])
 
   // init google map script
   const initMapScript = () => {
@@ -63,10 +88,11 @@ const SearchForm4 = () => {
 
   const searchFunction = () => {
     const sKeyword = searchTerm.current.value
-    const sAddress = searchInput.current.value
-    dispatch(setSearchFields({ searchTerm: sKeyword, searchAddress: sAddress }))
+    // const sAddress = searchInput.current.value
+    dispatch(setSearchFields({ searchTerm: sKeyword, searchFacility: searchFacility })) // searchAddress: sAddress
     dispatch(addKeyword(sKeyword))
-    dispatch(addLocation(sAddress))
+    // dispatch(addLocation(sAddress))
+    dispatch(addFacility(searchFacility))
     // TODO: fetch data from firebase and then route to next page
     
     Router.push("/job-list") 
@@ -74,9 +100,9 @@ const SearchForm4 = () => {
   
 
   // load map script after mounted
-  useEffect(() => {
-    initMapScript().then(() => initAutocomplete())
-  }, []);
+  // useEffect(() => {
+  //   initMapScript().then(() => initAutocomplete())
+  // }, []);
 
 
   return (
@@ -98,11 +124,19 @@ const SearchForm4 = () => {
         <div className="form-group col-lg-4 col-md-12 col-sm-12 location">
           <label>Where?</label>
           <span className="icon flaticon-map-locator"></span>
-          <input
+          <Typeahead
+            onChange={setFacilitySingleSelections}
+            id="facilityName"
+            className="form-group"
+            placeholder="Facility Name"
+            options={facilityNames}
+            selected={facilitySingleSelections}
+          />
+          {/* <input
             type="text"
             name="globaluphire-search_form_location"
             ref={searchInput}
-            placeholder="City, State, Country or Zip code" />
+            placeholder="City, State, Country or Zip code" /> */}
         </div>
 
         {/* <!-- Form Group --> */}

@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     searchTerm: '',
-    searchAddress: ''
+    searchAddress: '',
+    searchFacility: ''
 };
 
 export const searchSlice = createSlice({
@@ -12,6 +13,7 @@ export const searchSlice = createSlice({
         setSearchFields: (state, { payload }) => {
             state.searchTerm = payload.searchTerm
             state.searchAddress = payload.searchAddress
+            state.searchFacility = payload.searchFacility
         }
     },
 });

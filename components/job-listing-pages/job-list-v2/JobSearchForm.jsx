@@ -8,9 +8,10 @@ import { setSearchFields } from "../../../features/search/searchSlice";
 const JobSearchForm = () => {
   const dispatch = useDispatch()
   const filterTerm = useSelector((state) => state.filter.jobList.keyword)
-  const filterLocation = useSelector((state) => state.filter.jobList.location)
+  // const filterLocation = useSelector((state) => state.filter.jobList.location)
+  const filterFacility = useSelector((state) => state.filter.jobList.facility)
   const findJobs = () => {
-    dispatch(setSearchFields({ searchTerm: filterTerm, searchAddress: filterLocation }))
+    dispatch(setSearchFields({ searchTerm: filterTerm, searchFacility: filterFacility })) // searchAddress: filterLocation
   }
   return (
     <div className="job-search-form">

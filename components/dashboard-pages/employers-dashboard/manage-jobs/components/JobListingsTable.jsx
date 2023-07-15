@@ -31,7 +31,7 @@ const JobListingsTable = () => {
 
   const facilityNames = [
     "Keizer",
-    "French P",
+    "French Prairie",
     "Green Valley",
     "HearthStone",
     "Highland House",

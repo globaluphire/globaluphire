@@ -8,6 +8,7 @@ import {
     addDestination,
     addKeyword,
     addLocation,
+    addFacility,
     addPerPage,
     addSalary,
     addSort,
@@ -31,7 +32,8 @@ const FilterJobsBox = () => {
     const router = useRouter();
     const [jobs, setJobs] = useState([]);
     const searchTerm = useSelector((state) => state.search.searchTerm)
-    const searchAddress = useSelector((state) => state.search.searchAddress)
+    // const searchAddress = useSelector((state) => state.search.searchAddress)
+    const searchFacility = useSelector((state) => state.search.searchFacility)
     const pageSize = useSelector((state) => state.filter.jobSort.perPage.end)
     const [totalRecords, setTotalRecords] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
@@ -71,15 +73,16 @@ const FilterJobsBox = () => {
     const searchJobs = async () => {
 
         let query = supabase.from('jobs').select('*', {count: 'exact'})
-        if(searchAddress) query = query.ilike('job_address', '%'+searchAddress+'%')
+        // if(searchAddress) query = query.ilike('job_address', '%'+searchAddress+'%')
+        if(searchFacility) query = query.eq('facility_name', searchFacility)
         if(searchTerm) query = query.ilike('job_title', '%'+searchTerm+'%')
         query = query.eq('status', 'Published')
         query = query.order('created_at',  { ascending: sort == 'des' })
         if(pageSize <= totalRecords) query = query.range((currentPage - 1) * pageSize, (currentPage * pageSize) - 1)
 
         query.then(res => {
-            if(jobs.length + res.data.length > totalRecords) setJobs(res.data)
-            else setJobs([...jobs, ...res.data])
+            if(jobs.length + res?.data?.length > totalRecords) setJobs(res.data)
+            else setJobs([...jobs, ...res?.data])
           setTotalRecords(res.count)
         })
     }
@@ -102,12 +105,13 @@ const FilterJobsBox = () => {
         //   searchJobsWithAddress()
         // else 
         //   searchJobsWithTermAndAddress()
-      }, [searchAddress, searchTerm, pageSize, currentPage]);
+      }, [searchFacility, searchTerm, pageSize, currentPage]); // searchAddress
 
     const { jobList, jobSort } = useSelector((state) => state.filter);
     const {
         keyword,
         location,
+        facility,
         destination,
         category,
         jobType,
@@ -279,6 +283,7 @@ const FilterJobsBox = () => {
     const clearAll = () => {
         dispatch(addKeyword(""));
         dispatch(addLocation(""));
+        dispatch(addFacility(""));
         dispatch(addDestination({ min: 0, max: 100 }));
         dispatch(addCategory(""));
         dispatch(clearJobType());
@@ -291,7 +296,7 @@ const FilterJobsBox = () => {
         dispatch(addTag(""));
         dispatch(addSort(""));
         dispatch(addPerPage({ start: 0, end: 10 }));
-        dispatch(setSearchFields({ searchTerm: "", searchAddress: "" }))
+        dispatch(setSearchFields({ searchTerm: "", searchFacility: "" })) //searchAddress: ""
     };
 
     const fnCall = async () => {
@@ -354,7 +359,7 @@ const FilterJobsBox = () => {
                     {/* Collapsible sidebar button */}
 
                     <div className="text">
-                        Show <strong>{content?.length}</strong> jobs
+                        Showing <strong>{content?.length}</strong> jobs of <strong>{totalRecords}</strong>
                     </div>
                 </div>
                 {/* End show-result */}
@@ -362,6 +367,7 @@ const FilterJobsBox = () => {
                 <div className="sort-by">
                     {keyword !== "" ||
                     location !== "" ||
+                    facility !== "" ||
                     destination?.min !== 0 ||
                     destination?.max !== 100 ||
                     category !== "" ||
