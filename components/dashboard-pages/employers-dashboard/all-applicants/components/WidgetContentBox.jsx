@@ -175,7 +175,7 @@ const WidgetContentBox = () => {
         // open toast
         toast.success('Applicant notes has been saved!', {
             position: "bottom-right",
-            autoClose: false,
+            autoClose: 4000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -185,7 +185,7 @@ const WidgetContentBox = () => {
         });
 
         // fetching for refresh the data
-        fetchedAllApplicantsView();
+        // fetchedAllApplicantsView();
 
         // close popup
         document.getElementById('notesCloseButton').click();

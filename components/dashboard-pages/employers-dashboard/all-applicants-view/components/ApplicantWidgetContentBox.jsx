@@ -109,7 +109,7 @@ const ApplicantWidgetContentBox = () => {
         // open toast
         toast.success('Applicant notes has been saved!', {
             position: "bottom-right",
-            autoClose: false,
+            autoClose: 4000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
