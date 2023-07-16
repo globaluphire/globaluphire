@@ -119,7 +119,7 @@ const ApplicantWidgetContentBox = () => {
         });
 
         // fetching for refresh the data
-        fetchedAllApplicantsView();
+        // fetchedAllApplicantsView();
 
         // close popup
         document.getElementById('notesCloseButton').click();
