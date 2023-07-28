@@ -136,7 +136,8 @@ const CloneJobView = () => {
     "2901 E Barnett Rd., Medford, OR 97504",
     "4062 Arleta Ave NE, Keizer,	OR 97303",
     "2350 Oakmont Way, Suite 204, Eugene, OR 97401",
-    "1677 Pensacola Street, Honolulu, HI 96822"
+    "1677 Pensacola Street, Honolulu, HI 96822",
+    "10503 Timberwood Cir, Suite 200, Louisville, KY 40223"
   ]
 
   const facilityNames = [
