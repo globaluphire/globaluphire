@@ -54,6 +54,12 @@ module.exports = [
     icon: "la-file-invoice",
     routePath: "/employers-dashboard/hired-applications",
     active: "",
+  },  {
+    id: 9,
+    name: "Withdraw Applicants",
+    icon: "la-file-invoice",
+    routePath: "/employers-dashboard/withdrawal-applications",
+    active: "",
   },
   // {
   //   id: 6,
