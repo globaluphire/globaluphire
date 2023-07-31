@@ -15,9 +15,9 @@ export default function Document() {
         />
         <meta
           name="description"
-          content="Superio - Job Borad React NextJS Template"
+          content="Volare Health - Career, Job seeking portal"
         />
-        <meta name="ibthemes" content="ATFN" />
+        <meta name="volarehealth" content="ATFN" />
 
         <link rel="icon" href="/favicon.ico" />
       </Head>
