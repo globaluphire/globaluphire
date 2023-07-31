@@ -51,7 +51,7 @@ const index = () => {
       {/* <Block5 /> */}
       {/* <!-- End Steps Section --> */}
 
-      <CallToAction7 />
+      {/* <CallToAction7 /> */}
       {/* <!-- End Call To Action --> */}
 
       {/* <section className="job-categories">
