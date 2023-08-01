@@ -2,20 +2,34 @@ import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import Applicants from "./Applicants";
 import { Typeahead } from "react-bootstrap-typeahead";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
+const addSearchFilters = {
+    name: "",
+    jobTitle: "",
+    status: ""
+  }
 
 const WidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
-    const [searchField, setSearchField] = useState('');
+   // const [searchField, setSearchField] = useState('');
     const [applicationStatus, setApplicationStatus] = useState('');
     const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
     const [noteText, setNoteText] = useState('');
     const [applicationId, setApplicationId] = useState('');
     const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+
+    // for search filters
+    const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
+    const { name, jobTitle, status } = useMemo(() => searchFilters, [searchFilters])
 
     const facilityNames = [
         "Keizer",
@@ -51,11 +65,12 @@ const WidgetContentBox = () => {
   
     // clear all filters
     const clearAll = () => {
-        setSearchField('');
+        setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
+        setFacilitySingleSelections([])
         fetchedAllApplicantsView()
     };
 
-    async function findApplicant () {
+    async function findApplicant ({ name, jobTitle, status }) {
         // call reference to get applicantStatus options
         let { data: refData, error: e } = await supabase
             .from('reference')
@@ -72,15 +87,17 @@ const WidgetContentBox = () => {
             .neq('status', 'Rejection')
             .neq('status', 'Hired')
             .neq('status', 'Withdraw')
+            .ilike('name', '%'+name+'%')
+            .ilike('job_title', '%'+jobTitle+'%')
+            .ilike('status', '%'+status+'%')
             .order('created_at',  { ascending: false });
 
         if(data) {
             data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-            if (searchField) {
-                setFetchedAllApplicantsData(data.filter((applicant) => applicant.name.toLowerCase().includes(searchField.toLowerCase())))
-            }
             if (facilitySingleSelections.length > 0) {
                 setFetchedAllApplicantsData(data.filter((applicant) => applicant.facility_name?.includes(facilitySingleSelections[0])))
+            } else {
+                setFetchedAllApplicantsData(data)
             }
         }
     };
@@ -308,68 +325,109 @@ const WidgetContentBox = () => {
 
     return (
         <div className="tabs-box">
-            <div className="widget-title">
-                <h4>All Applicants!</h4>
-
-                {fetchedAllApplicants.length != 0 && applicationStatusReferenceOptions != null ? 
-                    <div className="chosen-outer">
-                    <Typeahead
-                        onChange={setFacilitySingleSelections}
-                        id="facilityName"
-                        className="form-group"
-                        placeholder="Facility Name"
-                        options={facilityNames}
-                        selected={facilitySingleSelections}
-                        required
-                    />
-
-                    {/* TODO: add search filters */}
-                    <input
-                        className="chosen-single form-input chosen-container mx-3"
-                        type="text"
-                        name="globaluphire-applicant"
-                        placeholder="Search by Applicant name"
-                        value={searchField}
-                        onChange={(e) => {
-                            setSearchField(e.target.value);
-                        }}
-                        style={{ minWidth: '300px'}}
-                    />
-            {/*           
-                    <select
-                        className="chosen-single form-select chosen-container mx-3"
-                        onChange={(e) => {
-                        setJobStatus(e.target.value)
-                        }}
-                    >
-                        <option>Status</option>
-                        <option>Published</option>
-                        <option>Unpublished</option>
-                    </select> */}
-
-                    <button
-                        onClick={findApplicant}
-                        className="btn btn-primary text-nowrap m-1"
-                        style= {{ minHeight: '43px' }}
-                    >
-                        Search
-                    </button>
-                    <button
-                        onClick={clearAll}
-                        className="btn btn-danger text-nowrap m-1"
-                        style= {{ minHeight: '43px' }}
-                    >
-                        Clear
-                    </button>
-                    </div> : '' }
+            <div className="widget-title mb-3" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
+                <b>All Applicants!</b>
             </div>
+            { applicationStatusReferenceOptions != null ?
+                <Form className='search-filter-form'>
+                    <Form.Label className="optional" style={{ marginLeft: '32px', letterSpacing: '2px', fontSize: '12px' }}>SEARCH BY</Form.Label>
+                    <Row className="mx-1" md={4}>
+                        <Col>
+                            <Form.Group className="mb-3 mx-3">
+                                <Form.Label className="chosen-single form-input chosen-container">Applicant Name</Form.Label>
+                                <Form.Control
+                                    className="chosen-single form-input chosen-container"
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({ 
+                                            ...previousState,
+                                            name: e.target.value
+                                        }))
+                                        }}
+                                    style={{ maxWidth: '300px' }}/>
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3 mx-3">
+                                <Form.Label className="chosen-single form-input chosen-container">Facility Name</Form.Label>
+                                <Typeahead
+                                    onChange={setFacilitySingleSelections}
+                                    id="facilityName"
+                                    className="chosen-single form-input chosen-container"
+                                    placeholder="select"
+                                    options={facilityNames}
+                                    selected={facilitySingleSelections}
+                                    style={{ maxWidth: '300px' }}
+                                    required
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3 mx-3">
+                                <Form.Label className="chosen-single form-input chosen-container">Job Title</Form.Label>
+                                <Form.Control
+                                    className="chosen-single form-input chosen-container"
+                                    type="text"
+                                    value={jobTitle}
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({ 
+                                            ...previousState,
+                                            jobTitle: e.target.value
+                                        }))
+                                        }}
+                                    style={{ maxWidth: '300px' }}/>
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3 mx-3">
+                                <Form.Label className="chosen-single form-input chosen-container">Applicant Status</Form.Label>
+                                <Form.Select className="chosen-single form-select"
+                                    onChange={(e) => {
+                                        setSearchFilters((previousState) => ({ 
+                                            ...previousState,
+                                            status: e.target.value
+                                        }))
+                                        }}
+                                    style={{ maxWidth: '300px' }}
+                                >
+                                    <option value=''></option>
+                                    {applicationStatusReferenceOptions.map((option) => (
+                                        <option value={option.ref_dspl}>{option.ref_dspl}</option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row className="mx-3">
+                        <Col>
+                            <Form.Group className="chosen-single form-input chosen-container mt-3">
+                                <Button variant="primary"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        findApplicant(searchFilters);
+                                    }}
+                                    className="btn btn-primary btn-sm text-nowrap m-1"
+                                    style= {{ minHeight: '40px', padding: '0 30px'}}>
+                                    Filter
+                                </Button>
+                                <Button variant="primary" onClick={clearAll}
+                                    className="btn btn-secondary btn-sm text-nowrap mx-2"
+                                    style= {{ minHeight: '40px', padding: '0 20px' }}>
+                                    Clear
+                                </Button>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                </Form> : ''
+            }
             {/* End filter top bar */}
 
             {/* Start table widget content */}
-            {fetchedAllApplicants.length == 0 ? <p style={{ fontSize: '1rem', fontWeight: '500' }}><center>No applicant applied to any of your posted jobs!</center></p>: 
-                <div className="widget-content">
-                    <div className="table-outer">
-                        <table className="default-table manage-job-table">
+            <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({fetchedAllApplicants.length}) Applicants Applied</div>
+            <div className="widget-content">
+                <div className="table-outer">
+                    <table className="default-table manage-job-table">
                         <thead>
                             <tr>
                             <th>Name</th>
@@ -381,95 +439,94 @@ const WidgetContentBox = () => {
                             <th>Actions</th>
                             </tr>
                         </thead>
-
-                        <tbody>
-                            {Array.from(fetchedAllApplicants).map((applicant) => (
-                                <tr key={applicant.application_id}>
-                                    <td>
-                                    {/* <!-- Job Block --> */}
-                                    <div className="job-block">
-                                        <div className="inner-box">
-                                            {/* <span className="company-logo">
-                                            <img src={item.logo} alt="logo" />
-                                            </span> */}
-                                            <h4>
-                                            {/* <Link href={`/employers-dashboard/edit-job/${applicant.user_id}`}>
+                        {fetchedAllApplicants.length == 0 ? <tbody style={{ fontSize: '1.5rem', fontWeight: '500' }}><tr><td><b>No results found!</b></td></tr></tbody>: 
+                            <tbody>
+                                {Array.from(fetchedAllApplicants).map((applicant) => (
+                                    <tr key={applicant.application_id}>
+                                        <td>
+                                        {/* <!-- Job Block --> */}
+                                        <div className="job-block">
+                                            <div className="inner-box">
+                                                {/* <span className="company-logo">
+                                                <img src={item.logo} alt="logo" />
+                                                </span> */}
+                                                <h4>
+                                                {/* <Link href={`/employers-dashboard/edit-job/${applicant.user_id}`}>
+                                                    {applicant.name}
+                                                </Link> */}
                                                 {applicant.name}
-                                            </Link> */}
-                                            {applicant.name}
-                                            </h4>
+                                                </h4>
+                                            </div>
                                         </div>
-                                    </div>
-                                    </td>
-                                    <td>
-                                    {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
-                                        <span>{applicant.created_at}</span>
-                                    </td>
-                                    <td>
-                                        {applicant.job_title}
-                                    </td>
-                                    <td>
-                                        {applicant.facility_name}
-                                    </td>
-                                    <td>
-                                        <select className="chosen-single form-select" 
-                                            value={applicant.status}
-                                            onChange={(e) => {
-                                                updateApplicationStatus(e.target.value, applicant.application_id)
-                                            }}>
-                                            {applicationStatusReferenceOptions.map((option) => (
-                                                <option value={option.ref_dspl}>{option.ref_dspl}</option>
-                                            ))}
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <ul className="option-list">
-                                            <li>
-                                                <button data-text="Add, View, Edit, Delete Notes">
-                                                <a
-                                                    href="#"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#addNoteModal"
-                                                    onClick = { () => {setNoteData(applicant.application_id) }}
-                                                >
-                                                    <span className="la la-eye"></span>
-                                                </a>
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </td>
-                                    <td>
-                                        <div className="option-box">
+                                        </td>
+                                        <td>
+                                        {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
+                                            <span>{applicant.created_at}</span>
+                                        </td>
+                                        <td>
+                                            {applicant.job_title}
+                                        </td>
+                                        <td>
+                                            {applicant.facility_name}
+                                        </td>
+                                        <td>
+                                            <select className="chosen-single form-select" 
+                                                value={applicant.status}
+                                                onChange={(e) => {
+                                                    updateApplicationStatus(e.target.value, applicant.application_id)
+                                                }}>
+                                                {applicationStatusReferenceOptions.map((option) => (
+                                                    <option value={option.ref_dspl}>{option.ref_dspl}</option>
+                                                ))}
+                                            </select>
+                                        </td>
+                                        <td>
                                             <ul className="option-list">
-                                            <li onClick = { () => { ViewCV(applicant.application_id) }}>
-                                                <button data-text="View/Download CV">
-                                                    <span className="la la-file-download"></span>
-                                                </button>
-                                            </li>
-                                            {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
-                                                <button data-text="Qualified">
-                                                <span className="la la-check"></span>
-                                                </button>
-                                            </li>
-                                            <li onClick={()=>{ NotQualified(applicant.application_id, applicant.status) }} >
-                                                <button data-text="Not Qualified">
-                                                <span className="la la-times-circle"></span>
-                                                </button>
-                                            </li>
-                                            <li onClick={()=>{ ResetStatus(applicant.application_id, applicant.status) }} >
-                                                <button data-text="Reset Status">
-                                                <span className="la la-undo-alt"></span>
-                                                </button>
-                                            </li> */}
+                                                <li>
+                                                    <button data-text="Add, View, Edit, Delete Notes">
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addNoteModal"
+                                                        onClick = { () => {setNoteData(applicant.application_id) }}
+                                                    >
+                                                        <span className="la la-eye"></span>
+                                                    </a>
+                                                    </button>
+                                                </li>
                                             </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                        </table>
-
-                        <span className="optional">Showing ({fetchedAllApplicants.length}) Applicants Applied</span>
+                                        </td>
+                                        <td>
+                                            <div className="option-box">
+                                                <ul className="option-list">
+                                                <li onClick = { () => { ViewCV(applicant.application_id) }}>
+                                                    <button data-text="View/Download CV">
+                                                        <span className="la la-file-download"></span>
+                                                    </button>
+                                                </li>
+                                                {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
+                                                    <button data-text="Qualified">
+                                                    <span className="la la-check"></span>
+                                                    </button>
+                                                </li>
+                                                <li onClick={()=>{ NotQualified(applicant.application_id, applicant.status) }} >
+                                                    <button data-text="Not Qualified">
+                                                    <span className="la la-times-circle"></span>
+                                                    </button>
+                                                </li>
+                                                <li onClick={()=>{ ResetStatus(applicant.application_id, applicant.status) }} >
+                                                    <button data-text="Reset Status">
+                                                    <span className="la la-undo-alt"></span>
+                                                    </button>
+                                                </li> */}
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        }
+                    </table>
 
                         {/* Add Notes Modal Popup */}
                         <div
@@ -521,7 +578,6 @@ const WidgetContentBox = () => {
                         </div>
                     </div>
                 </div>
-            }
             {/* End table widget content */}
         </div>
     );
