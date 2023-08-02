@@ -50,12 +50,31 @@ const WidgetContentBox = () => {
 
     async function updateApplicationStatus (applicationStatus, applicationId) {
         // save updated applicant status
-        const { data, error } = await supabase
+        const { data1, error1 } = await supabase
             .from('applications')
             .update({ status: applicationStatus })
             .eq('application_id', applicationId)
 
-        fetchedAllApplicantsView()
+        // this will prevent the page to keep filtered if have any search filters set
+        let { data, error } = await supabase
+            .from('applicants_view')
+            .select("*")
+            .neq('status', 'Rejection')
+            .neq('status', 'Hired')
+            .neq('status', 'Withdraw')
+            .ilike('name', '%'+name+'%')
+            .ilike('job_title', '%'+jobTitle+'%')
+            .ilike('status', '%'+status+'%')
+            .order('created_at',  { ascending: false });
+
+        if(data) {
+            data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
+            if (facilitySingleSelections.length > 0) {
+                setFetchedAllApplicantsData(data.filter((applicant) => applicant.facility_name?.includes(facilitySingleSelections[0])))
+            } else {
+                setFetchedAllApplicantsData(data)
+            }
+        }
     }
 
     const dateFormat = (val) => {
