@@ -408,6 +408,7 @@ const WidgetContentBox = () => {
                                             status: e.target.value
                                         }))
                                         }}
+                                    value={status}
                                     style={{ maxWidth: '300px' }}
                                 >
                                     <option value=''></option>
