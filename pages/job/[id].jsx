@@ -134,7 +134,7 @@ const JobSingleDynamicV1 = () => {
                     {/* compnay info */}
                     <li>
                       <span className="icon flaticon-map-locator"></span>{" "}
-                      {company?.job_address}
+                      {company?.job_comp_add}
                     </li>
                     {/* location info */}
                     <li>

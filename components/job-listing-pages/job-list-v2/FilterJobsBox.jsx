@@ -228,8 +228,8 @@ const FilterJobsBox = () => {
                                 {item.company}
                             </li> */}
 
-                            { item?.job_address ?                        
-                                <li className="mb-2"><i className="flaticon-map-locator"></i>{" "}{item?.job_address}</li>
+                            { item?.job_comp_add ?                        
+                                <li className="mb-2"><i className="flaticon-map-locator"></i>{" "}{item?.job_comp_add}</li>
                             : '' }
                             {/* compnay info */}
                             { item?.job_type ?
