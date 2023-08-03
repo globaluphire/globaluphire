@@ -1,18 +1,32 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { db } from "../../../../common/form/firebase";
 // import jobs from "../../../../../data/job-featured.js";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast, ToastContainer } from "react-toastify";
 import { Typeahead } from "react-bootstrap-typeahead";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
+const addSearchFilters = {
+    jobTitle: "",
+    jobType: ""
+  }
+
 
 const UnpublishedJobListingsTable = () => {
   const [jobs, setjobs] = useState([]);
   const [searchField, setSearchField] = useState('');
   const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+
+  // for search filters
+  const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
+  const { name, jobTitle, jobType } = useMemo(() => searchFilters, [searchFilters])
 
   //const [jobStatus, setJobStatus] = useState('');
   const user = useSelector(state => state.candidate.user)
@@ -126,28 +140,28 @@ const UnpublishedJobListingsTable = () => {
 
   // clear all filters
   const clearAll = () => {
-    setSearchField('');
+    setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
+    setFacilitySingleSelections([])
     fetchPost()
   };
 
   // Search function
   async function findJob () {
-
     let { data, error } = await supabase
-        .from('manage_jobs_view')
-        .select()
-        .eq('status', 'Unpublished')
-        .order('created_at',  { ascending: false });
-        data.forEach( job => job.created_at = dateFormat(job.created_at))
-        setjobs(data) 
+    .from('manage_jobs_view')
+    .select()
+    .eq('status', 'Published')
+    .ilike('job_title', '%'+jobTitle+'%')
+    .ilike('job_type', '%'+jobType+'%')
+    .order('created_at',  { ascending: false });
 
-        if (searchField) {
-          setjobs(data.filter((job) => job.job_title.toLowerCase().includes(searchField.toLowerCase())))
-        }
-        if (facilitySingleSelections.length > 0) {
-          setjobs(data.filter((job) => job.facility_name?.includes(facilitySingleSelections[0])))
-      }
-    };
+    data.forEach( job => job.created_at = dateFormat(job.created_at))
+    setjobs(data) 
+
+    if (facilitySingleSelections.length > 0) {
+      setjobs(data.filter((job) => job.facility_name?.includes(facilitySingleSelections[0])))
+    }
+  };
 
   // Initial Function
   const fetchPost = async () => {
@@ -168,80 +182,104 @@ const UnpublishedJobListingsTable = () => {
 
   return (
     <div className="tabs-box">
-      <div className="widget-title">
-        <h4>All Unpublished Jobs!</h4>
-
-        
-        {jobs.length != 0 ?
-          <div className="chosen-outer">
-          <Typeahead
-            onChange={setFacilitySingleSelections}
-            id="facilityName"
-            className="form-group"
-            placeholder="Facility Name"
-            options={facilityNames}
-            selected={facilitySingleSelections}
-            required
-          />
-
-          {/* TODO: add search filters */} 
-            <input
-              className="chosen-single form-input chosen-container mx-3"
-              type="text"
-              name="globaluphire-job_title"
-              placeholder="Search by Job Title"
-              value={searchField}
-              onChange={(e) => {
-                setSearchField(e.target.value);
-              }}
-              style={{ minWidth: '450px'}}
-            />
-{/*           
-          <select
-            className="chosen-single form-select chosen-container mx-3"
-            onChange={(e) => {
-              setJobStatus(e.target.value)
-            }}
-          >
-            <option>Status</option>
-            <option>Published</option>
-            <option>Unpublished</option>
-          </select> */}
-
-          <button
-            onClick={findJob}
-            className="btn btn-primary text-nowrap m-1"
-            style= {{ minHeight: '43px' }}
-          >
-            Search
-          </button>
-          <button
-            onClick={clearAll}
-            className="btn btn-danger text-nowrap m-1"
-            style= {{ minHeight: '43px' }}
-          >
-            Clear
-          </button>
-        </div> : '' }
+      <div className="widget-title mb-3" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
+          <b>All Unpublished Jobs!</b>
       </div>
+      <Form className='search-filter-form'>
+          <Form.Label className="optional" style={{ marginLeft: '32px', letterSpacing: '2px', fontSize: '12px' }}>SEARCH BY</Form.Label>
+          <Row className="mx-1" md={4}>
+              <Col>
+                  <Form.Group className="mb-3 mx-3">
+                      <Form.Label className="chosen-single form-input chosen-container">Job Title</Form.Label>
+                      <Form.Control
+                          className="chosen-single form-input chosen-container"
+                          type="text"
+                          value={jobTitle}
+                          onChange={(e) => {
+                              setSearchFilters((previousState) => ({ 
+                                  ...previousState,
+                                  jobTitle: e.target.value
+                                }))
+                              }}
+                          style={{ maxWidth: '300px' }}/>
+                  </Form.Group>
+              </Col>
+              <Col>
+                  <Form.Group className="mb-3 mx-3">
+                      <Form.Label className="chosen-single form-input chosen-container">Facility Name</Form.Label>
+                      <Typeahead
+                          onChange={setFacilitySingleSelections}
+                          id="facilityName"
+                          className="chosen-single form-input chosen-container"
+                          placeholder="select"
+                          options={facilityNames}
+                          selected={facilitySingleSelections}
+                          style={{ maxWidth: '300px' }}
+                          required
+                      />
+                  </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3 mx-3">
+                    <Form.Label className="chosen-single form-input chosen-container">Job Type</Form.Label>
+                    <Form.Select className="chosen-single form-select"
+                        onChange={(e) => {
+                            setSearchFilters((previousState) => ({ 
+                                ...previousState,
+                                jobType: e.target.value
+                            }))
+                            }}
+                        value={jobType}
+                        style={{ maxWidth: '300px' }}
+                    >
+                        <option value=''></option>
+                        <option value='Full Time'>Full Time</option>
+                        <option value='Part Time'>Part Time</option>
+                        <option value='Both'>Both</option>
+                        <option value='Per Diem'>Per Diem</option>
+                    </Form.Select>
+                </Form.Group>
+              </Col>
+          </Row>
+          <Row className="mx-3">
+              <Col>
+                  <Form.Group className="chosen-single form-input chosen-container mt-3">
+                      <Button variant="primary"
+                          onClick={(e) => {
+                              e.preventDefault();
+                              findJob(searchFilters);
+                          }}
+                          className="btn btn-primary btn-sm text-nowrap m-1"
+                          style= {{ minHeight: '40px', padding: '0 30px'}}>
+                          Filter
+                      </Button>
+                      <Button variant="primary" onClick={clearAll}
+                          className="btn btn-secondary btn-sm text-nowrap mx-2"
+                          style= {{ minHeight: '40px', padding: '0 20px' }}>
+                          Clear
+                      </Button>
+                  </Form.Group>
+              </Col>
+          </Row>
+      </Form>
       {/* End filter top bar */}
 
       {/* Start table widget content */}
-      {jobs.length == 0 ? <p style={{ fontSize: '1rem', fontWeight: '500' }}><center>You have not posted any jobs yet!</center></p>: 
-        <div className="widget-content">
-        <div className="table-outer">
-          <table className="default-table manage-job-table">
-            <thead>
-              <tr>
-                <th>Job Title</th>
-                <th>Facility</th>
-                <th>Applications</th>
-                <th>Published On</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
+      <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({jobs.length}) Published Job(s)</div>
+      <div className="widget-content">
+      <div className="table-outer">
+        <table className="default-table manage-job-table">
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Facility</th>
+              <th>Applications</th>
+              <th>Published On</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          {jobs.length == 0 ? <tbody style={{ fontSize: '1.5rem', fontWeight: '500' }}><tr><td><b>No results found!</b></td></tr></tbody>: 
             <tbody>
               {jobs.map((item) => (
                 <tr key={item.job_id}>
@@ -275,7 +313,7 @@ const UnpublishedJobListingsTable = () => {
                               { item?.salary ?
                                   <li>
                                     <span className="flaticon-money"></span>{" "}
-                                   ${item?.salary} {item?.salary_rate}
+                                  ${item?.salary} {item?.salary_rate}
                                   </li>
                                   : '' }
                               {/* salary info */}
@@ -336,11 +374,10 @@ const UnpublishedJobListingsTable = () => {
                 </tr>
               ))}
             </tbody>
-          </table>
-          <span className="optional">Showing ({jobs.length}) Unpublished Job(s)</span>
-        </div>
-        </div>
-      }
+          }
+        </table>
+      </div>
+      </div>
       {/* End table widget content */}
     </div>
   );

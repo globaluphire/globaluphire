@@ -21,7 +21,6 @@ const addSearchFilters = {
 const JobListingsTable = () => {
   const [jobs, setjobs] = useState([]);
   const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
-  const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
 
   // for search filters
   const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));

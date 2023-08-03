@@ -27,8 +27,8 @@ const index = () => {
 
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <BreadCrumb title="Manage jobs!" />
+        <div>
+          {/* <BreadCrumb title="Manage jobs!" /> */}
           {/* breadCrumb */}
 
           <MenuToggler />
