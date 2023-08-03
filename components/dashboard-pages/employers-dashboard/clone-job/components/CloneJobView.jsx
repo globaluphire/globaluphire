@@ -44,7 +44,6 @@ const submitJobPost = async (
         fetchedJobData.education ||
         fetchedJobData.experience ||
         fetchedJobData.job_comp_add ||
-        fetchedJobData.job_address ||
         fetchedJobData.facility_name) {
       try {
         const { data, error } = await supabase
@@ -59,7 +58,6 @@ const submitJobPost = async (
                 education: fetchedJobData.education,
                 salary: fetchedJobData.salary,
                 salary_rate: fetchedJobData.salary_rate,
-                job_address: fetchedJobData.job_address,
                 job_comp_add: fetchedJobData.job_comp_add,
                 facility_name: fetchedJobData.facility_name
               }
@@ -241,9 +239,9 @@ const CloneJobView = () => {
     initMapScript().then(() => initAutocomplete())
   }, []);
 
-  useEffect(() => {
-    searchInput.current.value = fetchedJobData.job_address
-  }, [fetchedJobData.job_address]);
+  // useEffect(() => {
+  //   searchInput.current.value = fetchedJobData.job_address
+  // }, [fetchedJobData.job_address]);
 
   return (
     <form className="default-form">
@@ -582,7 +580,7 @@ const CloneJobView = () => {
         </div>
 
         {/* <!-- Input --> */}
-        <div className="form-group col-lg-12 col-md-12">
+        {/* <div className="form-group col-lg-12 col-md-12">
           <label>City, State <span className="required">(required)</span></label>
             <input
                 type="text"
@@ -590,7 +588,7 @@ const CloneJobView = () => {
                 ref={searchInput}
                 placeholder="City, State"
             />
-        </div>
+        </div> */}
         
         {/* <!-- Input --> */}
         {/* <div className="form-group col-lg-6 col-md-12">

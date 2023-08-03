@@ -50,7 +50,7 @@ const submitJobPost = async (
   setJobData,
   user
 ) => {
-    if (jobTitle && jobDesc && jobType && address && completeAddress && facility) {
+    if (jobTitle && jobDesc && jobType && completeAddress && facility) {
         try {
         const { data, error } = await supabase
             .from('jobs')
@@ -64,7 +64,6 @@ const submitJobPost = async (
                 education: education,
                 salary: salary,
                 salary_rate: salaryRate,
-                job_address: address,
                 job_comp_add: completeAddress,
                 facility_name: facility,
               }
@@ -583,7 +582,7 @@ const PostBoxForm = () => {
         </div>
 
         {/* <!-- Input --> */}
-        <div className="form-group col-lg-12 col-md-12">
+        {/* <div className="form-group col-lg-12 col-md-12">
           <label>City, State <span className="required">(required)</span></label>
           <input
             type="text"
@@ -592,7 +591,7 @@ const PostBoxForm = () => {
             placeholder="City, State"
             required
           />
-        </div>
+        </div> */}
         
         {/* <!-- Input --> */}
         {/* <div className="form-group col-lg-6 col-md-12">

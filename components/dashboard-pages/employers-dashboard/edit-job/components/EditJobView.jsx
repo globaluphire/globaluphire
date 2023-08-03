@@ -25,7 +25,6 @@ const editedJobFields = {
     editedSalaryRate: "",
     editedCareer: "",
     editedExp: "",
-    editedAddress: "",
     editedCompleteAddress: "",
     editedFacility: ""
 }
@@ -53,7 +52,7 @@ const submitJobPost = async (
     if (editedJobTitle || editedJobDesc ||
         editedJobType || editedSalary ||
         editedSalaryRate || editedCareer ||
-        editedExp || editedAddress ||
+        editedExp ||
         editedCompleteAddress || editedFacility) {
         try {
 
@@ -67,7 +66,6 @@ const submitJobPost = async (
                  education: editedCareer ? editedCareer : fetchedJobData.education,
                  salary: editedSalary ? editedSalary : fetchedJobData.salary,
                  salary_rate: editedSalaryRate ? editedSalaryRate : fetchedJobData.salary_rate,
-                 job_address: editedAddress ? editedAddress : fetchedJobData.job_address,
                  change_dttm: new Date(),
                  update_ver_nbr: fetchedJobData.update_ver_nbr + 1
                 }
@@ -171,9 +169,9 @@ const EditJobView = ({ fetchedJobData }) => {
     initMapScript().then(() => initAutocomplete())
   }, []);
 
-  useEffect(() => {
-    searchInput.current.value = fetchedJobData.job_address
-  }, [fetchedJobData.job_address]);
+  // useEffect(() => {
+  //   searchInput.current.value = fetchedJobData.job_address
+  // }, [fetchedJobData.job_address]);
 
   return (
     <form className="default-form">
@@ -650,7 +648,7 @@ const EditJobView = ({ fetchedJobData }) => {
           />
         </div>
         {/* <!-- Input --> */}
-        <div className="form-group col-lg-12 col-md-12">
+        {/* <div className="form-group col-lg-12 col-md-12">
           <label>City, State <span className="required">(required)</span></label>
           { !editedAddress ?
             <input
@@ -668,7 +666,7 @@ const EditJobView = ({ fetchedJobData }) => {
                 required
               />
           }
-        </div>
+        </div> */}
         
         {/* <!-- Input --> */}
         {/* <div className="form-group col-lg-6 col-md-12">
