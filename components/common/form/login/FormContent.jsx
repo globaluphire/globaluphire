@@ -96,7 +96,7 @@ const FormContent = () => {
   const dispatch = useDispatch()
   return (
     <div className="form-inner">
-      <h3>Login to Global UpHire</h3>
+      <h3>Login to Volare Health Career</h3>
 
       {/* <!--Login Form--> */}
       <form method="post">

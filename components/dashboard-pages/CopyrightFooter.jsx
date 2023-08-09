@@ -2,7 +2,7 @@ const CopyrightFooter = () => {
   return (
     <div className="copyright-text">
       <p>
-        © {new Date().getFullYear()} Global UpHire{" "}
+        © {new Date().getFullYear()} Volare Health{" "}
         {/* <a
           href="https://themeforest.net/user/ib-themes"
           target="_blank"
@@ -10,7 +10,7 @@ const CopyrightFooter = () => {
         >
           ib-themes
         </a> */}
-        . All Right Reserved.
+        . All Rights Reserved.
       </p>
     </div>
   );

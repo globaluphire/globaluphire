@@ -14,7 +14,7 @@ const CopyrightFooter = () => {
           </div>
           <div className="copyright-text">
           <p style={{color: '#f5f5f5'}}>
-            © {new Date().getFullYear()} Global UpHire. All Right Reserved.
+            © {new Date().getFullYear()} Volare Health. All Rights Reserved.
           </p>
           </div>
           <div className="contact-info">
