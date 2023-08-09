@@ -200,3 +200,13 @@ Buttons Styles
   line-height: 21px;
   border-radius: 5px;
 }
+
+.btn-submit {
+  min-height: 40px;
+  padding: 0 30px;
+  background-color: var(--primary-color);
+}
+
+.btn-submit:hover {
+  background-color: var(--primary-hover-bg-color)
+}

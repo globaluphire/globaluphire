@@ -197,36 +197,6 @@ const HiredApplicationsWidgetContentBox = () => {
         }
     }
 
-    const addNotes = async () => {
-        const { data, error } = await supabase
-            .from('applications')
-            .update({ 'notes': noteText})
-            .eq('application_id', applicationId)
-
-        // open toast
-        toast.success('Applicant notes has been saved!', {
-            position: "bottom-right",
-            autoClose: 4000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        });
-
-        // fetching for refresh the data
-        // fetchedAllApplicantsView();
-
-        // close popup
-        document.getElementById('notesCloseButton').click();
-
-        // reset NoteText
-        setNoteText('');
-        setApplicationId('');
-        
-    }
-
     // const Qualified = async (applicationId, status) => {
     //     if (status != 'Qualified') {
     //       const { data, error } = await supabase
@@ -337,11 +307,11 @@ const HiredApplicationsWidgetContentBox = () => {
 
     return (
         <div className="tabs-box">
-            <div className="widget-title mb-3" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
+            <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
                 <b>Hired Applicants!</b>
             </div>
             { applicationStatusReferenceOptions != null ?
-                <Form className='search-filter-form'>
+                <Form>
                     <Form.Label className="optional" style={{ marginLeft: '32px', letterSpacing: '2px', fontSize: '12px' }}>SEARCH BY</Form.Label>
                     <Row className="mx-1" md={4}>
                         <Col>
@@ -414,14 +384,14 @@ const HiredApplicationsWidgetContentBox = () => {
                     </Row>
                     <Row className="mx-3">
                         <Col>
-                            <Form.Group className="chosen-single form-input chosen-container mt-3">
+                            <Form.Group className="chosen-single form-input chosen-container mb-3">
                                 <Button variant="primary"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         findApplicant(searchFilters);
                                     }}
-                                    className="btn btn-primary btn-sm text-nowrap m-1"
-                                    style= {{ minHeight: '40px', padding: '0 30px'}}>
+                                    className="btn btn-submit btn-sm text-nowrap m-1"
+                                    >
                                     Filter
                                 </Button>
                                 <Button variant="primary" onClick={clearAll}
@@ -488,7 +458,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                                 value={applicant.status}
                                                 onChange={(e) => {
                                                     updateApplicationStatus(e.target.value, applicant.application_id)
-                                                }}>
+                                                }} disabled>
                                                 {applicationStatusReferenceOptions.map((option) => (
                                                     <option value={option.ref_dspl}>{option.ref_dspl}</option>
                                                 ))}
@@ -497,7 +467,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                         <td>
                                             <ul className="option-list">
                                                 <li>
-                                                    <button data-text="Add, View, Edit, Delete Notes">
+                                                    <button data-text="View Notes">
                                                     <a
                                                         href="#"
                                                         data-bs-toggle="modal"
@@ -573,17 +543,6 @@ const HiredApplicationsWidgetContentBox = () => {
                                     }}
                                     style={{resize: 'vertical', overflowY: 'scroll', border: '1px solid #ccc', padding: '10px'}}></textarea>
                                 <br/>
-                                <div className="form-group text-center">
-                                    <button
-                                        className="theme-btn btn-style-one"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            addNotes();
-                                        }}
-                                    >
-                                        Save
-                                    </button>
-                                </div>
                             </form>
                             {/* End PrivateMessageBox */}
                         </div>

@@ -344,11 +344,11 @@ const WidgetContentBox = () => {
 
     return (
         <div className="tabs-box">
-            <div className="widget-title mb-3" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
+            <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
                 <b>All Applicants!</b>
             </div>
             { applicationStatusReferenceOptions != null ?
-                <Form className='search-filter-form'>
+                <Form>
                     <Form.Label className="optional" style={{ marginLeft: '32px', letterSpacing: '2px', fontSize: '12px' }}>SEARCH BY</Form.Label>
                     <Row className="mx-1" md={4}>
                         <Col>
@@ -421,14 +421,14 @@ const WidgetContentBox = () => {
                     </Row>
                     <Row className="mx-3">
                         <Col>
-                            <Form.Group className="chosen-single form-input chosen-container mt-3">
-                                <Button variant="primary"
+                            <Form.Group className="chosen-single form-input chosen-container mb-3">
+                                <Button
                                     onClick={(e) => {
                                         e.preventDefault();
                                         findApplicant(searchFilters);
                                     }}
-                                    className="btn btn-primary btn-sm text-nowrap m-1"
-                                    style= {{ minHeight: '40px', padding: '0 30px'}}>
+                                    className="btn btn-sm text-nowrap m-1 btn-submit"
+                                    >
                                     Filter
                                 </Button>
                                 <Button variant="primary" onClick={clearAll}

@@ -169,10 +169,10 @@ const JobListingsTable = () => {
 
   return (
     <div className="tabs-box">
-      <div className="widget-title mb-3" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
+      <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
           <b>All Published Jobs!</b>
       </div>
-      <Form className='search-filter-form'>
+      <Form>
           <Form.Label className="optional" style={{ marginLeft: '32px', letterSpacing: '2px', fontSize: '12px' }}>SEARCH BY</Form.Label>
           <Row className="mx-1" md={4}>
               <Col>
@@ -230,14 +230,14 @@ const JobListingsTable = () => {
           </Row>
           <Row className="mx-3">
               <Col>
-                  <Form.Group className="chosen-single form-input chosen-container mt-3">
+                  <Form.Group className="chosen-single form-input chosen-container mb-3">
                       <Button variant="primary"
                           onClick={(e) => {
                               e.preventDefault();
                               findJob(searchFilters);
                           }}
-                          className="btn btn-primary btn-sm text-nowrap m-1"
-                          style= {{ minHeight: '40px', padding: '0 30px'}}>
+                          className="btn btn-submit btn-sm text-nowrap m-1"
+                          >
                           Filter
                       </Button>
                       <Button variant="primary" onClick={clearAll}
@@ -314,13 +314,15 @@ const JobListingsTable = () => {
                   <td>
                       {item.facility_name}
                   </td>
-                  <td className="applied">
-                    {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
-                    <a onClick={()=>{
-                      router.push(`/employers-dashboard/all-applicants-view/${item.job_id}`)
-                    }}>
-                      {item.total_applicants > 0 ? `${item.total_applicants} applied` : 'No applications yet'}
-                    </a>
+                  <td>
+                    {item.total_applicants > 0 ? 
+                      <a className="applied" onClick={()=>{
+                        router.push(`/employers-dashboard/all-applicants-view/${item.job_id}`)
+                      }}>
+                        {item.total_applicants} applied
+                      </a>
+                      : <span>-</span>
+                    }
                   </td>
                   <td>
                   {item?.created_at}
