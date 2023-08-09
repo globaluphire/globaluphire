@@ -12,6 +12,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { Table } from "react-bootstrap";
 
 const addSearchFilters = {
     jobTitle: "",
@@ -268,7 +269,7 @@ const UnpublishedJobListingsTable = () => {
       <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({jobs.length}) Published Job(s)</div>
       <div className="widget-content">
       <div className="table-outer">
-        <table className="default-table manage-job-table">
+        <Table className="default-table manage-job-table">
           <thead>
             <tr>
               <th>Job Title</th>
@@ -286,7 +287,7 @@ const UnpublishedJobListingsTable = () => {
                   <td>
                     {/* <!-- Job Block --> */}
                     <div className="job-block">
-                      <div className="inner-box">
+                      <div>
                         <div>
                           {/* <span className="company-logo">
                             <img src={item.logo} alt="logo" />
@@ -327,13 +328,16 @@ const UnpublishedJobListingsTable = () => {
                   <td>
                       {item.facility_name}
                   </td>
-                  <td className="applied">
+                  <td>
                     {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
-                    <a onClick={()=>{
-                      router.push(`/employers-dashboard/all-applicants-view/${item.job_id}`)
-                    }}>
-                      {item.total_applicants > 0 ? `${item.total_applicants} applied` : 'No applications yet'}
-                    </a>
+                    {item.total_applicants > 0 ? 
+                      <a className="applied" onClick={()=>{
+                        router.push(`/employers-dashboard/all-applicants-view/${item.job_id}`)
+                      }}>
+                        {item.total_applicants} applied
+                      </a>
+                      : <span>-</span>
+                    }
                   </td>
                   <td>
                   {item?.created_at}
@@ -375,7 +379,7 @@ const UnpublishedJobListingsTable = () => {
               ))}
             </tbody>
           }
-        </table>
+        </Table>
       </div>
       </div>
       {/* End table widget content */}

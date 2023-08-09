@@ -12,6 +12,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { Table } from "react-bootstrap";
 
 const addSearchFilters = {
     jobTitle: "",
@@ -255,7 +256,7 @@ const JobListingsTable = () => {
       <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({jobs.length}) Published Job(s)</div>
       <div className="widget-content">
       <div className="table-outer">
-        <table className="default-table manage-job-table">
+        <Table className="default-table manage-job-table">
           <thead>
             <tr>
               <th>Job Title</th>
@@ -273,7 +274,7 @@ const JobListingsTable = () => {
                   <td>
                     {/* <!-- Job Block --> */}
                     <div className="job-block">
-                      <div className="inner-box">
+                      <div>
                         <div>
                           {/* <span className="company-logo">
                             <img src={item.logo} alt="logo" />
@@ -364,7 +365,7 @@ const JobListingsTable = () => {
               ))}
             </tbody>
           }
-        </table>
+        </Table>
       </div>
       </div>
       {/* End table widget content */}

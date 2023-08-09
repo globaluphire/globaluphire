@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { Table } from "react-bootstrap";
 
 const addSearchFilters = {
     name: "",
@@ -442,7 +443,7 @@ const RejectedApplicationsWidgetContentBox = () => {
             {/* Start table widget content */}
             <div className="widget-content">
                 <div className="table-outer">
-                    <table className="default-table manage-job-table">
+                    <Table className="default-table manage-job-table">
                         <thead>
                             <tr>
                             <th>Name</th>
@@ -462,7 +463,7 @@ const RejectedApplicationsWidgetContentBox = () => {
                                         <td>
                                         {/* <!-- Job Block --> */}
                                         <div className="job-block">
-                                            <div className="inner-box">
+                                            <div>
                                                 {/* <span className="company-logo">
                                                 <img src={item.logo} alt="logo" />
                                                 </span> */}
@@ -542,7 +543,7 @@ const RejectedApplicationsWidgetContentBox = () => {
                                 ))}
                             </tbody>
                         }
-                    </table>
+                    </Table>
 
                     {/* Add Notes Modal Popup */}
                     <div

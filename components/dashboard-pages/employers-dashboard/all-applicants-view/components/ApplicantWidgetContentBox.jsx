@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
+import { Table } from "react-bootstrap";
 
 const ApplicantWidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
@@ -270,7 +271,7 @@ const ApplicantWidgetContentBox = () => {
             {fetchedAllApplicants.length == 0  && applicationStatusReferenceOptions != null ? <p style={{ fontSize: '1rem', fontWeight: '500' }}><center>No applicant applied to this job!</center></p>: 
             <div className="widget-content">
             <div className="table-outer">
-                <table className="default-table manage-job-table">
+                <Table className="default-table manage-job-table">
                 <thead>
                     <tr>
                     <th>Name</th>
@@ -289,7 +290,7 @@ const ApplicantWidgetContentBox = () => {
                         <td>
                         {/* <!-- Job Block --> */}
                         <div className="job-block">
-                            <div className="inner-box">
+                            <div>
                                 {/* <span className="company-logo">
                                 <img src={item.logo} alt="logo" />
                                 </span> */}
@@ -369,7 +370,7 @@ const ApplicantWidgetContentBox = () => {
                     </tr>
                     ))}
                 </tbody>
-                </table>
+                </Table>
 
                 {/* Add Notes Modal Popup */}
                 <div

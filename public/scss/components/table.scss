@@ -18,6 +18,10 @@ default table
   min-width: 700px;
 }
 
+.default-table tbody tr:hover {
+  background-color: #e8f4f8;
+}
+
 .default-table thead {
   background: #f5f7fc;
   border-radius: 8px;
