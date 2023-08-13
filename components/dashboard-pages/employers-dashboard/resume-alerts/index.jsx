@@ -27,8 +27,8 @@ const index = () => {
 
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <BreadCrumb title="Resume Alerts!" />
+        <div>
+          {/* <BreadCrumb title="Resume Alerts!" /> */}
           {/* breadCrumb */}
 
           <MenuToggler />
@@ -38,8 +38,7 @@ const index = () => {
             <div className="col-lg-12">
               <div className="ls-widget">
                 <div className="tabs-box">
-                  <div className="widget-title">
-                    <h4>My Packages</h4>
+                  <div className="widget-title1" style={{paddingTop:"20px"}}>
                   </div>
                   {/* End widget-title */}
 
