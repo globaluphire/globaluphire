@@ -230,7 +230,7 @@ const TopCardBlock = () => {
       icon: "la-file-invoice",
       countNumber: totalRejectedApplications,
       metaName: "Rejected",
-      link: "/employers-dashboard/Rejected-applications",
+      link: "/employers-dashboard/rejected-applications",
       uiClass: "ui-red",
     }
   ];
