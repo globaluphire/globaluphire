@@ -1,11 +1,11 @@
 module.exports = [
-  // {
-  //   id: 1,
-  //   name: "Dashboard",
-  //   icon: "la-home",
-  //   routePath: "/employers-dashboard/dashboard",
-  //   active: "active",
-  // },
+  {
+    id: 1,
+    name: "Dashboard",
+    icon: "la-home",
+    routePath: "/employers-dashboard/dashboard",
+    active: "active",
+  },
   // {
   //   id: 2,
   //   name: "Company Profile",

@@ -124,6 +124,8 @@ const WidgetContentBox = () => {
 
     const fetchedAllApplicantsView = async () => {
       try{
+        const localSearchFilters = localStorage.getItem("status")
+        
         // call reference to get applicantStatus options
         let { data, error: e } = await supabase
             .from('reference')
@@ -141,6 +143,15 @@ const WidgetContentBox = () => {
             .neq('status', 'Hired')
             .neq('status', 'Withdraw')
             .order('created_at',  { ascending: false });
+    
+        if (localSearchFilters) {
+            setSearchFilters((previousState) => ({ 
+                ...previousState,
+                status: localSearchFilters
+            }))
+            allApplicantsView = allApplicantsView.filter(i => i.status == localSearchFilters)
+            localStorage.removeItem("status")
+        }
 
         if (allApplicantsView) {
             allApplicantsView.forEach( i => i.created_at = dateFormat(i.created_at))
