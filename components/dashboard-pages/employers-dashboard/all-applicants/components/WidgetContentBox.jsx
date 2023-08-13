@@ -11,7 +11,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { Table } from "react-bootstrap";
+// import { Table } from "react-bootstrap";
+import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 
 const addSearchFilters = {
     name: "",
@@ -27,6 +28,7 @@ const WidgetContentBox = () => {
     const [noteText, setNoteText] = useState('');
     const [applicationId, setApplicationId] = useState('');
     const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+    const [tableData, setTableData] = useState({});
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
@@ -145,6 +147,13 @@ const WidgetContentBox = () => {
         if (allApplicantsView) {
             allApplicantsView.forEach( i => i.created_at = dateFormat(i.created_at))
             setFetchedAllApplicantsData(allApplicantsView)
+            const basicData = {
+                columns: Object.keys(allApplicantsView),
+                rows: Object.values(allApplicantsView),
+            }
+            console.log(basicData)
+        
+            setTableData(basicData)
         }
       } catch(e) {
         toast.error('System is unavailable.  Please try again later or contact tech support!', {
@@ -234,114 +243,6 @@ const WidgetContentBox = () => {
         setApplicationId('');
         
     }
-
-    // const Qualified = async (applicationId, status) => {
-    //     if (status != 'Qualified') {
-    //       const { data, error } = await supabase
-    //           .from('applications')
-    //           .update({ status: 'Qualified' })
-    //           .eq('application_id', applicationId)
-    
-    //       // open toast
-    //       toast.success('Applicant status marked as Qualified.  Please let Applicant know about your decision!', {
-    //         position: "bottom-right",
-    //         autoClose: false,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "colored",
-    //       });
-    
-    //       // fetching for refresh the data
-    //       fetchedAllApplicantsView();
-    //     } else {
-    //       // open toast
-    //       toast.error('Applicant status is already marked as Qualified!', {
-    //         position: "bottom-right",
-    //         autoClose: false,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "colored",
-    //       });
-    //     }
-    // }
-    
-    // const NotQualified = async (applicationId, status) => {
-    //     if (status != 'Not Qualified') {
-    //         const { data, error } = await supabase
-    //             .from('applications')
-    //             .update({ status: 'Not Qualified' })
-    //             .eq('application_id', applicationId)
-
-    //         // open toast
-    //         toast.success('Applicant status marked as Not Qualified.  Please let Applicant know about your decision!', {
-    //         position: "bottom-right",
-    //         autoClose: false,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "colored",
-    //         });
-
-    //         // fetching for refresh the data
-    //         fetchedAllApplicantsView();
-    //     } else {
-    //         // open toast
-    //         toast.error('Applicant status is already marked as Not Qualified!', {
-    //         position: "bottom-right",
-    //         autoClose: false,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "colored",
-    //         });
-    //     }
-    // }
-
-    // const ResetStatus = async (applicationId, status) => {
-    //     if (status != null) {
-    //         const { data, error } = await supabase
-    //             .from('applications')
-    //             .update({ status: null })
-    //             .eq('application_id', applicationId)
-
-    //         // open toast
-    //         toast.success('Applicant status reset successfully.', {
-    //             position: "bottom-right",
-    //             autoClose: false,
-    //             hideProgressBar: false,
-    //             closeOnClick: true,
-    //             pauseOnHover: true,
-    //             draggable: true,
-    //             progress: undefined,
-    //             theme: "colored",
-    //         });
-
-    //         // fetching for refresh the data
-    //         fetchedAllApplicantsView();
-    //     } else {
-    //         // open toast
-    //         toast.error('Applicant status is already reset!', {
-    //             position: "bottom-right",
-    //             autoClose: false,
-    //             hideProgressBar: false,
-    //             closeOnClick: true,
-    //             pauseOnHover: true,
-    //             draggable: true,
-    //             progress: undefined,
-    //             theme: "colored",
-    //         });
-    //     }
-    // }
 
     return (
         <div className="tabs-box">
@@ -448,8 +349,8 @@ const WidgetContentBox = () => {
             <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({fetchedAllApplicants.length}) Applicants Applied</div>
             <div className="widget-content">
                 <div className="table-outer">
-                    <Table className="default-table manage-job-table">
-                        <thead>
+                    <MDBTable maxHeight='460px' striped hover className="default-table manage-job-table">
+                        <MDBTableHead>
                             <tr>
                             <th>Name</th>
                             <th>Applied On</th>
@@ -459,9 +360,9 @@ const WidgetContentBox = () => {
                             <th>Notes</th>
                             <th>Actions</th>
                             </tr>
-                        </thead>
+                        </MDBTableHead>
                         {fetchedAllApplicants.length == 0 ? <tbody style={{ fontSize: '1.5rem', fontWeight: '500' }}><tr><td><b>No results found!</b></td></tr></tbody>: 
-                            <tbody>
+                            <MDBTableBody>
                                 {Array.from(fetchedAllApplicants).map((applicant) => (
                                     <tr key={applicant.application_id}>
                                         <td>
@@ -545,9 +446,9 @@ const WidgetContentBox = () => {
                                         </td>
                                     </tr>
                                 ))}
-                            </tbody>
+                            </MDBTableBody>
                         }
-                    </Table>
+                    </MDBTable>
 
                         {/* Add Notes Modal Popup */}
                         <div
