@@ -8,6 +8,11 @@ import { supabase } from "../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import axios from 'axios'
 
+const dateFormat = (val) => {
+  const date = new Date(val)
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+}
+
 const ApplyInstantView = ({ company }) => {
 
   const [firstName, setFirstName] = useState("");
@@ -171,6 +176,25 @@ const ApplyInstantView = ({ company }) => {
                 progress: undefined,
                 theme: "colored",
               });
+              
+              let { data:jobs, error } = await supabase
+                  .from('jobs')
+                  .select()
+                  .eq('job_id', jobId)
+
+              if (jobs) {
+                  await supabase
+                    .from('notification')
+                    .insert([{
+                            type: `New Candidate Applied`,
+                            job_id: jobs[0].job_id,
+                            user_id: `GUEST`,
+                            facility: jobs[0].facility_name,
+                            notification_text: `<b>${firstName + " " + lastName}</b> Applied in <b>${jobs[0].job_title}</b>`,
+                            created_at: dateFormat(new Date())
+                        }
+                    ]);
+              }
             }
           }
         } else {

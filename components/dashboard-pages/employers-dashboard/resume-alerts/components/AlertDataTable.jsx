@@ -152,6 +152,7 @@ const AlertDataTable = () => {
               <thead>
                 <tr>
                   <th>Type</th>
+                  <th>Facility</th>
                   <th>Notification</th>
                   <th>Created</th>
                   <th>Action</th>
@@ -161,26 +162,27 @@ const AlertDataTable = () => {
 
               <tbody>
               { isLoading &&
-          <tr>
-            <td colspan="4" align="center">
-            <div style={{ width: '100%', margin: "auto" ,textAlign:'center' }}>
-            <BallTriangle
-              height={100}
-              width={100}
-              radius={5}
-              color="#000"
-              ariaLabel="ball-triangle-loading"
-              wrapperClass={{}}
-              wrapperStyle={{justifyContent:'center'}}
-              visible={true}
-            />
-          </div>
-            </td>
-          </tr>
-        }
+                <tr>
+                  <td colspan="4" align="center">
+                  <div style={{ width: '100%', margin: "auto" ,textAlign:'center' }}>
+                  <BallTriangle
+                    height={100}
+                    width={100}
+                    radius={5}
+                    color="#000"
+                    ariaLabel="ball-triangle-loading"
+                    wrapperClass={{}}
+                    wrapperStyle={{justifyContent:'center'}}
+                    visible={true}
+                  />
+                </div>
+                  </td>
+                </tr>
+              }
                 {userData && userData.map((candidate) => (
                   <tr>
                     <td>{candidate.type}</td>
+                    <td>{candidate.facility}</td>
                     <td>
                     <div dangerouslySetInnerHTML={{ __html: candidate.notification_text}}></div>
                     

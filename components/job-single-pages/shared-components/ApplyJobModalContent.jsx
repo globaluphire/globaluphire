@@ -11,6 +11,11 @@ import { supabase } from "../../../config/supabaseClient";
 import axios from "axios";
 // import { v4 } from "uuid";
 
+const dateFormat = (val) => {
+  const date = new Date(val)
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+}
+
 const ApplyJobModalContent = ({company}) => {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -160,6 +165,19 @@ const ApplyJobModalContent = ({company}) => {
               // close popup
               document.getElementById('applyJobCloseButton').click();
 
+              if (company) {
+                  await supabase
+                    .from('notification')
+                    .insert([{
+                            type: `New Candidate Applied`,
+                            job_id: company.job_id,
+                            user_id: userId,
+                            facility: company.facility_name,
+                            notification_text: `<b>${user.name}</b> Applied in <b>${company.job_title}</b>`,
+                            created_at: dateFormat(new Date())
+                        }
+                    ]);
+              }
             }
           }
         }
