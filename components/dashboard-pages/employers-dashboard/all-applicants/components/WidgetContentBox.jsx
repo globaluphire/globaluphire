@@ -82,7 +82,7 @@ const WidgetContentBox = () => {
       const date = new Date(val)
       return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
     }
-  
+
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
@@ -246,114 +246,6 @@ const WidgetContentBox = () => {
         
     }
 
-    // const Qualified = async (applicationId, status) => {
-    //     if (status != 'Qualified') {
-    //       const { data, error } = await supabase
-    //           .from('applications')
-    //           .update({ status: 'Qualified' })
-    //           .eq('application_id', applicationId)
-    
-    //       // open toast
-    //       toast.success('Applicant status marked as Qualified.  Please let Applicant know about your decision!', {
-    //         position: "bottom-right",
-    //         autoClose: false,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "colored",
-    //       });
-    
-    //       // fetching for refresh the data
-    //       fetchedAllApplicantsView();
-    //     } else {
-    //       // open toast
-    //       toast.error('Applicant status is already marked as Qualified!', {
-    //         position: "bottom-right",
-    //         autoClose: false,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "colored",
-    //       });
-    //     }
-    // }
-    
-    // const NotQualified = async (applicationId, status) => {
-    //     if (status != 'Not Qualified') {
-    //         const { data, error } = await supabase
-    //             .from('applications')
-    //             .update({ status: 'Not Qualified' })
-    //             .eq('application_id', applicationId)
-
-    //         // open toast
-    //         toast.success('Applicant status marked as Not Qualified.  Please let Applicant know about your decision!', {
-    //         position: "bottom-right",
-    //         autoClose: false,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "colored",
-    //         });
-
-    //         // fetching for refresh the data
-    //         fetchedAllApplicantsView();
-    //     } else {
-    //         // open toast
-    //         toast.error('Applicant status is already marked as Not Qualified!', {
-    //         position: "bottom-right",
-    //         autoClose: false,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: true,
-    //         draggable: true,
-    //         progress: undefined,
-    //         theme: "colored",
-    //         });
-    //     }
-    // }
-
-    // const ResetStatus = async (applicationId, status) => {
-    //     if (status != null) {
-    //         const { data, error } = await supabase
-    //             .from('applications')
-    //             .update({ status: null })
-    //             .eq('application_id', applicationId)
-
-    //         // open toast
-    //         toast.success('Applicant status reset successfully.', {
-    //             position: "bottom-right",
-    //             autoClose: false,
-    //             hideProgressBar: false,
-    //             closeOnClick: true,
-    //             pauseOnHover: true,
-    //             draggable: true,
-    //             progress: undefined,
-    //             theme: "colored",
-    //         });
-
-    //         // fetching for refresh the data
-    //         fetchedAllApplicantsView();
-    //     } else {
-    //         // open toast
-    //         toast.error('Applicant status is already reset!', {
-    //             position: "bottom-right",
-    //             autoClose: false,
-    //             hideProgressBar: false,
-    //             closeOnClick: true,
-    //             pauseOnHover: true,
-    //             draggable: true,
-    //             progress: undefined,
-    //             theme: "colored",
-    //         });
-    //     }
-    // }
-
     return (
         <div className="tabs-box">
             <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
@@ -375,7 +267,12 @@ const WidgetContentBox = () => {
                                             ...previousState,
                                             name: e.target.value
                                         }))
-                                        }}
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findApplicant(searchFilters)
+                                        }
+                                    }}
                                     style={{ maxWidth: '300px' }}/>
                             </Form.Group>
                         </Col>
@@ -406,7 +303,12 @@ const WidgetContentBox = () => {
                                             ...previousState,
                                             jobTitle: e.target.value
                                         }))
-                                        }}
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findApplicant(searchFilters)
+                                        }
+                                    }}
                                     style={{ maxWidth: '300px' }}/>
                             </Form.Group>
                         </Col>
@@ -419,7 +321,7 @@ const WidgetContentBox = () => {
                                             ...previousState,
                                             status: e.target.value
                                         }))
-                                        }}
+                                    }}
                                     value={status}
                                     style={{ maxWidth: '300px' }}
                                 >

@@ -147,17 +147,17 @@ const UnpublishedJobListingsTable = () => {
   };
 
   // Search function
-  async function findJob () {
+  async function findJob ({ name, jobTitle, jobType }) {
     let { data, error } = await supabase
-    .from('manage_jobs_view')
-    .select()
-    .eq('status', 'Published')
-    .ilike('job_title', '%'+jobTitle+'%')
-    .ilike('job_type', '%'+jobType+'%')
-    .order('created_at',  { ascending: false });
+        .from('manage_jobs_view')
+        .select()
+        .eq('status', 'Unpublished')
+        .ilike('job_title', '%'+jobTitle+'%')
+        .ilike('job_type', '%'+jobType+'%')
+        .order('created_at',  { ascending: false });
 
     data.forEach( job => job.created_at = dateFormat(job.created_at))
-    setjobs(data) 
+    setjobs(data)
 
     if (facilitySingleSelections.length > 0) {
       setjobs(data.filter((job) => job.facility_name?.includes(facilitySingleSelections[0])))
@@ -201,7 +201,13 @@ const UnpublishedJobListingsTable = () => {
                                   ...previousState,
                                   jobTitle: e.target.value
                                 }))
-                              }}
+                          }}
+                          onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                  findJob(searchFilters)
+                                  console.log(jobTitle)
+                              }
+                          }}
                           style={{ maxWidth: '300px' }}/>
                   </Form.Group>
               </Col>
@@ -229,7 +235,7 @@ const UnpublishedJobListingsTable = () => {
                                 ...previousState,
                                 jobType: e.target.value
                             }))
-                            }}
+                        }}
                         value={jobType}
                         style={{ maxWidth: '300px' }}
                     >

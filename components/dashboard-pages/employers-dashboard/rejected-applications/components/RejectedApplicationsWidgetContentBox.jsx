@@ -358,7 +358,12 @@ const RejectedApplicationsWidgetContentBox = () => {
                                             ...previousState,
                                             name: e.target.value
                                         }))
-                                        }}
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findApplicant(searchFilters)
+                                        }
+                                    }}
                                     style={{ maxWidth: '300px' }}/>
                             </Form.Group>
                         </Col>
@@ -389,7 +394,12 @@ const RejectedApplicationsWidgetContentBox = () => {
                                             ...previousState,
                                             jobTitle: e.target.value
                                         }))
-                                        }}
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            findApplicant(searchFilters)
+                                        }
+                                    }}
                                     style={{ maxWidth: '300px' }}/>
                             </Form.Group>
                         </Col>
@@ -402,7 +412,7 @@ const RejectedApplicationsWidgetContentBox = () => {
                                             ...previousState,
                                             status: e.target.value
                                         }))
-                                        }}
+                                    }}
                                     value={status}
                                     style={{ maxWidth: '300px' }}
                                 >

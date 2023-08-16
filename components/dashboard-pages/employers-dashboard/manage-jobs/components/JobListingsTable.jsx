@@ -134,7 +134,7 @@ const JobListingsTable = () => {
   };
 
   // Search function
-  async function findJob () {
+  async function findJob ({ name, jobTitle, jobType }) {
     let { data, error } = await supabase
         .from('manage_jobs_view')
         .select()
@@ -142,7 +142,7 @@ const JobListingsTable = () => {
         .ilike('job_title', '%'+jobTitle+'%')
         .ilike('job_type', '%'+jobType+'%')
         .order('created_at',  { ascending: false });
-    
+
     data.forEach( job => job.created_at = dateFormat(job.created_at))
     setjobs(data) 
 
@@ -188,7 +188,12 @@ const JobListingsTable = () => {
                                   ...previousState,
                                   jobTitle: e.target.value
                                 }))
-                              }}
+                          }}
+                          onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                  findJob(searchFilters)
+                              }
+                          }}
                           style={{ maxWidth: '300px' }}/>
                   </Form.Group>
               </Col>
@@ -216,7 +221,7 @@ const JobListingsTable = () => {
                                 ...previousState,
                                 jobType: e.target.value
                             }))
-                            }}
+                        }}
                         value={jobType}
                         style={{ maxWidth: '300px' }}
                     >
