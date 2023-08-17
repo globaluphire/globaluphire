@@ -71,10 +71,7 @@ const TopCardBlock = () => {
      */
     let countTotalApplications = await supabase
       .from('applications')
-      .select('*', { count: 'exact', head: true })
-      .neq('status', 'Rejection')
-      .neq('status', 'Hired')
-      .neq('status', 'Withdraw')
+      .select()
       //.eq('user_id', user.id)
       //.is('deleted', null);
     //console.log("countTotalApplications", countTotalApplications);
