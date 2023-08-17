@@ -41,7 +41,7 @@ const HiredApplicationsWidgetContentBox = () => {
         "Royal Garden",
         "South Hills",
         "Umpqua Valley",
-        "Corvallis",
+        "Corvallis Manor",
         "Hillside Heights",
         "Hale Nani",
         "Eugene Home Office",
