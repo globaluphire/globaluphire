@@ -13,13 +13,13 @@ module.exports = [
   //   routePath: "/candidates-dashboard/my-profile",
   //   active: "",
   // },
-  // {
-  //   id: 3,
-  //   name: "My Resume",
-  //   icon: "la la-file-invoice",
-  //   routePath: "/candidates-dashboard/my-resume",
-  //   active: "",
-  // },
+  {
+    id: 3,
+    name: "My Resume",
+    icon: "la la-file-invoice",
+    routePath: "/candidates-dashboard/my-resume",
+    active: "",
+  },
   {
       id: 4,
       name: "Applied Jobs",
@@ -41,13 +41,13 @@ module.exports = [
   //     routePath: "/candidates-dashboard/short-listed-jobs",
   //     active: "",
   // },
-  // {
-  //     id: 7,
-  //     name: "CV manager",
-  //     icon: "la la-file-invoice",
-  //     routePath: "/candidates-dashboard/cv-manager",
-  //     active: "",
-  // },
+  {
+      id: 7,
+      name: "CV manager",
+      icon: "la la-file-invoice",
+      routePath: "/candidates-dashboard/cv-manager",
+      active: "",
+  },
   // {
   //     id: 8,
   //     name: "Packages",
