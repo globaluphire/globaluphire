@@ -21,21 +21,26 @@ const LocationBox = () => {
     const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
 
     const facilityNames = [
-      "Keizer",
-      "French Prairie",
-      "Green Valley",
-      "HearthStone",
-      "Highland House",
-      "Rose Haven",
-      "Royal Garden",
-      "South Hills",
-      "Umpqua Valley",
-      "Corvallis",
-      "HillSide Heights",
-      "Hale Nani",
-      "Eugene Home Office",
-      "Louisville Home Office",
+        "Keizer",
+        "French Prairie",
+        "Green Valley",
+        "HearthStone",
+        "Highland House",
+        "Rose Haven",
+        "Royal Garden",
+        "South Hills",
+        "Umpqua Valley",
+        "Corvallis",
+        "Hillside Heights",
+        "Hale Nani",
+        "Eugene Home Office",
+        "Louisville Home Office",
+        "Chateau Napoleon Caring",
+        "Cypress at Lake Providence",
+        "Lakeshore Manor Nursing and Rehab",
+        "St. Bernard Nursing & Rehab"
     ]
+    
 
     useEffect(() => {
         dispath(addFacility(facilitySingleSelections[0]))

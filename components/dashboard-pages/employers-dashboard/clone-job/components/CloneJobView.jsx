@@ -135,7 +135,11 @@ const CloneJobView = () => {
     "4062 Arleta Ave NE, Keizer,	OR 97303",
     "2350 Oakmont Way, Suite 204, Eugene, OR 97401",
     "1677 Pensacola Street, Honolulu, HI 96822",
-    "10503 Timberwood Cir, Suite 200, Louisville, KY 40223"
+    "10503 Timberwood Cir, Suite 200, Louisville, KY 40223",
+    "252 LA Hwy 402, Napoleonville, LA 70390",
+    "5976 Highway 65N, Lake Providence, LA 71254",
+    "1400 Lindberg Street, Slidell, LA 70458",
+    "4021 Cadillac Street, New Orleans, LA 70122"
   ]
 
   const facilityNames = [
@@ -149,10 +153,14 @@ const CloneJobView = () => {
     "South Hills",
     "Umpqua Valley",
     "Corvallis",
-    "HillSide Heights",
+    "Hillside Heights",
     "Hale Nani",
     "Eugene Home Office",
     "Louisville Home Office",
+    "Chateau Napoleon Caring",
+    "Cypress at Lake Providence",
+    "Lakeshore Manor Nursing and Rehab",
+    "St. Bernard Nursing & Rehab"
   ]
 
   useEffect(() => {

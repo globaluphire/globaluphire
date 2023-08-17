@@ -48,10 +48,14 @@ const SearchForm4 = () => {
     "South Hills",
     "Umpqua Valley",
     "Corvallis",
-    "HillSide Heights",
+    "Hillside Heights",
     "Hale Nani",
     "Eugene Home Office",
     "Louisville Home Office",
+    "Chateau Napoleon Caring",
+    "Cypress at Lake Providence",
+    "Lakeshore Manor Nursing and Rehab",
+    "St. Bernard Nursing & Rehab"
   ]
 
   useEffect(() => {
