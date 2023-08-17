@@ -1,13 +1,29 @@
 import Link from "next/link.js";
 import jobs from "../../../../../data/job-featured.js";
 import { supabase } from "../../../../../config/supabaseClient";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import { Table } from "react-bootstrap";
+import { Typeahead } from "react-bootstrap-typeahead";
+import Button from 'react-bootstrap/Button';
+
+const addSearchFilters = {
+  jobTitle: "",
+  jobType: "",
+  status: ""
+}
 
 const JobListingsTable = () => {
 
   const [applications, setApplications] = useState([]);
-  const [searchField, setSearchField] = useState('');
+
+  // for search filters
+  const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
+  const { jobTitle, jobType, status } = useMemo(() => searchFilters, [searchFilters])
+  const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
 
   const user = useSelector(state => state.candidate.user)
 
@@ -18,27 +34,62 @@ const JobListingsTable = () => {
 
   // clear all filters
   const clearAll = () => {
-    setSearchField('');
+    setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
     fetchApplications()
   };
 
-  async function findAppliedJob () {
+  const ViewCV = async (applicationId) => {
+    const { data, error } = await supabase
+          .from('candidate_view')
+          .select('*')
+          .eq('application_id', applicationId);
+
+    if (data) {
+        window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
+    }
+    if (error) {
+        toast.error('Error while retrieving CV.  Please try again later or contact tech support!', {
+            position: "bottom-right",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
+    }
+}
+
+  async function findAppliedJob ({ jobTitle, jobType, status }) {
 
     let { data, error } = await supabase
-        .from('applicants_view')
+        .from('candidate_view')
         .select()
         .eq('user_id', user.id)
+        .ilike('job_title', '%'+jobTitle+'%')
+        .ilike('job_type', '%'+jobType+'%')
+        .ilike('status', '%'+status+'%')
         .order('created_at',  { ascending: false });
 
         if (data) {
           data.forEach( job => job.created_at = dateFormat(job.created_at))
-          setApplications(data.filter((job) => job.job_title.toLowerCase().includes(searchField.toLowerCase())))
+          setApplications(data)
         }
   };
 
   const fetchApplications = async () => {
+    // call reference to get applicantStatus options
+    let { data, error: e } = await supabase
+        .from('reference')
+        .select("*")
+        .eq('ref_nm',  'applicantStatus');
+    if (data) {
+      setApplicationStatusReferenceOptions(data)
+    }
+
     let { data: applications, error } = await supabase
-      .from('applicants_view')
+      .from('candidate_view')
       .select('*')
       .eq('user_id', user.id)
       .order('created_at',  { ascending: false });
@@ -55,84 +106,120 @@ const JobListingsTable = () => {
   
   return (
       <div className="tabs-box">
-        <div className="widget-title">
-          <h4>My Applied Jobs</h4>
-
-          {applications.length != 0 ?
-            <div className="chosen-outer">
-              {/* <select className="chosen-single form-select chosen-container"> */}
-                {/* <option>All Status</option> */}
-                {/* <option>Last 12 Months</option> */}
-                {/* <option>Last 16 Months</option> */}
-                {/* <option>Last 24 Months</option> */}
-                {/* <option>Last 5 year</option> */}
-              {/* </select> */}
-
-              {/* TODO: add search filters */}
-              <input
-                  className="chosen-single form-input chosen-container mx-3"
-                  type="text"
-                  name="globaluphire-job_title"
-                  placeholder="Search by Job Title"
-                  value={searchField}
-                  onChange={(e) => {
-                    setSearchField(e.target.value);
-                  }}
-                  style={{ minWidth: '450px'}}
-                />
-    {/*           
-              <select
-                className="chosen-single form-select chosen-container mx-3"
-                onChange={(e) => {
-                  setJobStatus(e.target.value)
-                }}
-              >
-                <option>Status</option>
-                <option>Published</option>
-                <option>Unpublished</option>
-              </select> */}
-
-              <button
-                onClick={findAppliedJob}
-                className="btn btn-primary text-nowrap m-1"
-                style= {{ minHeight: '43px' }}
-              >
-                Search
-              </button>
-              <button
-                onClick={clearAll}
-                className="btn btn-danger text-nowrap m-1"
-                style= {{ minHeight: '43px' }}
-              >
-                Clear
-              </button>
-            </div>
-          : '' }
+        <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
+            <b>My Applied Jobs!</b>
         </div>
+        { applicationStatusReferenceOptions != null ?
+          <Form>
+            <Form.Label className="optional" style={{ marginLeft: '32px', letterSpacing: '2px', fontSize: '12px' }}>SEARCH BY</Form.Label>
+            <Row className="mx-1" md={4}>
+                <Col>
+                    <Form.Group className="mb-3 mx-3">
+                        <Form.Label className="chosen-single form-input chosen-container">Job Title</Form.Label>
+                        <Form.Control
+                            className="chosen-single form-input chosen-container"
+                            type="text"
+                            value={jobTitle}
+                            onChange={(e) => {
+                                setSearchFilters((previousState) => ({ 
+                                    ...previousState,
+                                    jobTitle: e.target.value
+                                  }))
+                                }}
+                            style={{ maxWidth: '300px' }}/>
+                    </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group className="mb-3 mx-3">
+                      <Form.Label className="chosen-single form-input chosen-container">Applicant Status</Form.Label>
+                      <Form.Select className="chosen-single form-select"
+                          onChange={(e) => {
+                              setSearchFilters((previousState) => ({ 
+                                  ...previousState,
+                                  status: e.target.value
+                              }))
+                          }}
+                          value={status}
+                          style={{ maxWidth: '300px' }}
+                      >
+                          <option value=''></option>
+                          {applicationStatusReferenceOptions.map((option) => (
+                              <option value={option.ref_dspl}>{option.ref_dspl}</option>
+                          ))}
+                      </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group className="mb-3 mx-3">
+                      <Form.Label className="chosen-single form-input chosen-container">Job Type</Form.Label>
+                      <Form.Select className="chosen-single form-select"
+                          onChange={(e) => {
+                              setSearchFilters((previousState) => ({ 
+                                  ...previousState,
+                                  jobType: e.target.value
+                              }))
+                              }}
+                          value={jobType}
+                          style={{ maxWidth: '300px' }}
+                      >
+                          <option value=''></option>
+                          <option value='Full Time'>Full Time</option>
+                          <option value='Part Time'>Part Time</option>
+                          <option value='Both'>Both</option>
+                          <option value='Per Diem'>Per Diem</option>
+                      </Form.Select>
+                  </Form.Group>
+                </Col>
+            </Row>
+            <Row className="mx-3">
+                <Col>
+                    <Form.Group className="chosen-single form-input chosen-container mb-3">
+                        <Button variant="primary"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                findAppliedJob(searchFilters);
+                            }}
+                            className="btn btn-submit btn-sm text-nowrap m-1"
+                            >
+                            Filter
+                        </Button>
+                        <Button variant="primary" onClick={clearAll}
+                            className="btn btn-secondary btn-sm text-nowrap mx-2"
+                            style= {{ minHeight: '40px', padding: '0 20px' }}>
+                            Clear
+                        </Button>
+                    </Form.Group>
+                </Col>
+            </Row>
+          </Form> : ''
+        }
+
+        <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({applications.length}) Jobs Applied</div>
 
         {/* Start table widget content */}
-        {applications.length == 0 ? <p style={{ fontSize: '1rem', fontWeight: '500' }}><center>You have not applied to any jobs yet!</center></p> : 
-          <div className="widget-content">
+        <div className="widget-content">
+          <div className="table-outer">
             <div className="table-outer">
-              <div className="table-outer">
-                <table className="default-table manage-job-table">
-                  <thead>
-                    <tr>
-                      <th>Job Title</th>
-                      <th>Date Applied</th>
-                      <th>Status</th>
-                      {/* <th>Action</th> */}
-                    </tr>
-                  </thead>
+              <table className="default-table manage-job-table">
+                <thead>
+                  <tr>
+                    <th>Job Title</th>
+                    <th>Location</th>
+                    <th>Job Type</th>
+                    <th>Date Applied</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                    {/* <th>Action</th> */}
+                  </tr>
+                </thead>
 
+                {applications.length == 0 ? <tbody style={{ fontSize: '1.5rem', fontWeight: '500' }}><tr><td><b>No Applied Job(s)!</b></td></tr></tbody>: 
                   <tbody>
-                    {applications.slice(0, 4).map((item) => (
+                    {applications.map((item) => (
                       <tr key={item.application_id}>
                         <td>
                           {/* <!-- Job Block --> */}
                           <div className="job-block">
-                            <div className="inner-box">
-                              <div>
                                 {/* <span className="company-logo">
                                   <img src={item.logo} alt="logo" />
                                 </span> */}
@@ -141,32 +228,10 @@ const JobListingsTable = () => {
                                     {item.job_title}
                                   </Link>
                                 </h4>
-                                <ul className="job-info">
-                                  { item?.job_type ?
-                                        <li>
-                                          <span className="icon flaticon-clock-3"></span>
-                                          {item?.job_type}
-                                        </li>
-                                        : '' }
-                                    { item?.job_address ?
-                                        <li>
-                                          <span className="icon flaticon-map-locator"></span>
-                                          {item?.job_address}
-                                        </li>
-                                        : '' }
-                                    {/* location info */}
-                                    { item?.salary ?
-                                        <li>
-                                          <span className="icon flaticon-money"></span>{" "}
-                                          ${item?.salary} {item?.salary_rate}
-                                        </li>
-                                        : '' }
-                                    {/* salary info */}
-                                </ul>
-                              </div>
-                            </div>
                           </div>
                         </td>
+                        <td>{item.job_comp_add}</td>
+                        <td>{item.job_type}</td>
                         <td>{ item.created_at }</td>
                         { item.status == "Qualified" ?
                             <td className="status">{ item.status }</td>
@@ -176,30 +241,30 @@ const JobListingsTable = () => {
                             <td className="pending">Pending</td>
                             : <td className="pending">{ item.status }</td>
                         }
-                        {/* <td>
+                        <td>
                           <div className="option-box">
                             <ul className="option-list">
-                              <li>
-                                <button data-text="View Aplication">
-                                  <span className="la la-eye"></span>
-                                </button>
+                              <li onClick = { () => { ViewCV(item.application_id) }}>
+                                  <button data-text="View/Download CV">
+                                      <span className="la la-file-download"></span>
+                                  </button>
                               </li>
-                              <li>
+                              {/* <li>
                                 <button data-text="Delete Aplication">
                                   <span className="la la-trash"></span>
                                 </button>
-                              </li>
+                              </li> */}
                             </ul>
                           </div>
-                        </td> */}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
-                </table>
-              </div>
+                }
+              </table>
             </div>
           </div>
-        }
+        </div>
       </div>
   );
 };
