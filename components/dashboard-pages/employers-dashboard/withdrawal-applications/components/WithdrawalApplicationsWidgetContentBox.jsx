@@ -317,9 +317,7 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                         <td>
                                             <select className="chosen-single form-select" 
                                                 value={applicant.status}
-                                                onChange={(e) => {
-                                                    updateApplicationStatus(e.target.value, applicant.application_id)
-                                                }}>
+                                                disabled>
                                                 {applicationStatusReferenceOptions.map((option) => (
                                                     <option value={option.ref_dspl}>{option.ref_dspl}</option>
                                                 ))}

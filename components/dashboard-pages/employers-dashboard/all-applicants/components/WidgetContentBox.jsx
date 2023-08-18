@@ -54,6 +54,10 @@ const WidgetContentBox = () => {
             .ilike('status', '%'+status+'%')
             .order('created_at',  { ascending: false });
 
+        if (facility) {
+            data = data.filter(i => i.facility_name == facility)
+        }
+
         if(data) {
             data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
             setFetchedAllApplicantsData(data)
