@@ -11,73 +11,26 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Table } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 const addSearchFilters = {
     name: "",
-    jobTitle: "",
-    status: ""
+    jobTitle: ""
   }
 
 const HiredApplicationsWidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
-    const [searchField, setSearchField] = useState('');
     const [applicationStatus, setApplicationStatus] = useState('');
     const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
     const [noteText, setNoteText] = useState('');
     const [applicationId, setApplicationId] = useState('');
-    const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
     const { name, jobTitle, status } = useMemo(() => searchFilters, [searchFilters])
 
-    const facilityNames = [
-        "Keizer",
-        "French Prairie",
-        "Green Valley",
-        "HearthStone",
-        "Highland House",
-        "Rose Haven",
-        "Royal Garden",
-        "South Hills",
-        "Umpqua Valley",
-        "Corvallis Manor",
-        "Hillside Heights",
-        "Hale Nani",
-        "Eugene Home Office",
-        "Louisville Home Office",
-        "Chateau Napoleon Caring",
-        "Cypress at Lake Providence",
-        "Lakeshore Manor Nursing and Rehab",
-        "St. Bernard Nursing & Rehab"
-    ]
-    
-    async function updateApplicationStatus (applicationStatus, applicationId) {
-        // save updated applicant status
-        const { data1, error1 } = await supabase
-            .from('applications')
-            .update({ status: applicationStatus })
-            .eq('application_id', applicationId)
-
-        // this will prevent the page to keep filtered if have any search filters set
-        let { data, error } = await supabase
-            .from('applicants_view')
-            .select("*")
-            .eq('status', 'Hired')
-            .ilike('name', '%'+name+'%')
-            .ilike('job_title', '%'+jobTitle+'%')
-            .ilike('status', '%'+status+'%')
-            .order('created_at',  { ascending: false });
-
-        if(data) {
-            data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-            if (facilitySingleSelections.length > 0) {
-                setFetchedAllApplicantsData(data.filter((applicant) => applicant.facility_name?.includes(facilitySingleSelections[0])))
-            } else {
-                setFetchedAllApplicantsData(data)
-            }
-        }
-    }
+    // global states
+    const facility = useSelector(state => state.employer.facility.payload)
 
     const dateFormat = (val) => {
       const date = new Date(val)
@@ -87,8 +40,7 @@ const HiredApplicationsWidgetContentBox = () => {
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        setFacilitySingleSelections([])
-        fetchedAllApplicantsView()
+        fetchedAllApplicantsView({name: "", jobTitle: ""})
     };
 
     async function findApplicant () {
@@ -108,20 +60,19 @@ const HiredApplicationsWidgetContentBox = () => {
             .eq('status', 'Hired')
             .ilike('name', '%'+name+'%')
             .ilike('job_title', '%'+jobTitle+'%')
-            .ilike('status', '%'+status+'%')
             .order('created_at',  { ascending: false });
-
+            
+        if (facility) {
+            data = data.filter(i => i.facility_name == facility)
+        }
+    
         if(data) {
             data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-            if (facilitySingleSelections.length > 0) {
-                setFetchedAllApplicantsData(data.filter((applicant) => applicant.facility_name?.includes(facilitySingleSelections[0])))
-            } else {
-                setFetchedAllApplicantsData(data)
-            }
+            setFetchedAllApplicantsData(data)
         }
     };
 
-    const fetchedAllApplicantsView = async () => {
+    async function fetchedAllApplicantsView ({name, jobTitle}) {
       try{
         // call reference to get applicantStatus options
         let { data, error: e } = await supabase
@@ -137,7 +88,13 @@ const HiredApplicationsWidgetContentBox = () => {
             .from('applicants_view')
             .select("*")
             .eq('status', 'Hired')
+            .ilike('name', '%'+name+'%')
+            .ilike('job_title', '%'+jobTitle+'%')
             .order('created_at',  { ascending: false });
+
+        if (facility) {
+            allApplicantsView = allApplicantsView.filter(i => i.facility_name == facility)
+        }
 
         if (allApplicantsView) {
             allApplicantsView.forEach( i => i.created_at = dateFormat(i.created_at))
@@ -159,8 +116,13 @@ const HiredApplicationsWidgetContentBox = () => {
     };
   
     useEffect(() => {
-      fetchedAllApplicantsView()
-    }, []);
+      fetchedAllApplicantsView(searchFilters)
+      if (facility) {
+        localStorage.setItem("facility", facility);
+      } else {
+        localStorage.setItem("facility", '');
+      }
+    }, [facility]);
 
 
     const setNoteData = async (applicationId) => {
@@ -234,21 +196,6 @@ const HiredApplicationsWidgetContentBox = () => {
                         </Col>
                         <Col>
                             <Form.Group className="mb-3 mx-3">
-                                <Form.Label className="chosen-single form-input chosen-container">Facility Name</Form.Label>
-                                <Typeahead
-                                    onChange={setFacilitySingleSelections}
-                                    id="facilityName"
-                                    className="chosen-single form-input chosen-container"
-                                    placeholder="select"
-                                    options={facilityNames}
-                                    selected={facilitySingleSelections}
-                                    style={{ maxWidth: '300px' }}
-                                    required
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group className="mb-3 mx-3">
                                 <Form.Label className="chosen-single form-input chosen-container">Job Title</Form.Label>
                                 <Form.Control
                                     className="chosen-single form-input chosen-container"
@@ -266,26 +213,6 @@ const HiredApplicationsWidgetContentBox = () => {
                                         }
                                     }}
                                     style={{ maxWidth: '300px' }}/>
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group className="mb-3 mx-3">
-                                <Form.Label className="chosen-single form-input chosen-container">Applicant Status</Form.Label>
-                                <Form.Select className="chosen-single form-select"
-                                    onChange={(e) => {
-                                        setSearchFilters((previousState) => ({ 
-                                            ...previousState,
-                                            status: e.target.value
-                                        }))
-                                        }}
-                                    value={status}
-                                    style={{ maxWidth: '300px' }}
-                                >
-                                    <option value=''></option>
-                                    {applicationStatusReferenceOptions.map((option) => (
-                                        <option value={option.ref_dspl}>{option.ref_dspl}</option>
-                                    ))}
-                                </Form.Select>
                             </Form.Group>
                         </Col>
                     </Row>
@@ -363,9 +290,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                         <td>
                                             <select className="chosen-single form-select" 
                                                 value={applicant.status}
-                                                onChange={(e) => {
-                                                    updateApplicationStatus(e.target.value, applicant.application_id)
-                                                }} disabled>
+                                                disabled>
                                                 {applicationStatusReferenceOptions.map((option) => (
                                                     <option value={option.ref_dspl}>{option.ref_dspl}</option>
                                                 ))}

@@ -10,7 +10,10 @@ import Link from "next/link";
 
 const TopCardBlock = () => {
 
+  // global states
+  const facility = useSelector(state => state.employer.facility.payload)
   const user = useSelector(state => state.candidate.user);
+
   const [isLoading, setIsLoading] = useState(false);
 
   // states for Jobs
@@ -33,106 +36,194 @@ const TopCardBlock = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+    if (facility) {
+      localStorage.setItem("facility", facility);
+    } else {
+      localStorage.setItem("facility", '');
+    }
+  }, [facility]);
 
   const fetchDashboardData = async () => {
     setIsLoading(true);
-    
-    // fetch data for Jobs
-    let countTotalPostedJobs = await supabase
-      .from('jobs')
-      .select('*', { count: 'exact', head: true })
-      //.eq('user_id', user.id)
-    if (countTotalPostedJobs.count > 0) {
-      setTotalPostedJobs(countTotalPostedJobs.count);
-    }
 
-    let countTotalPublishedJobs = await supabase
-      .from('jobs')
-      .select('*', { count: 'exact', head: true })
-      //.eq('user_id', user.id)
-      .eq('status', 'Published');
-    if (countTotalPublishedJobs.count > 0) {
-      setTotalPublishedJobs(countTotalPublishedJobs.count);
-    }
+    if (facility) {
+      // fetch data for Jobs
+      let countTotalPostedJobs = await supabase
+        .from('jobs')
+        .select('*', { count: 'exact', head: true })
+        .eq('facility_name', facility)
+        //.eq('user_id', user.id)
+        setTotalPostedJobs(countTotalPostedJobs.count);
 
-    let countTotalUnpublishedJobs = await supabase
-      .from('jobs')
-      .select('*', { count: 'exact', head: true })
-      //.eq('user_id', user.id)
-      .eq('status', 'Unpublished');
-    if (countTotalUnpublishedJobs.count > 0) {
-      setTotalUnpublishedJobs(countTotalUnpublishedJobs.count);
-    }
-    
+      let countTotalPublishedJobs = await supabase
+        .from('jobs')
+        .select('*', { count: 'exact', head: true })
+        .eq('facility_name', facility)
+        //.eq('user_id', user.id)
+        .eq('status', 'Published');
+        setTotalPublishedJobs(countTotalPublishedJobs.count);
 
-    /**
-     * fetch data for Applications
-     */
-    let countTotalApplications = await supabase
-      .from('applications')
-      .select('*', { count: 'exact', head: true })
-      //.eq('user_id', user.id)
-      //.is('deleted', null);
-    //console.log("countTotalApplications", countTotalApplications);
-    if (countTotalApplications.count > 0) {
-      setTotalApplications(countTotalApplications.count);
-    }
+      let countTotalUnpublishedJobs = await supabase
+        .from('jobs')
+        .select('*', { count: 'exact', head: true })
+        .eq('facility_name', facility)
+        //.eq('user_id', user.id)
+        .eq('status', 'Unpublished');
+        setTotalUnpublishedJobs(countTotalUnpublishedJobs.count);
+      
 
-    /**
-     * fetch data for New Applications
-     */
-    let countTotalNewApplications = await supabase
-      .from('applications')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'New')
-      //.eq('user_id', user.id)
-      //.is('deleted', null);
-    //console.log("countTotalApplications", countTotalApplications);
-    if (countTotalNewApplications.count > 0) {
-      setTotalNewApplications(countTotalNewApplications.count);
-    }
+      /**
+       * fetch data for Applications
+       */
+      let countTotalApplications = await supabase
+        .from('applicants_view')
+        .select('*', { count: 'exact', head: true })
+        .eq('facility_name', facility)
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+        setTotalApplications(countTotalApplications.count);
 
-    /**
-     * fetch data for Applications
-     */
-    let countTotalHiredApplications = await supabase
-      .from('applications')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'Hired')
-      //.eq('user_id', user.id)
-      //.is('deleted', null);
-    //console.log("countTotalApplications", countTotalApplications);
-    if (countTotalHiredApplications.count > 0) {
-      setTotalHiredApplications(countTotalHiredApplications.count);
-    }
+      /**
+       * fetch data for New Applications
+       */
+      let countTotalNewApplications = await supabase
+        .from('applicants_view')
+        .select('*', { count: 'exact', head: true })
+        .eq('facility_name', facility)
+        .eq('status', 'New')
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+        setTotalNewApplications(countTotalNewApplications.count);
 
-    /**
-     * fetch data for Applications
-     */
-    let countTotalWithrawedApplications = await supabase
-      .from('applications')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'Withdraw')
-      //.eq('user_id', user.id)
-      //.is('deleted', null);
-    //console.log("countTotalApplications", countTotalApplications);
-    if (countTotalWithrawedApplications.count > 0) {
-      setTotalWithdrawedApplications(countTotalWithrawedApplications.count);
-    }
+      /**
+       * fetch data for Applications
+       */
+      let countTotalHiredApplications = await supabase
+        .from('applicants_view')
+        .select('*', { count: 'exact', head: true })
+        .eq('facility_name', facility)
+        .eq('status', 'Hired')
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+        setTotalHiredApplications(countTotalHiredApplications.count);
 
-    // fetch data for Applications
-    let countTotalRejectedApplications = await supabase
-      .from('applications')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'Rejection')
-      //.eq('user_id', user.id)
-      //.is('deleted', null);
-    //console.log("countTotalApplications", countTotalApplications);
-    if (countTotalRejectedApplications.count > 0) {
-      setTotalRejectedApplications(countTotalRejectedApplications.count);
-    }
+      /**
+       * fetch data for Applications
+       */
+      let countTotalWithrawedApplications = await supabase
+        .from('applicants_view')
+        .select('*', { count: 'exact', head: true })
+        .eq('facility_name', facility)
+        .eq('status', 'Withdraw')
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+        setTotalWithdrawedApplications(countTotalWithrawedApplications.count);
 
+      // fetch data for Applications
+      let countTotalRejectedApplications = await supabase
+        .from('applicants_view')
+        .select('*', { count: 'exact', head: true })
+        .eq('facility_name', facility)
+        .eq('status', 'Rejection')
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+        setTotalRejectedApplications(countTotalRejectedApplications.count);
+    } else {
+
+      // fetch data for Jobs
+      let countTotalPostedJobs = await supabase
+        .from('jobs')
+        .select('*', { count: 'exact', head: true })
+        //.eq('user_id', user.id)
+        setTotalPostedJobs(countTotalPostedJobs.count);
+
+      let countTotalPublishedJobs = await supabase
+        .from('jobs')
+        .select('*', { count: 'exact', head: true })
+        //.eq('user_id', user.id)
+        .eq('status', 'Published');
+        setTotalPublishedJobs(countTotalPublishedJobs.count);
+
+      let countTotalUnpublishedJobs = await supabase
+        .from('jobs')
+        .select('*', { count: 'exact', head: true })
+        //.eq('user_id', user.id)
+        .eq('status', 'Unpublished');
+        setTotalUnpublishedJobs(countTotalUnpublishedJobs.count);
+      
+
+      /**
+       * fetch data for Applications
+       */
+      let countTotalApplications = await supabase
+        .from('applications')
+        .select('*', { count: 'exact', head: true })
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+      if (countTotalApplications.count > 0) {
+        setTotalApplications(countTotalApplications.count);
+      }
+
+      /**
+       * fetch data for New Applications
+       */
+      let countTotalNewApplications = await supabase
+        .from('applications')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'New')
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+      if (countTotalNewApplications.count > 0) {
+        setTotalNewApplications(countTotalNewApplications.count);
+      }
+
+      /**
+       * fetch data for Applications
+       */
+      let countTotalHiredApplications = await supabase
+        .from('applications')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'Hired')
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+      if (countTotalHiredApplications.count > 0) {
+        setTotalHiredApplications(countTotalHiredApplications.count);
+      }
+
+      /**
+       * fetch data for Applications
+       */
+      let countTotalWithrawedApplications = await supabase
+        .from('applications')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'Withdraw')
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+      if (countTotalWithrawedApplications.count > 0) {
+        setTotalWithdrawedApplications(countTotalWithrawedApplications.count);
+      }
+
+      // fetch data for Applications
+      let countTotalRejectedApplications = await supabase
+        .from('applications')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'Rejection')
+        //.eq('user_id', user.id)
+        //.is('deleted', null);
+      //console.log("countTotalApplications", countTotalApplications);
+      if (countTotalRejectedApplications.count > 0) {
+        setTotalRejectedApplications(countTotalRejectedApplications.count);
+      }
+    }
 
     // fetch data for Messages
     // let total_unread = 0;

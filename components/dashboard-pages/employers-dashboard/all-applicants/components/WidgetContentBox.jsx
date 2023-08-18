@@ -12,6 +12,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Table } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
 
 const addSearchFilters = {
     name: "",
@@ -26,33 +27,14 @@ const WidgetContentBox = () => {
     const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
     const [noteText, setNoteText] = useState('');
     const [applicationId, setApplicationId] = useState('');
-    const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
     const { name, jobTitle, status } = useMemo(() => searchFilters, [searchFilters])
 
-    const facilityNames = [
-        "Keizer",
-        "French Prairie",
-        "Green Valley",
-        "HearthStone",
-        "Highland House",
-        "Rose Haven",
-        "Royal Garden",
-        "South Hills",
-        "Umpqua Valley",
-        "Corvallis Manor",
-        "Hillside Heights",
-        "Hale Nani",
-        "Eugene Home Office",
-        "Louisville Home Office",
-        "Chateau Napoleon Caring",
-        "Cypress at Lake Providence",
-        "Lakeshore Manor Nursing and Rehab",
-        "St. Bernard Nursing & Rehab"
-    ]
-    
+    // global states
+    const facility = useSelector(state => state.employer.facility.payload)
+
     async function updateApplicationStatus (applicationStatus, applicationId) {
         // save updated applicant status
         const { data1, error1 } = await supabase
@@ -74,11 +56,7 @@ const WidgetContentBox = () => {
 
         if(data) {
             data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-            if (facilitySingleSelections.length > 0) {
-                setFetchedAllApplicantsData(data.filter((applicant) => applicant.facility_name?.includes(facilitySingleSelections[0])))
-            } else {
-                setFetchedAllApplicantsData(data)
-            }
+            setFetchedAllApplicantsData(data)
         }
     }
 
@@ -90,21 +68,10 @@ const WidgetContentBox = () => {
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        setFacilitySingleSelections([])
-        fetchedAllApplicantsView()
+        fetchedAllApplicantsView({name: "", jobTitle: "", status: ""})
     };
 
     async function findApplicant ({ name, jobTitle, status }) {
-        // call reference to get applicantStatus options
-        let { data: refData, error: e } = await supabase
-            .from('reference')
-            .select("*")
-            .eq('ref_nm',  'applicantStatus');
-
-        if (refData) {
-            setApplicationStatusReferenceOptions(refData)
-        }
-    
         let { data, error } = await supabase
             .from('applicants_view')
             .select("*")
@@ -118,18 +85,19 @@ const WidgetContentBox = () => {
 
         if(data) {
             data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-            if (facilitySingleSelections.length > 0) {
-                setFetchedAllApplicantsData(data.filter((applicant) => applicant.facility_name?.includes(facilitySingleSelections[0])))
-            } else {
-                setFetchedAllApplicantsData(data)
+
+            if (facility) {
+                data = data.filter(i => i.facility_name == facility)
             }
+
+            setFetchedAllApplicantsData(data)
         }
     };
 
-    const fetchedAllApplicantsView = async () => {
+    async function fetchedAllApplicantsView ({ name, jobTitle, status }) {
       try{
         const localSearchFilters = localStorage.getItem("status")
-        
+
         // call reference to get applicantStatus options
         let { data, error: e } = await supabase
             .from('reference')
@@ -146,6 +114,9 @@ const WidgetContentBox = () => {
             .neq('status', 'Rejection')
             .neq('status', 'Hired')
             .neq('status', 'Withdraw')
+            .ilike('name', '%'+name+'%')
+            .ilike('job_title', '%'+jobTitle+'%')
+            .ilike('status', '%'+status+'%')
             .order('created_at',  { ascending: false });
     
         if (localSearchFilters) {
@@ -155,6 +126,10 @@ const WidgetContentBox = () => {
             }))
             allApplicantsView = allApplicantsView.filter(i => i.status == localSearchFilters)
             localStorage.removeItem("status")
+        }
+
+        if (facility) {
+            allApplicantsView = allApplicantsView.filter(i => i.facility_name == facility)
         }
 
         if (allApplicantsView) {
@@ -177,8 +152,13 @@ const WidgetContentBox = () => {
     };
   
     useEffect(() => {
-      fetchedAllApplicantsView()
-    }, []);
+      fetchedAllApplicantsView(searchFilters)
+      if (facility) {
+        localStorage.setItem("facility", facility);
+      } else {
+        localStorage.setItem("facility", '');
+      }
+    }, [facility]);
 
 
     const setNoteData = async (applicationId) => {
@@ -278,21 +258,6 @@ const WidgetContentBox = () => {
                                         }
                                     }}
                                     style={{ maxWidth: '300px' }}/>
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group className="mb-3 mx-3">
-                                <Form.Label className="chosen-single form-input chosen-container">Facility Name</Form.Label>
-                                <Typeahead
-                                    onChange={setFacilitySingleSelections}
-                                    id="facilityName"
-                                    className="chosen-single form-input chosen-container"
-                                    placeholder="select"
-                                    options={facilityNames}
-                                    selected={facilitySingleSelections}
-                                    style={{ maxWidth: '300px' }}
-                                    required
-                                />
                             </Form.Group>
                         </Col>
                         <Col>

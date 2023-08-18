@@ -22,48 +22,17 @@ const addSearchFilters = {
 
 const UnpublishedJobListingsTable = () => {
   const [jobs, setjobs] = useState([]);
-  const [searchField, setSearchField] = useState('');
-  const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
 
   // for search filters
   const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
-  const { name, jobTitle, jobType } = useMemo(() => searchFilters, [searchFilters])
+  const { jobTitle, jobType } = useMemo(() => searchFilters, [searchFilters])
 
   //const [jobStatus, setJobStatus] = useState('');
   const user = useSelector(state => state.candidate.user)
   const router = useRouter();
 
-  // const fetchPost = async () => {
-  //   const userJoblistQuery  = query(collection(db, "jobs"), where("user", "==", user.id))
-  //   await getDocs(userJoblistQuery).then((querySnapshot) => {
-  //     const newData = querySnapshot.docs.map((doc) => ({
-  //       ...doc.data(),
-  //       id: doc.id,
-  //     }));
-  //     setjobs(newData);
-  //   });
-  // };
-
-  const facilityNames = [
-    "Keizer",
-    "French Prairie",
-    "Green Valley",
-    "HearthStone",
-    "Highland House",
-    "Rose Haven",
-    "Royal Garden",
-    "South Hills",
-    "Umpqua Valley",
-    "Corvallis Manor",
-    "Hillside Heights",
-    "Hale Nani",
-    "Eugene Home Office",
-    "Louisville Home Office",
-    "Chateau Napoleon Caring",
-    "Cypress at Lake Providence",
-    "Lakeshore Manor Nursing and Rehab",
-    "St. Bernard Nursing & Rehab"
-  ]
+  // global states
+  const facility = useSelector(state => state.employer.facility.payload)
 
   const dateFormat = (val) => {
     const date = new Date(val)
@@ -147,12 +116,11 @@ const UnpublishedJobListingsTable = () => {
   // clear all filters
   const clearAll = () => {
     setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-    setFacilitySingleSelections([])
-    fetchPost()
+    fetchPost({jobTitle: "", jobType: ""})
   };
 
   // Search function
-  async function findJob ({ name, jobTitle, jobType }) {
+  async function findJob ({ jobTitle, jobType }) {
     let { data, error } = await supabase
         .from('manage_jobs_view')
         .select()
@@ -161,21 +129,28 @@ const UnpublishedJobListingsTable = () => {
         .ilike('job_type', '%'+jobType+'%')
         .order('created_at',  { ascending: false });
 
+    if (facility) {
+      data = data.filter(i => i.facility_name == facility)
+    }
+  
     data.forEach( job => job.created_at = dateFormat(job.created_at))
     setjobs(data)
 
-    if (facilitySingleSelections.length > 0) {
-      setjobs(data.filter((job) => job.facility_name?.includes(facilitySingleSelections[0])))
-    }
   };
 
   // Initial Function
-  const fetchPost = async () => {
+  async function fetchPost ({ jobTitle, jobType}) {
     let { data, error } = await supabase
       .from('manage_jobs_view')
       .select()
       .eq('status', 'Unpublished')
+      .ilike('job_title', '%'+jobTitle+'%')
+      .ilike('job_type', '%'+jobType+'%')
       .order('created_at',  { ascending: false });
+
+      if (facility) {
+        data = data.filter(i => i.facility_name == facility)
+      }
 
       data.forEach( job => job.created_at = dateFormat(job.created_at))
       setjobs(data)
@@ -183,8 +158,13 @@ const UnpublishedJobListingsTable = () => {
   
 
   useEffect(() => {
-    fetchPost();
-  }, []);
+    fetchPost({ jobTitle, jobType});
+    if (facility) {
+      localStorage.setItem("facility", facility);
+    } else {
+      localStorage.setItem("facility", '');
+    }
+  }, [facility]);
 
   return (
     <div className="tabs-box">
@@ -210,25 +190,9 @@ const UnpublishedJobListingsTable = () => {
                           onKeyDown={(e) => {
                               if (e.key === "Enter") {
                                   findJob(searchFilters)
-                                  console.log(jobTitle)
                               }
                           }}
                           style={{ maxWidth: '300px' }}/>
-                  </Form.Group>
-              </Col>
-              <Col>
-                  <Form.Group className="mb-3 mx-3">
-                      <Form.Label className="chosen-single form-input chosen-container">Facility Name</Form.Label>
-                      <Typeahead
-                          onChange={setFacilitySingleSelections}
-                          id="facilityName"
-                          className="chosen-single form-input chosen-container"
-                          placeholder="select"
-                          options={facilityNames}
-                          selected={facilitySingleSelections}
-                          style={{ maxWidth: '300px' }}
-                          required
-                      />
                   </Form.Group>
               </Col>
               <Col>

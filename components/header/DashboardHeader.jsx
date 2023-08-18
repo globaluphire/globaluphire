@@ -9,9 +9,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { setUserData } from "../../features/candidate/candidateSlice";
 import { logout } from "../../utils/logout";
 import candidatesMenuData from "../../data/candidatesMenuData";
+import { supabase } from "../../config/supabaseClient";
+import { Typeahead } from "react-bootstrap-typeahead";
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import { setFacility } from "../../features/employer/employerSlice";
 
 const DashboardHeader = () => {
+  // global states
+  const facility = useSelector(state => state.employer.facility.payload)
+  console.log(facility)
+
+  // localStorage items
+  const localStorageFacility = localStorage.getItem("facility")
+  let localStorageFacilityArray = []
+  if (localStorageFacility) {
+    localStorageFacilityArray.push(localStorageFacility)
+  }
+
   const [navbar, setNavbar] = useState(false);
+  const [facilityNames, setFacilityNames] = useState([]);
+  const [facilitySingleSelections, setFacilitySingleSelections] = useState(localStorageFacilityArray);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -24,9 +42,42 @@ const DashboardHeader = () => {
     }
   };
 
+  async function getFacilityNames() {
+    // call reference to get applicantStatus options
+    let { data: refData, error: e } = await supabase
+    .from('reference')
+    .select("*")
+    .eq('ref_nm',  'facilityName');
+
+    if (refData) {
+        // setFacilityNames(refData)
+        let facilities = []
+        for (let i = 0; i < refData.length; i++) {
+          facilities.push(refData[i].ref_dspl)
+        }
+        facilities.sort()
+        setFacilityNames(facilities)
+    }
+  }
+
   useEffect(() => {
     window.addEventListener("scroll", changeBackground);
+    getFacilityNames();
+    if(facility) {
+      let facilityArray = []
+      facilityArray.push(facility)
+      setFacilitySingleSelections(facilityArray)
+    }
   }, []);
+
+  useEffect(() => {
+    if (facilitySingleSelections) {
+      dispatch(setFacility(facilitySingleSelections[0]))
+    } else {
+      dispatch(setFacility(''))
+    }
+    console.log(facility)
+  }, [facilitySingleSelections])
 
   const user = useSelector(state => state.candidate.user)
   const menuOptions = user.role !== 'CANDIDATE' ?  employerMenuData : candidatesMenuData
@@ -56,6 +107,31 @@ const DashboardHeader = () => {
             </div>
             {/* End .logo-box */}
 
+            { user.role !== 'CANDIDATE' ? <div className="vr" style={{ height: '60px', marginRight: '50px', marginTop: '15px' }}></div> : '' }
+
+            <div className="outer-box">
+            {/* <!-- Dashboard Option --> */}
+            { user.role !== 'CANDIDATE' ?
+              <Form>
+                <Col>
+                  <Form.Group>
+                      <Typeahead
+                          id="facilityNames"
+                          onChange={setFacilitySingleSelections}
+                          className="chosen-single form-input chosen-container"
+                          placeholder="Select Facility"
+                          options={facilityNames}
+                          selected={facilitySingleSelections}
+                          style={{ minWidth: '300px' }}
+                          required
+                      />
+                  </Form.Group>
+                </Col>
+              </Form>
+              : '' }
+            {/* End dropdown */}
+          </div>
+          {/* End outer-box */}
             {/* <HeaderNavContent /> */}
             {/* <!-- Main Menu End--> */}
           </div>
