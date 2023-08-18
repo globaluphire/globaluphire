@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { getDecryptedItem } from "../utils/encryptedStorage";
 import { setUserData } from "../features/candidate/candidateSlice";
+import 'react-tooltip/dist/react-tooltip.css'
 
 if (typeof window !== "undefined") {
   require("bootstrap/dist/js/bootstrap");

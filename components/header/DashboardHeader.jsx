@@ -14,6 +14,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import { setFacility } from "../../features/employer/employerSlice";
+import { Tooltip } from 'react-tooltip'
 
 const DashboardHeader = () => {
   // global states
@@ -123,11 +124,19 @@ const DashboardHeader = () => {
                           required
                       />
                   </Form.Group>
+
                 </Col>
               </Form>
               : '' }
             {/* End dropdown */}
-          </div>
+            </div>
+            { user.role !== 'CANDIDATE' ?
+              <div className="option-box">
+                <a data-tooltip-id="facility-tooltip" data-tooltip-content="This is applicable to all admin pages, if you want to show data for all facilities then don't select any!">
+                  <span className="lar la-question-circle" style={{ fontSize: '24px', margin: '5px' }}></span>
+                </a>
+                <Tooltip id="facility-tooltip" />
+              </div> : '' }
           {/* End outer-box */}
             {/* <HeaderNavContent /> */}
             {/* <!-- Main Menu End--> */}
