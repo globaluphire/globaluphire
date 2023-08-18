@@ -18,13 +18,11 @@ import { setFacility } from "../../features/employer/employerSlice";
 const DashboardHeader = () => {
   // global states
   const facility = useSelector(state => state.employer.facility.payload)
-  console.log(facility)
 
-  // localStorage items
-  const localStorageFacility = localStorage.getItem("facility")
+  // set initial facility value
   let localStorageFacilityArray = []
-  if (localStorageFacility) {
-    localStorageFacilityArray.push(localStorageFacility)
+  if (facility) {
+    localStorageFacilityArray.push(facility)
   }
 
   const [navbar, setNavbar] = useState(false);
