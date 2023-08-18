@@ -61,20 +61,20 @@ const AlertDataTable = () => {
       let recordPerPage = rpp;
       let totalPages = Math.ceil(totalRecords / recordPerPage);
       setTotalPages(totalPages);
-      console.log("totalRecords",totalRecords,"recordPerPage",recordPerPage,"totalPages",totalPages);
+      // console.log("totalRecords",totalRecords,"recordPerPage",recordPerPage,"totalPages",totalPages);
       if (totalPages) {
         let arrPage = [];
         for (var i = 1; i <= totalPages; i++) {
           arrPage.push(i);
         }
-        console.log("arrPage",arrPage);
+        // console.log("arrPage",arrPage);
         setArrPages(arrPage);
         let start_limit = parseInt(parseInt(pageNo - 1) * parseInt(rpp));
         if (pageNo < 1) {
           start_limit = parseInt(parseInt(pageNo) * parseInt(rpp));
         }
         let end_limit = parseInt(start_limit) + parseInt(rpp);
-        console.log("start_limit", start_limit, "end_limit", end_limit);
+        // console.log("start_limit", start_limit, "end_limit", end_limit);
         setCurrentPage(pageNo);
 
         let { data, error } = await supabase

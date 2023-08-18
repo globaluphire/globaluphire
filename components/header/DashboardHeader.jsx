@@ -74,7 +74,6 @@ const DashboardHeader = () => {
     } else {
       dispatch(setFacility(''))
     }
-    console.log(facility)
   }, [facilitySingleSelections])
 
   const user = useSelector(state => state.candidate.user)

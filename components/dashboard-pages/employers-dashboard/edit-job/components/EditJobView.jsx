@@ -122,7 +122,7 @@ const submitJobPost = async (
 };
 
 const EditJobView = ({ fetchedJobData }) => {
-  console.log(fetchedJobData);
+  // console.log(fetchedJobData);
   const user = useSelector(state => state.candidate.user)
   const [editedJobData, setEditedJobData] = useState(JSON.parse(JSON.stringify(editedJobFields)));
   const { editedJobTitle, editedJobDesc, editedJobType, editedSalary, editedSalaryRate, editedCareer, editedExp, editedAddress, editedCompleteAddress, editedFacility } = useMemo(() => editedJobData, [editedJobData])

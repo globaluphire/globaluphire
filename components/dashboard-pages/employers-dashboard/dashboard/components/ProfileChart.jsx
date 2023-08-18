@@ -87,7 +87,7 @@ const ProfileChart = () => {
   }
 
   const fetchedAllApplicantsView = async (selectedMonth) => {
-    console.log("selectedMonth",selectedMonth);
+    // console.log("selectedMonth",selectedMonth);
     let { data, error } = await supabase
       .from('applicants_view')
       .select("*")

@@ -167,7 +167,7 @@ const CvUploader = () => {
                             deleted: 'no',
                         }
                     ]);
-                console.log(insertNotification);      
+                // console.log(insertNotification);      
                 if (insertNotification) {
 
                     setTimeout(() => {
