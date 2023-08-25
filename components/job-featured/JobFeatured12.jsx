@@ -83,7 +83,7 @@ const JobFeatured12 = () => {
                   {/* compnay info */}
                   <li>
                     <span className="icon flaticon-map-locator"></span>
-                    {item.job_address}
+                    {item.job_comp_add}
                   </li>
                   {/* location info */}
                 </ul>
