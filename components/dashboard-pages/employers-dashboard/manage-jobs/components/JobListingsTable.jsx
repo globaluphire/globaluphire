@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { db } from "../../../../common/form/firebase";
+import { auth, db } from "../../../../common/form/firebase";
 // import jobs from "../../../../../data/job-featured.js";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast, ToastContainer } from "react-toastify";
@@ -40,23 +40,43 @@ const JobListingsTable = () => {
 
   // enableNotifyMeFlag
   const enableNotifyMeFlag = async (jobId) => {
-    if (jobId) {
-      const { data, error } = await supabase
+    if (jobId && user) {
+      const { data: authUser, error: e } = await supabase
           .from('jobs')
-          .update({ 'notify_me': true })
+          .select()
           .eq('job_id', jobId)
+          .eq('user_id', user.id)
 
-      // open toast
-      toast.success('Success!', {
-        position: "bottom-right",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      if (authUser.length > 0) {
+        const { data, error } = await supabase
+            .from('jobs')
+            .update({ 'notify_me': true })
+            .eq('job_id', jobId)
+
+        // open toast
+        toast.success('Success!', {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      } else {
+        // open toast
+        toast.error('Action Restricted! You are not the owner of this Job!', {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
 
       // fetching all posts to refresh the data in Job Listing Table
       fetchPost(searchFilters);
@@ -77,23 +97,43 @@ const JobListingsTable = () => {
 
   // disableNotifyMeFlag
   const disableNotifyMeFlag = async (jobId) => {
-    if (jobId) {
-      const { data, error } = await supabase
+    if (jobId && user) {
+      const { data: authUser, error: e } = await supabase
           .from('jobs')
-          .update({ 'notify_me': false })
+          .select()
           .eq('job_id', jobId)
+          .eq('user_id', user.id)
 
-      // open toast
-      toast.success('Success!', {
-        position: "bottom-right",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+      if (authUser.length > 0) {
+        const { data, error } = await supabase
+            .from('jobs')
+            .update({ 'notify_me': false })
+            .eq('job_id', jobId)
+
+        // open toast
+        toast.success('Success!', {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      } else {
+        // open toast
+        toast.error('Action Restricted! You are not the owner of this Job!', {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
 
       // fetching all posts to refresh the data in Job Listing Table
       fetchPost(searchFilters);
