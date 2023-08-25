@@ -204,6 +204,46 @@ const WidgetContentBox = () => {
         }
     }
 
+    const DownloadHandler = async (applicant) => {
+        const { data, error } = await supabase
+            .from('applicants_view')
+            .select('*')
+            .eq('application_id', applicant.application_id);
+
+        if (data) {
+            let fileName = data[0].doc_dwnld_url.slice(14, -2);
+            fetch(fileName, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/pdf',
+                },
+              })
+                .then(response => response.blob())
+                .then(blob => {
+                  const url = window.URL.createObjectURL(new Blob([blob]));
+                  const link = document.createElement('a');
+                  link.href = url;
+                  link.download = fileName;
+                  document.body.appendChild(link);
+                  link.click();
+                  link.parentNode.removeChild(link);
+                });
+            //window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
+        }
+        if (error) {
+            toast.error('Error while retrieving CV.  Please try again later or contact tech support!', {
+                position: "bottom-right",
+                autoClose: true,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    }
+
     const addNotes = async () => {
         const { data, error } = await supabase
             .from('applications')
@@ -407,8 +447,13 @@ const WidgetContentBox = () => {
                                             <div className="option-box">
                                                 <ul className="option-list">
                                                 <li onClick = { () => { ViewCV(applicant.application_id) }}>
-                                                    <button data-text="View/Download CV">
+                                                    <button data-text="View CV">
                                                         <span className="la la-file-download"></span>
+                                                    </button>
+                                                </li>
+                                                <li onClick={() => DownloadHandler(applicant)}>
+                                                    <button data-text="Download CV">
+                                                        <span className="la la-download"></span>
                                                     </button>
                                                 </li>
                                                 {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
