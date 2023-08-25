@@ -3,7 +3,7 @@ export default function handler(req, res) {
         const mail = require('@sendgrid/mail');
         mail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY)
         const msg = {
-            to: 'support@globaluphire.com', // Change to your recipient
+            to: `${req.body.notifyMeEmail}`,
             from: 'support@globaluphire.com', // Change to your verified sender,
             subject: `[Volare Health] New application for ${req.body.jobTitle}: ${req.body.name} ${req.body.time}`,
             attachments: req.body.attachments,
@@ -80,6 +80,10 @@ export default function handler(req, res) {
                   <li>
                     <b>Applied In Center: </b>
                     <span>${req.body.jobCompAdd}</span>
+                  </li>
+                  <li>
+                    <b>Facility Name: </b>
+                    <span>${req.body.facilityName}</span>
                   </li>
                 </ul>
                 <p>Note: Please login with your employer credentials to access link</p>

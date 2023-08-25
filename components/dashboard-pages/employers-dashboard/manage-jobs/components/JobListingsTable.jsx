@@ -38,6 +38,80 @@ const JobListingsTable = () => {
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
   }
 
+  // enableNotifyMeFlag
+  const enableNotifyMeFlag = async (jobId) => {
+    if (jobId) {
+      const { data, error } = await supabase
+          .from('jobs')
+          .update({ 'notify_me': true })
+          .eq('job_id', jobId)
+
+      // open toast
+      toast.success('Success!', {
+        position: "bottom-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+
+      // fetching all posts to refresh the data in Job Listing Table
+      fetchPost(searchFilters);
+    } else {
+      // open toast
+      toast.error('Error on enabling Notify Me Flag! Please contact tech support!', {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  }
+
+  // disableNotifyMeFlag
+  const disableNotifyMeFlag = async (jobId) => {
+    if (jobId) {
+      const { data, error } = await supabase
+          .from('jobs')
+          .update({ 'notify_me': false })
+          .eq('job_id', jobId)
+
+      // open toast
+      toast.success('Success!', {
+        position: "bottom-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+
+      // fetching all posts to refresh the data in Job Listing Table
+      fetchPost(searchFilters);
+    } else {
+      // open toast
+      toast.error('Error on disabling Notify Me Flag! Please contact tech support!', {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  }
+
   // Publish job action
   const publishJob = async (jobId, status) => {
     if (status !== 'Published') {
@@ -59,7 +133,7 @@ const JobListingsTable = () => {
       });
 
       // fetching all posts to refresh the data in Job Listing Table
-      fetchPost();
+      fetchPost(searchFilters);
     } else {
       // open toast
       toast.error('Job is already published!', {
@@ -96,7 +170,7 @@ const JobListingsTable = () => {
       });
 
       // fetching all posts to refresh the data in Job Listing Table
-      fetchPost();
+      fetchPost(searchFilters);
     } else {
       // open toast
       toast.error('Job is already unpublished!', {
@@ -322,6 +396,19 @@ const JobListingsTable = () => {
                   <td>
                     <div className="option-box">
                       <ul className="option-list">
+                        { item.notify_me ? 
+                            <li onClick={()=>{ disableNotifyMeFlag(item.job_id) }}>
+                              <button data-text="Notify job owner when application recieved" disabled>
+                                <span className="la la-bell"></span>
+                              </button>
+                            </li>
+                            :
+                            <li onClick={()=>{ enableNotifyMeFlag(item.job_id) }}>
+                              <button data-text="Notify job owner when application recieved" disabled>
+                                <span className="la la-bell-slash"></span>
+                              </button>
+                            </li>
+                        }
                         <li onClick={()=>{
                           router.push(`/employers-dashboard/clone-job/${item.job_id}`)
                         }}>
@@ -336,6 +423,8 @@ const JobListingsTable = () => {
                             <span className="la la-file-alt"></span>
                           </button>
                         </li>
+                      </ul>
+                      <ul className="option-list" style={{marginTop: '5px'}}>
                         <li onClick={()=>{ publishJob(item.job_id, item.status) }} >
                           <button data-text="Publish Job">
                             <span className="la la-eye"></span>

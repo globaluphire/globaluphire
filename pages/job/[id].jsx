@@ -39,7 +39,7 @@ const JobSingleDynamicV1 = () => {
     try{
       if (id) {
         let { data: jobs, error } = await supabase
-            .from('jobs')
+            .from('users_jobs_view')
             .select("*")
 
             // Filters

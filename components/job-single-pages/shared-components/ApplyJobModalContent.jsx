@@ -129,7 +129,7 @@ const ApplyJobModalContent = ({company}) => {
             });
 
               const fileBase64 = await toBase64(selectedFile)
-
+              const notifyMeEmail = company.notify_me ? company.email : 'support@globaluphire.com'
                 axios({
                   method: 'POST',
                   url: '/api/mail',
@@ -140,6 +140,8 @@ const ApplyJobModalContent = ({company}) => {
                     jobId: jobId,
                     jobTitle: company.job_title,
                     jobCompAdd: company.job_comp_add,
+                    notifyMeEmail: notifyMeEmail,
+                    facilityName: company.facility_name,
                     attachments: [
                       {
                         content: fileBase64,
@@ -149,7 +151,7 @@ const ApplyJobModalContent = ({company}) => {
                       }
                     ]
                   }
-                })       
+                })
               // open toast
               toast.success('Successfully Applied in this job!', {
                 position: "bottom-right",

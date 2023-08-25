@@ -145,6 +145,7 @@ const ApplyInstantView = ({ company }) => {
             });
 
               const fileBase64 = await toBase64(guestSelectedFile)
+              const notifyMeEmail = company.notify_me ? company.email : 'support@globaluphire.com'
 
                 axios({
                   method: 'POST',
@@ -155,6 +156,8 @@ const ApplyInstantView = ({ company }) => {
                     time: time.toLocaleString('en-US'),
                     jobId: jobId,
                     jobTitle: company.job_title,
+                    notifyMeEmail: notifyMeEmail,
+                    facilityName: company.facility_name,
                     attachments: [
                       {
                         content: fileBase64,
@@ -164,7 +167,7 @@ const ApplyInstantView = ({ company }) => {
                       }
                     ]
                   }
-                })       
+                })
               // open toast
               toast.success('Successfully Applied in this job!', {
                 position: "bottom-right",

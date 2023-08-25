@@ -60,7 +60,7 @@ const UnpublishedJobListingsTable = () => {
       });
 
       // fetching all posts to refresh the data in Job Listing Table
-      fetchPost();
+      fetchPost(searchFilters);
     } else {
       // open toast
       toast.error('Job is already published!', {
@@ -97,7 +97,7 @@ const UnpublishedJobListingsTable = () => {
       });
 
       // fetching all posts to refresh the data in Job Listing Table
-      fetchPost();
+      fetchPost(searchFilters);
     } else {
       // open toast
       toast.error('Job is already unpublished!', {
