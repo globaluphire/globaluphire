@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { supabase } from '../../../../../config/supabaseClient';
-import { Tooltip } from "react-Tooltip";
+import { Tooltip } from "react-tooltip";
 
 const ContactInfoBox = () => {
 
