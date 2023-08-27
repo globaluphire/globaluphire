@@ -29,6 +29,7 @@ import Header from "../../components/home-9/Header";
 
 const JobSingleDynamicV1 = () => {
   const [isUserApplied, setIsUserApplied] = useState([]);
+  const [isJobShortlisted, setIsJobShortlisted] = useState();
   const user = useSelector(state => state.candidate.user)
   const showLoginButton = useMemo(() => !user?.id, [user])
   const router = useRouter();
@@ -85,18 +86,77 @@ const JobSingleDynamicV1 = () => {
     }
   };
 
+  const fetchJobShortlisted = async () => {
+    if (id && user) {
+        let { data, error } = await supabase
+          .from('shortlisted_jobs')
+          .select("*")
+
+          // Filters
+          .eq('job_id', id)
+          .eq('user_id', user.id)
+
+        if (data?.length > 0) {
+          setIsJobShortlisted(true);
+        } else {
+          setIsJobShortlisted(false);
+        }
+    } else {
+      setIsJobShortlisted(false);
+    }
+  };
+
   useEffect(() => {
     setIsUserApplied(false);
     fetchCompany();
     fetchPostForLoggedInUser();
+    fetchJobShortlisted();
   }, [id]);
 
-  // useEffect(() => {
-  //   if (!id) <h1>Loading...</h1>;
-  //   else setCompany(jobs.find((item) => item.id == id));
+  // short list job action
+  const shortListJob = async () => {
+    await supabase
+      .from('shortlisted_jobs')
+      .insert([{ 
+        job_id: id,
+        user_id: user.id
+      }])
 
-  //   return () => {};
-  // }, [id]);
+    setIsJobShortlisted(true)
+
+    toast.success('Job Shortlisted!', {
+      position: "bottom-right",
+      autoClose: '4000',
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  }
+
+  // unShortList job action
+  const unShortListJob = async () => {
+    await supabase
+      .from('shortlisted_jobs')
+      .delete()
+      .eq('job_id', id)
+      .eq('user_id', user.id)
+
+    setIsJobShortlisted(false)
+
+    toast.success('Job Unshortlisted!', {
+      position: "bottom-right",
+      autoClose: '4000',
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+  }
 
   return (
     <>
@@ -162,19 +222,14 @@ const JobSingleDynamicV1 = () => {
                   {/* End .job-other-info */}
                 </div>
                 {/* End .content */}
+                <div style={{display: "flex"}}>
+                  { !showLoginButton && isUserApplied ?
+                      <span className="btn-box theme-btn btn-style-nine">
+                          ✓ Applied
+                      </span>
+                      : ''}
 
-                { !showLoginButton && isUserApplied ?
-                    <span className="btn-box theme-btn btn-style-nine">
-                        ✓ Applied
-                      {/* <button className="bookmark-btn">
-                        <i className="flaticon-bookmark"></i>
-                      </button> */}
-                    </span>
-
-                    : ''}
-
-                { !showLoginButton && !isUserApplied ?
-                    <div className="btn-box">
+                  { !showLoginButton && !isUserApplied ?
                       <a
                         href="#"
                         className="theme-btn btn-style-one"
@@ -183,13 +238,23 @@ const JobSingleDynamicV1 = () => {
                       >
                         Apply For Job
                       </a>
-                      {/* <button className="bookmark-btn">
-                          <i className="flaticon-bookmark"></i>
-                        </button> */}
-                    </div>
-                    : ''}
-                {/* End apply for job btn */}
+                      : ''}
+                  {/* End apply for job btn */}
+                  {!showLoginButton ?
+                    <span>
+                      { isJobShortlisted ? 
+                          <button className="bookmark-btn-filled" onClick={() => { unShortListJob() }}>
+                            <i className="las la-bookmark"></i>
+                          </button>
+                        :
+                          <button className="bookmark-btn" onClick={() => { shortListJob() }}>
+                            <i className="la la-bookmark"></i>
+                          </button>
+                      }
+                    </span>
+                  : ''}
 
+                </div>
                 {/* <!-- Modal --> */}
                 <div
                   className="modal fade"

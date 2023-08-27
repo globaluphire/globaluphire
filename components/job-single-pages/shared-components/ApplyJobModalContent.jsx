@@ -180,6 +180,9 @@ const ApplyJobModalContent = ({company}) => {
                         }
                     ]);
               }
+
+              location.reload();
+
             }
           }
         }
