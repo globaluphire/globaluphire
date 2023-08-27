@@ -454,7 +454,7 @@ const WidgetContentBox = () => {
                                                         data-bs-target="#addNoteModal"
                                                         onClick = { () => {setNoteData(applicant.application_id) }}
                                                     >
-                                                        <span className="la la-eye"></span>
+                                                        <span className="la la-comment-dots"></span>
                                                     </a>
                                                     </button>
                                                 </li>

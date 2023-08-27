@@ -335,7 +335,7 @@ const ApplicantWidgetContentBox = () => {
                                         onClick = { () => { setNoteText (applicant.notes);
                                             setApplicationId(applicant.application_id) }}
                                     >
-                                        <span className="la la-eye"></span>
+                                        <span className="la la-comment-dots"></span>
                                     </a>
                                     </button>
                                 </li>
