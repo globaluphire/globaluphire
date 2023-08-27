@@ -46,10 +46,10 @@ const signInWithGoogle = async (dispatch) => {
         photo_url: user.photoURL,
         email: user.email,
         auth_provider: "google",
-        phone_number: user.phoneNumber,
         role: 'CANDIDATE'
       }
       const { data, error } = await supabase.from('users').insert([userData])
+      await supabase.from('users_dtl').insert([{user_id: user.uid}])
     } else {
       userData = fetchUser.data[0]
     }

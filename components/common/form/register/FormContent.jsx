@@ -75,10 +75,10 @@ const FormContent = () => {
             photo_url: user.photoURL,
             email: email,
             auth_provider: "local",
-            phone_number: user.phoneNumber,
             role: 'CANDIDATE'
           }
           const { data, error } = await supabase.from('users').insert([userData])
+          await supabase.from('users_dtl').insert([{user_id: user.uid}])
         } else {
           userData = fetchUser.data[0]
         }
