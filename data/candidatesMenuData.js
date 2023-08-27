@@ -34,13 +34,13 @@ module.exports = [
   //     routePath: "/candidates-dashboard/job-alerts",
   //     active: "",
   // },
-  // {
-  //     id: 6,
-  //     name: "Shortlisted Jobs",
-  //     icon: "la-bookmark-o",
-  //     routePath: "/candidates-dashboard/short-listed-jobs",
-  //     active: "",
-  // },
+  {
+      id: 6,
+      name: "Shortlisted Jobs",
+      icon: "la-bookmark-o",
+      routePath: "/candidates-dashboard/short-listed-jobs",
+      active: "",
+  },
   {
       id: 7,
       name: "CV manager",
