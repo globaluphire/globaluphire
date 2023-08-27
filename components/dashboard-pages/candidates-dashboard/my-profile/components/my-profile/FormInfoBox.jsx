@@ -1,4 +1,13 @@
+import Router, { useRouter } from "next/router";
 import Select from "react-select";
+import { useSelector } from "react-redux";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { supabase } from '../../../../../../config/supabaseClient';
+// import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
+import { Tooltip } from 'react-tooltip'
+// import SunEditor from "suneditor-react";
 
 const FormInfoBox = () => {
   const catOptions = [
@@ -12,50 +21,217 @@ const FormInfoBox = () => {
     { value: "Creative Art", label: "Creative Art" },
   ];
 
+  const user = useSelector(state => state.candidate.user);
+  useEffect(() => {
+    fetchCandidate(user.id);
+  }, []);
+
+  let arrExistingDepartments = [];
+  const [name, setName] = useState(user.name);
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [currentSalary, setCurrentSalary] = useState('');
+  const [expectedSalary, setExpectedSalary] = useState('');
+  const [experience, setExperience] = useState('');
+  const [DOB, setDOB] = useState('');
+  const [education, setEducation] = useState('');
+  const [language, setLanguage] = useState('');
+  const [description, setDescription] = useState('');
+  const [skills, setSkills] = useState('');
+
+  const handleMultipleValues = (selectedValues) => {
+    let selectedString = "";
+    if (selectedValues && selectedValues != false) {
+      selectedValues.map((item) => {
+        selectedString += item.value + ",";
+      })
+    }
+    if (selectedString != "") {
+      selectedString = selectedString.substring(0, selectedString.length - 1);
+    }
+    //console.log("selectedString", selectedString);
+    setSkills(selectedString);
+  }
+
+  const fetchCandidate = async (userID) => {
+    try {
+      if (userID) {
+        let userData = await supabase
+          .from('users')
+          .select('*')
+          .eq('user_id', userID);
+        if(userData){
+            //set userData
+            setName(userData.data[0].name);
+            setEmail(userData.data[0].email);
+
+            // fetch user details
+            let userDtlData = await supabase
+              .from('users_dtl')
+              .select('*')
+              .eq('user_id', userID);
+            if (userDtlData) {
+              setPhone(userDtlData.data[0].phn_nbr);
+              setCurrentSalary(userDtlData.data[0].curr_sal);
+              setExpectedSalary(userDtlData.data[0].expected_sal);
+              setExperience(userDtlData.data[0].experience);
+              setDOB(userDtlData.data[0].dob);
+              setEducation(userDtlData.data[0].education);
+              setLanguage(userDtlData.data[0].languages);
+              setDescription(userDtlData.data[0].desc);
+
+              // let all_departments = customer[0].departments;
+              // let arrSelectedDepartments = [];
+              // if (all_departments != null) {
+              //   all_departments = all_departments.split(",");
+              //   all_departments.map((item) => {
+              //     catOptions.map((defined_item, index) => {
+              //       if (defined_item.label == item) {
+              //         arrSelectedDepartments.push(catOptions[index]);
+              //         arrExistingDepartments.push(catOptions[index]);
+              //       }
+              //     })
+              //   });
+              //   if (arrSelectedDepartments.length > 0) {
+              //     setCategoriesForm(arrSelectedDepartments);
+              //   }
+              // }
+            }
+          }
+        }
+      
+    } catch (e) {
+      console.log("Fetch user Error", e);
+      toast.error('System is unavailable to fetch customer.  Please try again later or contact tech support!', {
+        position: "bottom-right",
+        autoClose: true,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      console.warn(e)
+    }
+  };
+
+  const submitCandidateProfile = async () => {
+    if (name && phone && email && experience && education) {
+      try {
+          await supabase
+            .from('users')
+            .update({
+              name: name,
+              change_dttm: new Date()
+            })
+            .eq('user_id', user.id);
+
+          await supabase
+            .from('users_dtl')
+            .update({
+              phn_nbr: phone,
+              curr_sal: currentSalary,
+              expected_sal: expectedSalary,
+              experience: experience,
+              // dob: DOB,
+              education: education,
+              // languages: language,
+              // skills: skills,
+              // allow_indexig: allowSearchListingForm,
+              desc: description,
+              change_dttm: new Date()
+            })
+            .eq('user_id', user.id);
+
+        // open toast
+        toast.success('Your Profile Updated successfully', {
+          position: "bottom-right",
+          autoClose: true,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+        setTimeout(() => {
+          Router.push("/candidates-dashboard/my-profile")
+        }, 3000);
+
+      } catch (err) {
+        // open toast
+        console.log("My Profile Error", err);
+        toast.error('Error while saving your company profile, Please try again later or contact tech support', {
+          position: "bottom-right",
+          autoClose: true,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+        // console.warn(err);
+      }
+    } else {
+      // open toast
+      toast.error('Please fill all the required fields.', {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
+  };
+
+
+
   return (
     <form action="#" className="default-form">
       <div className="row">
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Full Name</label>
-          <input type="text" name="name" placeholder="Jerome" required />
-        </div>
-
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Job Title</label>
-          <input type="text" name="name" placeholder="UI Designer" required />
-        </div>
-
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Phone</label>
+          <label>Full Name <span className="required">(required)</span></label>
           <input
             type="text"
             name="name"
-            placeholder="0 123 456 7890"
+            value={name}
             required
+            onChange={(e) => { setName(e.target.value) }}
           />
         </div>
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Email address</label>
+          <label>
+            Phone Number <span className="required">(required)</span>
+            <a data-tooltip-id="phone-tooltip" data-tooltip-content="Phone number should be in (555)555-5555">
+              <span className="lar la-question-circle" style={{ fontSize: '14px', margin: '5px' }}></span>
+            </a>
+            <Tooltip id="phone-tooltip" />
+          </label>
           <input
             type="text"
-            name="name"
-            placeholder="creativelayers"
+            name="phone"
+            value={phone}
             required
+            onChange={(e) => { setPhone(e.target.value) }}
           />
         </div>
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Website</label>
+          <label>Email address <span className="required">(required)</span></label>
           <input
             type="text"
-            name="name"
-            placeholder="www.jerome.com"
+            name="email"
+            readOnly
+            value={email}
             required
           />
         </div>
@@ -63,94 +239,177 @@ const FormInfoBox = () => {
         {/* <!-- Input --> */}
         <div className="form-group col-lg-3 col-md-12">
           <label>Current Salary($)</label>
-          <select className="chosen-single form-select" required>
-            <option>40-70 K</option>
-            <option>50-80 K</option>
-            <option>60-90 K</option>
-            <option>70-100 K</option>
+          <select
+            className="chosen-single form-select"
+            value={currentSalary}
+            onChange={(e) => { setCurrentSalary(e.target.value) }}
+          >
+            <option></option>
+            <option>40-60 K</option>
+            <option>60-80 K</option>
+            <option>80-100 K</option>
             <option>100-150 K</option>
+            <option>150K</option>
           </select>
         </div>
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-3 col-md-12">
           <label>Expected Salary($)</label>
-          <select className="chosen-single form-select" required>
-            <option>120-350 K</option>
-            <option>40-70 K</option>
-            <option>50-80 K</option>
-            <option>60-90 K</option>
-            <option>70-100 K</option>
+          <select
+            className="chosen-single form-select"
+            value={expectedSalary}
+            onChange={(e) => { setExpectedSalary(e.target.value) }}
+          >
+            <option></option>
+            <option>40-60 K</option>
+            <option>60-80 K</option>
+            <option>80-100 K</option>
             <option>100-150 K</option>
+            <option>150K</option>
           </select>
         </div>
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Experience</label>
-          <input type="text" name="name" placeholder="5-10 Years" required />
+          <label>
+            Experience <span className="required">(Required)</span>
+            <a data-tooltip-id="experience-tooltip" data-tooltip-content="How many years of Experience do you have? Ex. Freshers or 5 Years">
+              <span className="lar la-question-circle" style={{ fontSize: '14px', margin: '5px' }}></span>
+            </a>
+            <Tooltip id="experience-tooltip" />
+          </label>
+          <input
+            type="text"
+            value={experience}
+            Required
+            onChange={(e) => { setExperience(e.target.value) }}
+          />
         </div>
 
         {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Age</label>
-          <select className="chosen-single form-select" required>
+        {/* <div className="form-group col-lg-6 col-md-12">
+          <label>Date of Birth</label>
+          <select
+            className="chosen-single form-select"
+            value={DOB}
+            onChange={(e) => { setDOB(e.target.value) }}
+          >
             <option>23 - 27 Years</option>
             <option>24 - 28 Years</option>
             <option>25 - 29 Years</option>
             <option>26 - 30 Years</option>
           </select>
-        </div>
+        </div> */}
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Education Levels</label>
-          <input type="text" name="name" placeholder="Certificate" required />
-        </div>
-
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Languages</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="English, Turkish"
-            required
-          />
-        </div>
-
-        {/* <!-- Search Select --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Categories </label>
-          <Select
-            defaultValue={[catOptions[1]]}
-            isMulti
-            name="colors"
-            options={catOptions}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            required
-          />
-        </div>
-
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Allow In Search & Listing</label>
-          <select className="chosen-single form-select" required>
-            <option>Yes</option>
-            <option>No</option>
+          <label>Education <span className="required">(required)</span></label>
+          <select
+            className="chosen-single form-select"
+            value={education}
+            onChange={(e) => {setEducation(e.target.value)}}
+          >
+            <option></option>
+            <option>Certificate</option>
+            <option>High School</option>
+            <option>Associate Degree</option>
+            <option>Bachelor's Degree</option>
+            <option>Master's Degree</option>
           </select>
         </div>
 
+        {/* <!-- Input --> */}
+        {/* <div className="form-group col-lg-6 col-md-12">
+          <label>
+            Languages
+            <a data-tooltip-id="facility-tooltip" data-tooltip-content="Add languages in comma separated! Ex. English, Spanish, ...">
+              <span className="lar la-question-circle" style={{ fontSize: '14px', margin: '5px' }}></span>
+            </a>
+          </label>
+          <input
+            type="text"
+            value={language}
+            onChange={(e) => { setLanguage(e.target.value) }}
+          />
+        </div> */}
+
+        {/* <!-- Search Select --> */}
+        {/* <div className="form-group col-lg-6 col-md-12">
+          <label>
+            Skills
+            <a data-tooltip-id="facility-tooltip" data-tooltip-content="Add skills in comma separated!">
+              <span className="lar la-question-circle" style={{ fontSize: '14px', margin: '5px' }}></span>
+            </a>
+          </label>
+          <Tooltip id="facility-tooltip" />
+          <input
+            type="text"
+            name="skills"
+            onChange={(e) => { setSkills(e.target.value) }}
+          />
+            
+        </div> */}
+
+        {/* <!-- About Candidate --> */}
+        {/* <div className="form-group col-lg-12 col-md-12">
+          <label>Description <span className="required">(required)</span></label>
+          <a data-tooltip-id="description-tooltip" data-tooltip-content="Describe about yourself!">
+            <span className="lar la-question-circle" style={{ fontSize: '14px', margin: '5px' }}></span>
+          </a>
+          <Tooltip id="description-tooltip" />
+          <SunEditor
+            setContents={description}
+            setOptions={{
+              buttonList: [
+                ["fontSize", "formatBlock"],
+                ["bold", "underline", "italic", "strike", "subscript", "superscript"],
+                ["align", "horizontalRule", "list", "table"],
+                ["fontColor", "hiliteColor"],
+                ["outdent", "indent"],
+                ["undo", "redo"],
+                ["removeFormat"],
+                ["outdent", "indent"],
+                ["link"],
+                ["preview", "print"],
+                ["fullScreen", "showBlocks", "codeView"],
+              ],
+            }}
+            setDefaultStyle="color:black;"
+            onChange={(e) => {
+              setDescription(e)
+            }}
+          />
+        </div> */}
+
         {/* <!-- About Company --> */}
         <div className="form-group col-lg-12 col-md-12">
-          <label>Description</label>
-          <textarea placeholder="Spent several years working on sheep on Wall Street. Had moderate success investing in Yugo's on Wall Street. Managed a small team buying and selling Pogo sticks for farmers. Spent several years licensing licorice in West Palm Beach, FL. Developed several new methods for working it banjos in the aftermarket. Spent a weekend importing banjos in West Palm Beach, FL.In this position, the Software Engineer collaborates with Evention's Development team to continuously enhance our current software solutions as well as create new solutions to eliminate the back-office operations and management challenges present"></textarea>
+          <label>Description <span className="required">(required)</span></label>
+          <a data-tooltip-id="description-tooltip" data-tooltip-content="Describe about yourself!">
+            <span className="lar la-question-circle" style={{ fontSize: '14px', margin: '5px' }}></span>
+          </a>
+          <Tooltip id="description-tooltip" />
+          <textarea
+            type="text"
+            value={description}
+            onChange={(e) => {              
+              setDescription(e.target.value)
+            }}
+          >
+          </textarea>
         </div>
+
 
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <button type="submit" className="theme-btn btn-style-one">
+          <button
+            type="submit"
+            className="theme-btn btn-style-one"
+            onClick={(e) => {
+              e.preventDefault();
+              submitCandidateProfile();
+            }}
+          >
             Save
           </button>
         </div>
