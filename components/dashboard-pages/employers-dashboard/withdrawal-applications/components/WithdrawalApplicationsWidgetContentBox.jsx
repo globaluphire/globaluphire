@@ -365,6 +365,7 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                         </td>
                                         <td>
                                             <ul className="option-list">
+                                            {applicant.notes ?
                                                 <li>
                                                     <button data-text="Add, View, Edit, Delete Notes">
                                                     <a
@@ -376,7 +377,20 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                                         <span className="la la-comment-dots"></span>
                                                     </a>
                                                     </button>
+                                                </li> : 
+                                                <li>
+                                                    <button data-text="Add, View, Edit, Delete Notes">
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#addNoteModal"
+                                                        onClick = { () => {setNoteData(applicant.application_id) }}
+                                                    >
+                                                        <span className="la la-comment-alt"></span>
+                                                    </a>
+                                                    </button>
                                                 </li>
+                                            }
                                             </ul>
                                         </td>
                                         <td>
