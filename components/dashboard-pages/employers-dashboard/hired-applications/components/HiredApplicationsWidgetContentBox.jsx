@@ -33,8 +33,12 @@ const HiredApplicationsWidgetContentBox = () => {
     const facility = useSelector(state => state.employer.facility.payload)
 
     const dateFormat = (val) => {
-      const date = new Date(val)
-      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+        if(val) {
+            const date = new Date(val)
+            return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+        } else {
+            return
+        }
     }
   
     // clear all filters
@@ -97,6 +101,7 @@ const HiredApplicationsWidgetContentBox = () => {
         }
 
         if (allApplicantsView) {
+            allApplicantsView.forEach( i => i.hired_date = dateFormat(i.hired_date))
             allApplicantsView.forEach( i => i.created_at = dateFormat(i.created_at))
             setFetchedAllApplicantsData(allApplicantsView)
         }
@@ -290,6 +295,7 @@ const HiredApplicationsWidgetContentBox = () => {
                             <tr>
                             <th>Name</th>
                             <th>Applied On</th>
+                            <th>Hired On</th>
                             <th>Job Title</th>
                             <th>Facility</th>
                             <th>Status</th>
@@ -320,6 +326,11 @@ const HiredApplicationsWidgetContentBox = () => {
                                         <td>
                                         {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
                                             <span>{applicant.created_at}</span>
+                                        </td>
+                                        <td>
+                                            {applicant.hired_date ?
+                                                <span>{applicant.hired_date}</span>
+                                            : <span>-</span> }
                                         </td>
                                         <td>
                                             {applicant.job_title}

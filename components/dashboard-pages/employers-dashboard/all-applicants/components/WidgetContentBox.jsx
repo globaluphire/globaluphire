@@ -37,10 +37,22 @@ const WidgetContentBox = () => {
 
     async function updateApplicationStatus (applicationStatus, applicationId) {
         // save updated applicant status
-        const { data1, error1 } = await supabase
-            .from('applications')
-            .update({ status: applicationStatus })
-            .eq('application_id', applicationId)
+        if (applicationStatus == "Hired") {
+            await supabase
+                .from('applications')
+                .update({
+                    status: applicationStatus,
+                    hired_date: new Date()
+                })
+                .eq('application_id', applicationId)
+        } else {
+            await supabase
+                .from('applications')
+                .update({ status: applicationStatus })
+                .eq('application_id', applicationId)
+        }
+        await supabase
+            .rpc('increment', { x: 1, row_id: applicationId })
 
         // this will prevent the page to keep filtered if have any search filters set
         let { data, error } = await supabase
@@ -245,10 +257,15 @@ const WidgetContentBox = () => {
     }
 
     const addNotes = async () => {
-        const { data, error } = await supabase
+        await supabase
             .from('applications')
-            .update({ 'notes': noteText})
+            .update({
+                'notes': noteText
+            })
             .eq('application_id', applicationId)
+
+        await supabase
+            .rpc('increment', { x: 1, row_id: applicationId })
 
         // open toast
         toast.success('Applicant notes has been saved!', {
