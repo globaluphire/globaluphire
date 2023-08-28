@@ -163,7 +163,7 @@ const JobFavouriteTable = () => {
             </Row>
           </Form>
 
-        <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({shortlistedJobs.length}) Jobs Applied</div>
+        <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({shortlistedJobs.length}) Shortlisted jobs</div>
 
         {/* Start table widget content */}
         <div className="widget-content">
