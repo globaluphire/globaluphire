@@ -49,23 +49,20 @@ const submitJobPost = async (
   user,
   fetchedJobData
 ) => {
-    if (editedJobTitle || editedJobDesc ||
-        editedJobType || editedSalary ||
-        editedSalaryRate || editedCareer ||
-        editedExp ||
-        editedCompleteAddress || editedFacility) {
+    if (editedJobTitle && editedJobDesc &&
+        editedJobType && editedExp) {
         try {
 
             const { data, error } = await supabase
             .from('jobs')
             .update(
-                { job_title: editedJobTitle ? editedJobTitle : fetchedJobData.job_title,
-                 job_desc: editedJobDesc ? editedJobDesc : fetchedJobData.job_desc,
-                 job_type: editedJobType ? editedJobType : fetchedJobData.job_type,
-                 experience: editedExp ? editedExp : fetchedJobData.experience,
-                 education: editedCareer ? editedCareer : fetchedJobData.education,
-                 salary: editedSalary ? editedSalary : fetchedJobData.salary,
-                 salary_rate: editedSalaryRate ? editedSalaryRate : fetchedJobData.salary_rate,
+                { job_title: editedJobTitle,
+                 job_desc: editedJobDesc,
+                 job_type: editedJobType,
+                 experience: editedExp,
+                 education: editedCareer,
+                 salary: editedSalary,
+                 salary_rate: editedSalaryRate,
                  change_dttm: new Date(),
                  update_ver_nbr: fetchedJobData.update_ver_nbr + 1
                 }
@@ -79,7 +76,7 @@ const submitJobPost = async (
             // open toast
             toast.success('Job edited successfully', {
                 position: "bottom-right",
-                autoClose: 3000,
+                autoClose: false,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -91,7 +88,7 @@ const submitJobPost = async (
             // redirect to original page where user came from
             setTimeout(() => {
                 Router.push("/employers-dashboard/manage-jobs")
-            }, 4000)
+            }, 500)
       } catch (err) {
         // open toast
         toast.error('Error while saving your changes, Please try again later or contact tech support', {
@@ -169,6 +166,24 @@ const EditJobView = ({ fetchedJobData }) => {
     initMapScript().then(() => initAutocomplete())
   }, []);
 
+  const assignJobData = () => {
+    setEditedJobData({
+      editedJobTitle: fetchedJobData.job_title,
+      editedJobDesc: fetchedJobData.job_desc,
+      editedJobType: fetchedJobData.job_type,
+      editedSalary: fetchedJobData.salary,
+      editedSalaryRate: fetchedJobData.salary_rate,
+      editedCareer: fetchedJobData.education,
+      editedExp: fetchedJobData.experience,
+      editedCompleteAddress: fetchedJobData.job_comp_add,
+      editedFacility: fetchedJobData.facility_name
+    })
+  }
+
+  useEffect(() => {
+    assignJobData(fetchedJobData)
+  }, [fetchedJobData]);
+
   // useEffect(() => {
   //   searchInput.current.value = fetchedJobData.job_address
   // }, [fetchedJobData.job_address]);
@@ -179,166 +194,51 @@ const EditJobView = ({ fetchedJobData }) => {
         {/* <!-- Input --> */}
         <div className="form-group col-lg-12 col-md-12">
           <label>Job Title <span className="required">(required)</span></label>
-          { !editedJobTitle ? 
             <input
-                type="text"
-                name="globaluphire-jobTitle"
-                value={fetchedJobData.job_title}
-                required
-                onChange={(e) => {
-                setEditedJobData((previousState) => ({ 
-                    ...previousState,
-                    editedJobTitle: e.target.value
-                }))
-                }}
-                placeholder="Job Title"
+              type="text"
+              name="globaluphire-jobTitle"
+              value={editedJobTitle}
+              required
+              onChange={(e) => {
+              setEditedJobData((previousState) => ({ 
+                  ...previousState,
+                  editedJobTitle: e.target.value
+              }))
+              }}
             />
-            : <input
-                    type="text"
-                    name="globaluphire-jobTitle"
-                    value={editedJobTitle}
-                    required
-                    onChange={(e) => {
-                    setEditedJobData((previousState) => ({ 
-                        ...previousState,
-                        editedJobTitle: e.target.value
-                    }))
-                    }}
-                    placeholder="Job Title"
-                />
-          }
         </div>
         {/* <!-- About Company --> */}
         <div className="form-group col-lg-12 col-md-12">
           <label>Job Description <span className="required">(required)</span></label>
-          
-          { !editedJobDesc ?
             <SunEditor 
-            setContents={fetchedJobData.job_desc}
-            setOptions={{
-            buttonList: [
-              ["fontSize", "formatBlock"],
-              ["bold", "underline", "italic", "strike", "subscript", "superscript"],
-              ["align", "horizontalRule", "list", "table"],
-              ["fontColor", "hiliteColor"],
-              ["outdent", "indent"],
-              ["undo", "redo"],
-              ["removeFormat"],
-              ["outdent", "indent"],
-              ["link"],
-              ["preview", "print"],
-              ["fullScreen", "showBlocks", "codeView"],
-            ],
-          }}
-          setDefaultStyle="color:black;"
-          onChange={(e) => {
-            setEditedJobData((previousState) => ({ 
-              ...previousState,
-              editedJobDesc: e
-            }))
-          }}
-          />
-            : 
-            <SunEditor 
-            setOptions={{
-            buttonList: [
-              ["fontSize", "formatBlock"],
-              ["bold", "underline", "italic", "strike", "subscript", "superscript"],
-              ["align", "horizontalRule", "list", "table"],
-              ["fontColor", "hiliteColor"],
-              ["outdent", "indent"],
-              ["undo", "redo"],
-              ["removeFormat"],
-              ["outdent", "indent"],
-              ["link"],
-              ["preview", "print"],
-              ["fullScreen", "showBlocks", "codeView"],
-            ],
-          }}
-          setDefaultStyle="color:black;"
-          onChange={(e) => {
-            setEditedJobData((previousState) => ({ 
-              ...previousState,
-              editedJobDesc: e
-            }))
-          }}
-          />
-          }   
-        </div>
-        {/* <!-- Input --> */}
-{/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Email Address <span className="optional">(optional)</span></label>
-          <input
-            type="text"
-            name="name"
-            placeholder="example@test.com"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
+              setContents={editedJobDesc}
+              setOptions={{
+              buttonList: [
+                ["fontSize", "formatBlock"],
+                ["bold", "underline", "italic", "strike", "subscript", "superscript"],
+                ["align", "horizontalRule", "list", "table"],
+                ["fontColor", "hiliteColor"],
+                ["outdent", "indent"],
+                ["undo", "redo"],
+                ["removeFormat"],
+                ["outdent", "indent"],
+                ["link"],
+                ["preview", "print"],
+                ["fullScreen", "showBlocks", "codeView"],
+              ],
             }}
-          />
-        </div>
- */}
-        {/* <!-- Input --> */}
-{/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Username</label>
-          <input
-            type="text"
-            name="name"
-            placeholder=""
-            value={username}
+            setDefaultStyle="color:black;"
             onChange={(e) => {
-              setUsername(e.target.value);
+              setEditedJobData((previousState) => ({ 
+                ...previousState,
+                editedJobDesc: e
+              }))
             }}
-          />
+            />
         </div>
- */}
-        {/* <!-- Search Select --> */}
-{/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Specialisms </label>
-          <Select
-            defaultValue={[specialisms[2]]}
-            isMulti
-            name="colors"
-            options={specialisms}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            value={specialism}
-            onChange={(e) => {
-              // const updatedOptions = [...e.target.options]
-              //   .filter((option) => option.selected)
-              //   .map((x) => x.value);
-              // console.log("updatedOptions", updatedOptions);
-              // setSpecialism(updatedOptions);
-              setSpecialism(e || []);
-            }}
-          />
-        </div>
- */}
         <div className="form-group col-lg-6 col-md-12">
           <label>Job Type <span className="required"> (required)</span></label>
-          { !editedJobType ? 
             <select
-                className="chosen-single form-select"
-                value={fetchedJobData.job_type}
-                required
-                onChange={(e) => {
-                setEditedJobData((previousState) => ({ 
-                    ...previousState,
-                    editedJobType: e.target.value
-                }))
-                }}
-            >
-            <option></option>
-            <option>Full Time</option>
-            <option>Part Time</option>
-            <option>Both</option>
-            <option>Per Diem</option>
-          </select>
-          : <select
                 className="chosen-single form-select"
                 value={editedJobType}
                 required
@@ -355,35 +255,10 @@ const EditJobView = ({ fetchedJobData }) => {
             <option>Both</option>
             <option>Per Diem</option>
             </select>
-          }
         </div>
         <div className="form-group col-lg-6 col-md-12">
           <label>Experience<span className="required"> (required)</span></label>
-          { !editedExp ? 
-            <select
-                className="chosen-single form-select"
-                value={fetchedJobData.experience}
-                required
-                onChange={(e) => {
-                setEditedJobData((previousState) => ({ 
-                    ...previousState,
-                    editedExp: e.target.value
-                }))
-                }}
-            >
-                <option></option>
-                <option>1 year</option>
-                <option>2 years</option>
-                <option>3 years</option>
-                <option>4 years</option>
-                <option>5 years</option>
-                <option>6 years</option>
-                <option>7 years</option>
-                <option>8 years</option>
-                <option>9 years</option>
-                <option>10+ years</option>
-            </select>
-            : <select
+              <select
                     className="chosen-single form-select"
                     value={editedExp}
                     required
@@ -406,7 +281,6 @@ const EditJobView = ({ fetchedJobData }) => {
                     <option>9 years</option>
                     <option>10+ years</option>
                 </select>
-          }
         </div>
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
@@ -414,7 +288,7 @@ const EditJobView = ({ fetchedJobData }) => {
           <input
             type="text"
             name="globaluphire-salary"
-            value={fetchedJobData.salary}
+            value={editedSalary}
             placeholder="$100,000.00"
             onChange={(e) => {
               setEditedJobData((previousState) => ({ 
@@ -426,62 +300,26 @@ const EditJobView = ({ fetchedJobData }) => {
         </div>
         <div className="form-group col-lg-6 col-md-12">
           <label>Salary Rate <span className="optional">(optional)</span></label>
-          { !editedSalaryRate ?
             <select
-                className="chosen-single form-select"
-                value={fetchedJobData.salary_rate}
-                onChange={(e) => {
-                setEditedJobData((previousState) => ({ 
-                    ...previousState,
-                    editedSalaryRate: e.target.value
-                }))
-                }}
-            >
-                <option></option>
-                <option>Per hour</option>
-                <option>Per diem</option>
-                <option>Per month</option>
-                <option>Per year</option>
-            </select>
-            : <select
-                    className="chosen-single form-select"
-                    value={editedSalaryRate}
-                    onChange={(e) => {
-                    setEditedJobData((previousState) => ({ 
-                        ...previousState,
-                        editedSalaryRate: e.target.value
-                    }))
-                    }}
-                >
-                    <option></option>
-                    <option>Per hour</option>
-                    <option>Per diem</option>
-                    <option>Per month</option>
-                    <option>Per year</option>
-                </select>
-          }
+                  className="chosen-single form-select"
+                  value={editedSalaryRate}
+                  onChange={(e) => {
+                  setEditedJobData((previousState) => ({ 
+                      ...previousState,
+                      editedSalaryRate: e.target.value
+                  }))
+                  }}
+              >
+                  <option></option>
+                  <option>Per hour</option>
+                  <option>Per diem</option>
+                  <option>Per month</option>
+                  <option>Per year</option>
+              </select>
         </div>
         <div className="form-group col-lg-6 col-md-12">
           <label>Education<span className="optional"> (optional)</span></label>
-          { !editedCareer ?
-            <select
-                className="chosen-single form-select"
-                value={fetchedJobData.education}
-                onChange={(e) => {
-                setEditedJobData((previousState) => ({ 
-                    ...previousState,
-                    editedCareer: e.target.value
-                }))
-                }}
-            >
-                <option></option>
-                <option>Certificate</option>
-                <option>High School</option>
-                <option>Associate Degree</option>
-                <option>Bachelor's Degree</option>
-                <option>Master's Degree</option>
-            </select>
-            : <select
+              <select
                     className="chosen-single form-select"
                     value={editedCareer}
                     onChange={(e) => {
@@ -498,114 +336,7 @@ const EditJobView = ({ fetchedJobData }) => {
                     <option>Bachelor's Degree</option>
                     <option>Master's Degree</option>
                 </select>
-          }
         </div>
-{/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Gender</label>
-          <select
-            className="chosen-single form-select"
-            value={gender}
-            onChange={(e) => {
-              setGender(e.target.value);
-            }}
-          >
-            <option>Select</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-          </select>
-        </div>
- */}
-{/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Industry</label>
-          <select
-            className="chosen-single form-select"
-            value={industy}
-            onChange={(e) => {
-              setIndustry(e.target.value);
-            }}
-          >
-            <option>Select</option>
-            <option>Banking</option>
-            <option>Digital & Creative</option>
-            <option>Retail</option>
-            <option>Human Resources</option>
-            <option>Management</option>
-          </select>
-        </div>
- */}
-{/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Qualification</label>
-          <select
-            className="chosen-single form-select"
-            value={qualification}
-            onChange={(e) => {
-              setQualification(e.target.value);
-            }}
-          >
-            <option>Select</option>
-            <option>Banking</option>
-            <option>Digital & Creative</option>
-            <option>Retail</option>
-            <option>Human Resources</option>
-            <option>Management</option>
-          </select>
-        </div>
- */}
-        {/* <!-- Input --> */}
-{/*
-        <div className="form-group col-lg-12 col-md-12">
-          <label>Application Deadline Date</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="06.04.2020"
-            value={deadline}
-            onChange={(e) => {
-              setDeadline(e.target.value);
-            }}
-          />
-        </div>
- */}
-{/*
-        <div className="form-group col-lg-6 col-md-12">
-          <label>City <span className="required">(required)</span></label>
-          <input
-            type="text"
-            name="globaluphire-city"
-            required
-            value={city}
-            onChange={(e) => {
-              setCity(e.target.value);
-            }}
-            placeholder="City"
-          />
-        </div>
-         */}
-{/* <!-- Input --> */}{/*
-
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Country <span className="required">(required)</span></label>
-          <select
-            className="chosen-single form-select"
-            value={country}
-            required
-            onChange={(e) => {
-              setCountry(e.target.value);
-            }}
-          >
-            <option></option>
-            <option>Australia</option>
-            <option>Pakistan</option>
-            <option>USA</option>
-            <option>Japan</option>
-            <option>India</option>
-          </select>
-        </div>
- */}
 
         <div className="form-group col-lg-12 col-md-12">
           <label>Facility Name <span className="optional">(read-only)</span></label>
@@ -633,7 +364,7 @@ const EditJobView = ({ fetchedJobData }) => {
             type="text"
             name="facilityName"
             placeholder="Facility Name"
-            value={fetchedJobData.facility_name}
+            value={editedFacility}
             disabled
           />
         </div>
@@ -642,63 +373,11 @@ const EditJobView = ({ fetchedJobData }) => {
           <input
             type="text"
             name="globaluphire-address"
-            value={fetchedJobData.job_comp_add}
+            value={editedCompleteAddress}
             placeholder="Address"
             disabled
           />
         </div>
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-12 col-md-12">
-          <label>City, State <span className="required">(required)</span></label>
-          { !editedAddress ?
-            <input
-                type="text"
-                name="globaluphire-address"
-                ref={searchInput}
-                placeholder="City, State"
-                required
-            />
-            : <input
-                type="text"
-                name="globaluphire-address"
-                ref={searchInput}                    
-                placeholder="City, State"
-                required
-              />
-          }
-        </div> */}
-        
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-6 col-md-12">
-          <label>Find On Map</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="329 Queensberry Street, North Melbourne VIC 3051, Australia."
-          />
-        </div> */}
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-3 col-md-12">
-          <label>Latitude</label>
-          <input type="text" name="name" placeholder="Melbourne" />
-        </div> */}
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-3 col-md-12">
-          <label>Longitude</label>
-          <input type="text" name="name" placeholder="Melbourne" />
-        </div> */}
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-12 col-md-12">
-          <button className="theme-btn btn-style-three">Search Location</button>
-        </div>
-        <div className="form-group col-lg-12 col-md-12">
-          <div className="map-outer">
-            <div style={{ height: "420px", width: "100%" }}>
-              <Map />
-            </div>
-          </div>
-        </div> */}
-        {/* <!-- Input --> */}
         <div className="form-group col-lg-12 col-md-12 text-right">
           <button
             className="theme-btn btn-style-one"
