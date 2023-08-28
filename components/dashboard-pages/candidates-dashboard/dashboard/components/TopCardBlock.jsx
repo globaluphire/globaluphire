@@ -79,10 +79,9 @@ const TopCardBlock = () => {
     // }
 
     let countTotalShortlist = await supabase
-      .from('applications_view')
+      .from('shortlisted_jobs_view')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', user.id)
-      .eq('status', 'Shortlisted');
     if (countTotalShortlist.count > 0) {
       setTotalShortlist(countTotalShortlist.count);
     }
