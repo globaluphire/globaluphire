@@ -44,7 +44,7 @@ const SearchForm4 = () => {
     "HearthStone",
     "Highland House",
     "Rose Haven",
-    "Royal Garden",
+    "Royale Gardens",
     "South Hills",
     "Umpqua Valley",
     "Corvallis Manor",
