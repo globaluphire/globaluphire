@@ -13,6 +13,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
+import "react-chat-elements/dist/main.css"
+import { MessageBox, Input } from "react-chat-elements";
+import { useRef } from "react";
 
 const addSearchFilters = {
     name: "",
@@ -35,6 +38,15 @@ const WidgetContentBox = () => {
     // global states
     const facility = useSelector(state => state.employer.facility.payload)
 
+    // sms modal
+    const [userData, setUserData] = useState();
+    const [userName, setUserName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [message, setMessage] = useState('');
+    const [allMessages, setAllMessages] = useState([]);
+    const inputRef = useRef(null)
+    let clearInput = () => {}
+    
     async function updateApplicationStatus (applicationStatus, applicationId) {
         // save updated applicant status
         if (applicationStatus == "Hired") {
@@ -291,6 +303,46 @@ const WidgetContentBox = () => {
         
     }
 
+    const handleSetUserData = (applicantData) => {
+        setUserData(applicantData);
+        console.log(applicantData);
+      };
+
+    const handleButtonClick = () => {
+        // Your button click logic here
+        const message = inputRef.current.value
+            if (message != "") {
+
+                
+                setAllMessages((previous)=>
+                [...previous,
+                    <MessageBox
+                        position={"right"}
+                        type={"text"}
+                        title={"You"}
+                        text={message}
+                    />
+                ]);
+                clearInput()
+      
+            } else {
+                return;
+            }
+        };
+    const chatInputButton = (
+        <Button
+        className="theme-btn btn-style-one"
+        onClick={handleButtonClick}
+        >
+            Send
+        </Button>
+    );
+
+    useEffect(() => {
+        console.log("Message", message)
+        console.log("Messageall", allMessages)
+      }, [message, allMessages]);
+
     return (
         <div className="tabs-box">
             <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
@@ -486,6 +538,18 @@ const WidgetContentBox = () => {
                                                         <span className="la la-download"></span>
                                                     </button>
                                                 </li>
+                                                <li>
+                                                    <button data-text="Send Message">
+                                                    <a
+                                                        href="#"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#sendSmsModal"
+                                                        onClick={() => handleSetUserData(applicant)}
+                                                        >
+                                                        <span className="la la-send"></span>
+                                                    </a>
+                                                    </button>
+                                                </li>
                                                 {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
                                                     <button data-text="Qualified">
                                                     <span className="la la-check"></span>
@@ -556,6 +620,92 @@ const WidgetContentBox = () => {
                                 {/* End PrivateMessageBox */}
                             </div>
                             {/* End .send-private-message-wrapper */}
+                            </div>
+                        </div>
+
+                        {/* Send SMS Modal Popup */}
+                        
+                        <div className="modal fade" id="sendSmsModal">
+                            <div className="modal-dialog modal-dialog-centered modal-xl">
+                                <div className="apply-modal-content modal-content">
+                                    <button
+                                        type="button"
+                                        id="close-button-2"
+                                        className="closed-modal"
+                                        data-bs-dismiss="modal"
+                                    ></button>
+                                    {/* End close modal btn */}
+                                    <h3 className="modal-title">Send SMS</h3>
+                                    <div className="modal-body">
+                                        {/* <div class="toggle-button-cover">
+                                            <div class="button r" id="button-1">
+                                                <input type="checkbox" class="checkbox" />
+                                                <div class="knobs"></div>
+                                                <div class="layer"></div>
+                                            </div>
+                                        </div> */}
+                                        <div class="row align-items-start">
+                                            <div class="col-md-6">
+                                                <form>
+                                                    <div className="form-group">
+                                                        <label htmlFor="name">Name:</label>
+                                                        <input
+                                                            type="text"
+                                                            id="name"
+                                                            className="form-control"
+                                                            value={userData?.name}
+                                                            onChange={(e) => {
+                                                                setUserName(e.target.value);
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="form-group mt-3">
+                                                        <label htmlFor="phoneNumber">Phone Number:</label>
+                                                        <input
+                                                            type="text"
+                                                            id="phoneNumber"
+                                                            className="form-control"
+                                                            value={phoneNumber}
+                                                            onChange={(e) => {
+                                                                setPhoneNumber(e.target.value);
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div 
+                                                    className="container" 
+                                                    style={{ 
+                                                        position:"relative", 
+                                                        background:"#EEEEEE", 
+                                                        borderRadius: "20px", 
+                                                        width:"500px",
+                                                        height: "400px",
+                                                        padding:"20px", 
+                                                        paddingBottom:"0", 
+                                                        overflowY:"scroll"}}
+                                                >
+                                                    {allMessages.map((el)=>el)}
+                                                    
+                                                    <div style={{position:"sticky", bottom:"0", width:"100%", left:"0", margin:"0"}}>
+                                                        <Input
+                                                            placeholder="Type here..."
+                                                            multiline={true}
+                                                            // className="mt-3"
+                                                            rightButtons={chatInputButton}
+                                                            referance={inputRef}
+                                                            clear={(clear)=>(clearInput = clear)}
+                                                            autoHeight={true}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* End modal-body */}
+                                </div>
+                                {/* End modal-content */}
                             </div>
                         </div>
                     </div>
