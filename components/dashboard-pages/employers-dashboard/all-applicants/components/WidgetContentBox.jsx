@@ -23,7 +23,7 @@ const addSearchFilters = {
     status: ""
   }
 
-const WidgetContentBox = ({user}) => {
+const WidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
    // const [searchField, setSearchField] = useState('');
     const [applicationStatus, setApplicationStatus] = useState('');
@@ -39,6 +39,7 @@ const WidgetContentBox = ({user}) => {
     const facility = useSelector(state => state.employer.facility.payload)
 
     // sms modal
+    const user = useSelector(state => state.candidate.user)
     const [selectedUserData, setSelectedUserData] = useState();
     const [receiversName, setReceiversName] = useState('');
     const [receiversPhoneNumber, setReceiversPhoneNumber] = useState('');
@@ -311,9 +312,9 @@ const WidgetContentBox = ({user}) => {
         const message = inputRef.current.value
             if (message != "") {
                 const messageObj = {
-                    sender_name: user.user.name,
-                    sender_user_id: user.user.id,
-                    sender_email: user.user.email,
+                    sender_name: user.name,
+                    sender_user_id: user.id,
+                    sender_email: user.email,
                     receiver_name: receiversName ? receiversName : selectedUserData.name,
                     receiver_email: selectedUserData.email,
                     receiver_phone: receiversPhoneNumber,
