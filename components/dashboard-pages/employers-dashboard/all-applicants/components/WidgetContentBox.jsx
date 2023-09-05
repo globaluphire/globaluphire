@@ -309,11 +309,8 @@ const WidgetContentBox = () => {
       };
 
     const handleButtonClick = () => {
-        // Your button click logic here
         const message = inputRef.current.value
             if (message != "") {
-
-                
                 setAllMessages((previous)=>
                 [...previous,
                     <MessageBox
@@ -339,7 +336,6 @@ const WidgetContentBox = () => {
     );
 
     useEffect(() => {
-        console.log("Message", message)
         console.log("Messageall", allMessages)
       }, [message, allMessages]);
 
@@ -681,18 +677,28 @@ const WidgetContentBox = () => {
                                                         background:"#EEEEEE", 
                                                         borderRadius: "20px", 
                                                         width:"500px",
+                                                        // minHeight:"400px",
                                                         height: "400px",
                                                         padding:"20px", 
                                                         paddingBottom:"0", 
                                                         overflowY:"scroll"}}
                                                 >
+                                                    <div style={{minHeight:"280px"}}>
                                                     {allMessages.map((el)=>el)}
+                                                    </div>
                                                     
-                                                    <div style={{position:"sticky", bottom:"0", width:"100%", left:"0", margin:"0"}}>
+                                                    <div style={{ 
+                                                        position:"sticky", 
+                                                        bottom:"0", 
+                                                        width:"100%", 
+                                                        left:"0", 
+                                                        margin: '0 auto 1rem auto',
+                                                        }}
+                                                    >
                                                         <Input
                                                             placeholder="Type here..."
                                                             multiline={true}
-                                                            // className="mt-3"
+                                                            className="mt-3"
                                                             rightButtons={chatInputButton}
                                                             referance={inputRef}
                                                             clear={(clear)=>(clearInput = clear)}
