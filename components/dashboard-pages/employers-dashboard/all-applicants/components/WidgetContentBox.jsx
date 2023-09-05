@@ -14,7 +14,7 @@ import Col from 'react-bootstrap/Col';
 import { Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import "react-chat-elements/dist/main.css"
-import { MessageBox, Input } from "react-chat-elements";
+import { MessageBox, Input, MessageList } from "react-chat-elements";
 import { useRef } from "react";
 
 const addSearchFilters = {
@@ -42,10 +42,8 @@ const WidgetContentBox = () => {
     const [userData, setUserData] = useState();
     const [userName, setUserName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [message, setMessage] = useState('');
     const [allMessages, setAllMessages] = useState([]);
     const inputRef = useRef(null)
-    let clearInput = () => {}
     
     async function updateApplicationStatus (applicationStatus, applicationId) {
         // save updated applicant status
@@ -320,7 +318,7 @@ const WidgetContentBox = () => {
                         text={message}
                     />
                 ]);
-                clearInput()
+                inputRef.current.value = ""
       
             } else {
                 return;
@@ -334,10 +332,6 @@ const WidgetContentBox = () => {
             Send
         </Button>
     );
-
-    useEffect(() => {
-        console.log("Messageall", allMessages)
-      }, [message, allMessages]);
 
     return (
         <div className="tabs-box">
@@ -701,7 +695,6 @@ const WidgetContentBox = () => {
                                                             className="mt-3"
                                                             rightButtons={chatInputButton}
                                                             referance={inputRef}
-                                                            clear={(clear)=>(clearInput = clear)}
                                                             autoHeight={true}
                                                         />
                                                     </div>
