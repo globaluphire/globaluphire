@@ -8,7 +8,7 @@ import WidgetContentBox from "./components/WidgetContentBox";
 import WidgetTopFilterBox from "./components/WidgetTopFilterBox";
 import MenuToggler from "../../MenuToggler";
 
-const index = () => {
+const index = (user) => {
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
@@ -46,7 +46,7 @@ const index = () => {
                   </div> */}
                   {/* End top widget filter bar */}
 
-                  <WidgetContentBox />
+                  <WidgetContentBox user={user} />
                   {/* End widget-content */}
                 </div>
               </div>

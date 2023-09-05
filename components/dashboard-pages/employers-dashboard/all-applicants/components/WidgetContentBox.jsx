@@ -23,7 +23,7 @@ const addSearchFilters = {
     status: ""
   }
 
-const WidgetContentBox = () => {
+const WidgetContentBox = ({user}) => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
    // const [searchField, setSearchField] = useState('');
     const [applicationStatus, setApplicationStatus] = useState('');
@@ -39,9 +39,9 @@ const WidgetContentBox = () => {
     const facility = useSelector(state => state.employer.facility.payload)
 
     // sms modal
-    const [userData, setUserData] = useState();
-    const [userName, setUserName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [selectedUserData, setSelectedUserData] = useState();
+    const [receiversName, setReceiversName] = useState('');
+    const [receiversPhoneNumber, setReceiversPhoneNumber] = useState('');
     const [allMessages, setAllMessages] = useState([]);
     const inputRef = useRef(null)
     
@@ -302,13 +302,26 @@ const WidgetContentBox = () => {
     }
 
     const handleSetUserData = (applicantData) => {
-        setUserData(applicantData);
-        console.log(applicantData);
+        setSelectedUserData(applicantData);
+        // console.log(selectedUserData)
+        console.log(user)
       };
 
-    const handleButtonClick = () => {
+    const handleButtonClick = async () => {
         const message = inputRef.current.value
             if (message != "") {
+                const messageObj = {
+                    sender_name: user.user.name,
+                    sender_user_id: user.user.id,
+                    sender_email: user.user.email,
+                    receiver_name: receiversName ? receiversName : selectedUserData.name,
+                    receiver_email: selectedUserData.email,
+                    receiver_phone: receiversPhoneNumber,
+                    message: message,
+                    direction: "outbound"
+                }
+                // call api for twilio
+                await supabase.from('sms_messages').insert(messageObj)
                 setAllMessages((previous)=>
                 [...previous,
                     <MessageBox
@@ -326,8 +339,9 @@ const WidgetContentBox = () => {
         };
     const chatInputButton = (
         <Button
-        className="theme-btn btn-style-one"
-        onClick={handleButtonClick}
+            className="theme-btn btn-style-one"
+            onClick={handleButtonClick}
+            disabled={!receiversPhoneNumber}
         >
             Send
         </Button>
@@ -643,21 +657,21 @@ const WidgetContentBox = () => {
                                                             type="text"
                                                             id="name"
                                                             className="form-control"
-                                                            value={userData?.name}
+                                                            value={selectedUserData?.name}
                                                             onChange={(e) => {
-                                                                setUserName(e.target.value);
+                                                                setReceiversName(e.target.value);
                                                             }}
                                                         />
                                                     </div>
                                                     <div className="form-group mt-3">
                                                         <label htmlFor="phoneNumber">Phone Number:</label>
                                                         <input
-                                                            type="text"
+                                                            type="number"
                                                             id="phoneNumber"
                                                             className="form-control"
-                                                            value={phoneNumber}
+                                                            value={receiversPhoneNumber}
                                                             onChange={(e) => {
-                                                                setPhoneNumber(e.target.value);
+                                                                setReceiversPhoneNumber(e.target.value);
                                                             }}
                                                         />
                                                     </div>
