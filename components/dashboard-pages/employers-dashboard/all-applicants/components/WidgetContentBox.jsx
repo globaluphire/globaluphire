@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 import "react-chat-elements/dist/main.css"
 import { MessageBox, Input, MessageList } from "react-chat-elements";
 import { useRef } from "react";
+import styles from "../../../../../styles/WidgetContentBox.module.css";
 
 const addSearchFilters = {
     name: "",
@@ -42,7 +43,7 @@ const WidgetContentBox = () => {
     const user = useSelector(state => state.candidate.user)
     const [selectedUserData, setSelectedUserData] = useState();
     const [receiversName, setReceiversName] = useState('');
-    const [receiversPhoneNumber, setReceiversPhoneNumber] = useState('');
+    const [receiversPhoneNumber, setReceiversPhoneNumber] = useState('+');
     const [allMessages, setAllMessages] = useState([]);
     const inputRef = useRef(null)
     
@@ -304,6 +305,7 @@ const WidgetContentBox = () => {
 
     const handleSetUserData = (applicantData) => {
         setSelectedUserData(applicantData);
+        setReceiversName(applicantData.name);
         // console.log(selectedUserData)
         console.log(user)
       };
@@ -315,7 +317,7 @@ const WidgetContentBox = () => {
                     sender_name: user.name,
                     sender_user_id: user.id,
                     sender_email: user.email,
-                    receiver_name: receiversName ? receiversName : selectedUserData.name,
+                    receiver_name: receiversName,
                     receiver_email: selectedUserData.email,
                     receiver_phone: receiversPhoneNumber,
                     message: message,
@@ -340,9 +342,9 @@ const WidgetContentBox = () => {
         };
     const chatInputButton = (
         <Button
-            className="theme-btn btn-style-one"
+            className="theme-btn btn-style-one btn-submit"
             onClick={handleButtonClick}
-            disabled={!receiversPhoneNumber}
+            disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") ? false : true}
         >
             Send
         </Button>
@@ -658,7 +660,7 @@ const WidgetContentBox = () => {
                                                             type="text"
                                                             id="name"
                                                             className="form-control"
-                                                            value={selectedUserData?.name}
+                                                            value={receiversName}
                                                             onChange={(e) => {
                                                                 setReceiversName(e.target.value);
                                                             }}
@@ -667,12 +669,23 @@ const WidgetContentBox = () => {
                                                     <div className="form-group mt-3">
                                                         <label htmlFor="phoneNumber">Phone Number:</label>
                                                         <input
-                                                            type="number"
+                                                            type="text"
                                                             id="phoneNumber"
                                                             className="form-control"
+                                                            maxLength={13}
+                                                            minLength={11}
                                                             value={receiversPhoneNumber}
+                                                            placeholder="+1 123 456 7890"
                                                             onChange={(e) => {
-                                                                setReceiversPhoneNumber(e.target.value);
+                                                                if (e.target.value.trim() == "") {
+                                                                    setReceiversPhoneNumber("+")
+                                                                    return
+                                                                }
+                                                                const number =  e.target.value.replace("+", "");
+                                                                if (isNaN(number)) return
+                                                                if (e.target.value.length <= 13) {
+                                                                    setReceiversPhoneNumber(e.target.value.trim());
+                                                                }
                                                             }}
                                                         />
                                                     </div>
@@ -680,19 +693,23 @@ const WidgetContentBox = () => {
                                             </div>
                                             <div className="col-md-6">
                                                 <div 
-                                                    className="container" 
+                                                    className={styles.smsMessageBox + " container"}
                                                     style={{ 
                                                         position:"relative", 
                                                         background:"#EEEEEE", 
                                                         borderRadius: "20px", 
                                                         width:"500px",
-                                                        // minHeight:"400px",
+                                                        minHeight:"400px",
                                                         height: "400px",
                                                         padding:"20px", 
                                                         paddingBottom:"0", 
                                                         overflowY:"scroll"}}
                                                 >
-                                                    <div style={{minHeight:"280px"}}>
+                                                    <div
+                                                        style={{ 
+                                                            minHeight:"300px", 
+                                                        }}
+                                                    >
                                                     {allMessages.map((el)=>el)}
                                                     </div>
                                                     
@@ -701,13 +718,13 @@ const WidgetContentBox = () => {
                                                         bottom:"0", 
                                                         width:"100%", 
                                                         left:"0", 
-                                                        margin: '0 auto 1rem auto',
+                                                        padding:"10px 0 ",
                                                         }}
                                                     >
                                                         <Input
                                                             placeholder="Type here..."
                                                             multiline={true}
-                                                            className="mt-3"
+                                                            className="input rounded px-2"
                                                             rightButtons={chatInputButton}
                                                             referance={inputRef}
                                                             autoHeight={true}
