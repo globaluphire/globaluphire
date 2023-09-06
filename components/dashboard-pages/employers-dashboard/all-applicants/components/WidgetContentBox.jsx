@@ -2,7 +2,7 @@ import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import Applicants from "./Applicants";
@@ -14,9 +14,7 @@ import Col from 'react-bootstrap/Col';
 import { Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import "react-chat-elements/dist/main.css"
-import { MessageBox, Input, MessageList } from "react-chat-elements";
-import { useRef } from "react";
-import styles from "../../../../../styles/WidgetContentBox.module.css";
+import SmsModal from "./smsModal";
 
 const addSearchFilters = {
     name: "",
@@ -39,13 +37,11 @@ const WidgetContentBox = () => {
     // global states
     const facility = useSelector(state => state.employer.facility.payload)
 
-    // sms modal
-    const user = useSelector(state => state.candidate.user)
-    const [selectedUserData, setSelectedUserData] = useState();
-    const [receiversName, setReceiversName] = useState('');
-    const [receiversPhoneNumber, setReceiversPhoneNumber] = useState('+');
-    const [allMessages, setAllMessages] = useState([]);
-    const inputRef = useRef(null)
+    // selected applicant for sms/mail modal
+    const [selectedApplicant, setSelectedApplicant] = useState()
+
+    // sms email toggle
+    const [mailModal, showMailModal] = useState(false)
     
     async function updateApplicationStatus (applicationStatus, applicationId) {
         // save updated applicant status
@@ -327,102 +323,6 @@ const WidgetContentBox = () => {
         }
     }
 
-    const scrollToBottom = (id) => {
-        // chatBoxContainer
-        const element = document.getElementById(id);
-        element.scrollTop = element.scrollHeight;
-    }
-
-    const handleSetMessages = async (data) => {
-        if(!data){
-            console.log("error retriving messages")
-            return;
-        }
-        setAllMessages(()=>
-        [
-            data.map((el)=>{
-                if(el.direction === "inbound"){
-                    return (
-                        <MessageBox
-                            position={"left"}
-                            type={"text"}
-                            title={el.name}
-                            text={el.message}
-                        />
-                    )
-                } else {
-                    return (
-                        <MessageBox
-                            position={"right"}
-                            type={"text"}
-                            title={"You"}
-                            text={el.message}
-                        />
-                    )
-                }
-            })
-        ]);
-        scrollToBottom("chatBoxContainer")
-    }
-
-    
-    const handleSetModalData = async (applicantData) => {
-        setSelectedUserData(applicantData);
-        setReceiversName(applicantData.name);
-        setReceiversPhoneNumber("")
-
-        const { data, error } = await supabase
-        .from('sms_messages')
-        .select()
-        .match({ receiver_name: applicantData.name })
-
-        if(data[0]?.receiver_phone){
-            setReceiversPhoneNumber(data[0].receiver_phone)
-        }
-        handleSetMessages(data);
-      };
-
-    const handleButtonClick = async () => {
-        const message = inputRef.current.value
-            if (message != "") {
-                const messageObj = {
-                    sender_name: user.name,
-                    sender_user_id: user.id,
-                    sender_email: user.email,
-                    receiver_name: receiversName,
-                    receiver_email: selectedUserData.email,
-                    receiver_phone: receiversPhoneNumber,
-                    message: message,
-                    direction: "outbound"
-                }
-                // api call for twilio uncomment this code for it to work
-                // await sendSms(message, receiversPhoneNumber)
-                await supabase.from('sms_messages').insert(messageObj)
-                setAllMessages((previous)=>
-                [...previous,
-                    <MessageBox
-                        position={"right"}
-                        type={"text"}
-                        title={"You"}
-                        text={message}
-                    />
-                ]);
-                inputRef.current.value = ""
-      
-            } else {
-                return;
-            }
-        };
-    const chatInputButton = (
-        <Button
-            className="theme-btn btn-style-one btn-submit"
-            onClick={handleButtonClick}
-            disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") ? false : true}
-        >
-            Send
-        </Button>
-    );
-
     return (
         <div className="tabs-box">
             <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
@@ -624,7 +524,7 @@ const WidgetContentBox = () => {
                                                         href="#"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#sendSmsModal"
-                                                        onClick={() => handleSetModalData(applicant)}
+                                                        onClick={() => setSelectedApplicant(applicant)}
                                                         >
                                                         <span className="la la-send"></span>
                                                     </a>
@@ -704,117 +604,7 @@ const WidgetContentBox = () => {
                         </div>
 
                         {/* Send SMS Modal Popup */}
-                        
-                        <div className="modal fade" id="sendSmsModal">
-                            <div className="modal-dialog modal-dialog-centered modal-xl">
-                                <div className="apply-modal-content modal-content">
-                                    <button
-                                        type="button"
-                                        id="close-button-2"
-                                        className="closed-modal"
-                                        data-bs-dismiss="modal"
-                                    ></button>
-                                    {/* End close modal btn */}
-                                    <h3 className="modal-title">Send SMS</h3>
-                                    <div className="modal-body">
-                                        {/* <div class="toggle-button-cover">
-                                            <div class="button r" id="button-1">
-                                                <input type="checkbox" class="checkbox" />
-                                                <div class="knobs"></div>
-                                                <div class="layer"></div>
-                                            </div>
-                                        </div> */}
-                                        <div class="row align-items-start">
-                                            <div class="col-md-6">
-                                                <form>
-                                                    <div className="form-group">
-                                                        <label htmlFor="name">Name:</label>
-                                                        <input
-                                                            type="text"
-                                                            id="name"
-                                                            className="form-control"
-                                                            value={receiversName}
-                                                            onChange={(e) => {
-                                                                setReceiversName(e.target.value);
-                                                            }}
-                                                            disabled
-                                                        />
-                                                    </div>
-                                                    <div className="form-group mt-3">
-                                                        <label htmlFor="phoneNumber">Phone Number:</label>
-                                                        <input
-                                                            type="text"
-                                                            id="phoneNumber"
-                                                            className="form-control"
-                                                            maxLength={13}
-                                                            minLength={11}
-                                                            value={receiversPhoneNumber}
-                                                            placeholder="+1 123 456 7890"
-                                                            onChange={(e) => {
-                                                                if (e.target.value.trim() == "") {
-                                                                    setReceiversPhoneNumber("+")
-                                                                    return
-                                                                }
-                                                                const number =  e.target.value.replace("+", "");
-                                                                if (isNaN(number)) return
-                                                                if (e.target.value.length <= 13) {
-                                                                    setReceiversPhoneNumber(e.target.value.trim());
-                                                                }
-                                                            }}
-                                                            disabled={receiversPhoneNumber? true: false}
-                                                        />
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <div 
-                                                    className={styles.smsMessageBox + " container"}
-                                                    style={{ 
-                                                        position:"relative", 
-                                                        background:"#EEEEEE", 
-                                                        borderRadius: "20px", 
-                                                        width:"500px",
-                                                        minHeight:"400px",
-                                                        height: "400px",
-                                                        padding:"20px", 
-                                                        paddingBottom:"0", 
-                                                        overflowY:"scroll"}}
-                                                        >
-                                                    <div
-                                                        id="chatBoxContainer"
-                                                        style={{ 
-                                                            minHeight:"300px", 
-                                                        }}
-                                                    >
-                                                    {allMessages.map((el)=>el)}
-                                                    </div>
-                                                    
-                                                    <div style={{ 
-                                                        position:"sticky", 
-                                                        bottom:"0", 
-                                                        width:"100%", 
-                                                        left:"0", 
-                                                        padding:"10px 0 ",
-                                                        }}
-                                                    >
-                                                        <Input
-                                                            placeholder="Type here..."
-                                                            multiline={true}
-                                                            className="input rounded px-2"
-                                                            rightButtons={chatInputButton}
-                                                            referance={inputRef}
-                                                            autoHeight={true}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* End modal-body */}
-                                </div>
-                                {/* End modal-content */}
-                            </div>
-                        </div>
+                        <SmsModal applicantData={selectedApplicant}/>
                     </div>
                 </div>
             {/* End table widget content */}
