@@ -2,10 +2,10 @@ import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { MessageBox, Input, MessageList } from "react-chat-elements";
 import styles from "../../../../../styles/WidgetContentBox.module.css";
-import Button from 'react-bootstrap/Button';
+import Button from "react-bootstrap/Button";
 import { supabase } from "../../../../../config/supabaseClient";
 
-function SmsModal({applicantData}) {
+function SmsModal({ applicantData }) {
   const user = useSelector((state) => state.candidate.user);
   const [selectedUserData, setSelectedUserData] = useState();
   const [receiversName, setReceiversName] = useState("");
@@ -88,9 +88,9 @@ function SmsModal({applicantData}) {
 
     if (data[0]?.receiver_phone) {
       setReceiversPhoneNumber(data[0].receiver_phone);
-      setPhoneNumberDisabled(true)
+      setPhoneNumberDisabled(true);
     } else {
-        setPhoneNumberDisabled(false)
+      setPhoneNumberDisabled(false);
     }
     handleSetMessages(data);
   };
@@ -135,113 +135,98 @@ function SmsModal({applicantData}) {
     </Button>
   );
 
-  useEffect(()=>{
-    handleSetModalData(applicantData)
-    console.log("applicantData:",applicantData)
-  },[applicantData])
+  useEffect(() => {
+    handleSetModalData(applicantData);
+    console.log("applicantData:", applicantData);
+  }, [applicantData]);
   return (
-    <div className="modal fade" id="sendSmsModal">
-      <div className="modal-dialog modal-dialog-centered modal-xl">
-        <div className="apply-modal-content modal-content">
-          <button
-            type="button"
-            id="close-button-2"
-            className="closed-modal"
-            data-bs-dismiss="modal"
-          ></button>
-          <h3 className="modal-title">Send SMS</h3>
-          <div className="modal-body">
-            <div className="row align-items-start">
-              <div className="col-md-6">
-                <form>
-                  <div className="form-group">
-                    <label htmlFor="name">Name:</label>
-                    <input
-                      type="text"
-                      id="name"
-                      className="form-control"
-                      value={receiversName}
-                      onChange={(e) => {
-                        setReceiversName(e.target.value);
-                      }}
-                      disabled
-                    />
-                  </div>
-                  <div className="form-group mt-3">
-                    <label htmlFor="phoneNumber">Phone Number:</label>
-                    <input
-                      type="text"
-                      id="phoneNumber"
-                      className="form-control"
-                      maxLength={13}
-                      minLength={11}
-                      value={receiversPhoneNumber}
-                      placeholder="+1 123 456 7890"
-                      onChange={(e) => {
-                        if (e.target.value.trim() === "") {
-                          setReceiversPhoneNumber("+");
-                          return;
-                        }
-                        const number = e.target.value.replace("+", "");
-                        if (isNaN(number)) return;
-                        if (e.target.value.length <= 13) {
-                          setReceiversPhoneNumber(e.target.value.trim());
-                        }
-                      }}
-                      disabled={phoneNumberDisabled}
-                    />
-                  </div>
-                </form>
-              </div>
-              <div className="col-md-6">
-                <div
-                  className={styles.smsMessageBox + " container"}
-                  style={{
-                    position: "relative",
-                    background: "#EEEEEE",
-                    borderRadius: "20px",
-                    width: "500px",
-                    minHeight: "400px",
-                    height: "400px",
-                    padding: "20px",
-                    paddingBottom: "0",
-                    overflowY: "scroll",
-                  }}
-                >
-                  <div
-                    id="chatBoxContainer"
-                    style={{
-                      minHeight: "300px",
-                    }}
-                  >
-                    {allMessages.map((el) => el)}
-                  </div>
+    <>
+      <div className="col-md-6">
+        <form>
+          <div className="form-group">
+            <label htmlFor="name">Name:</label>
+            <input
+              type="text"
+              id="name"
+              className="form-control"
+              value={receiversName}
+              onChange={(e) => {
+                setReceiversName(e.target.value);
+              }}
+              disabled
+            />
+          </div>
+          <div className="form-group mt-3">
+            <label htmlFor="phoneNumber">Phone Number:</label>
+            <input
+              type="text"
+              id="phoneNumber"
+              className="form-control"
+              maxLength={13}
+              minLength={11}
+              value={receiversPhoneNumber}
+              placeholder="+1 123 456 7890"
+              onChange={(e) => {
+                if (e.target.value.trim() === "") {
+                  setReceiversPhoneNumber("+");
+                  return;
+                }
+                const number = e.target.value.replace("+", "");
+                if (isNaN(number)) return;
+                if (e.target.value.length <= 13) {
+                  setReceiversPhoneNumber(e.target.value.trim());
+                }
+              }}
+              disabled={phoneNumberDisabled}
+            />
+          </div>
+        </form>
+      </div>
+      <div className="col-md-6">
+        <div
+          className={styles.smsMessageBox + " container"}
+          style={{
+            position: "relative",
+            background: "#EEEEEE",
+            borderRadius: "20px",
+            width: "500px",
+            minHeight: "400px",
+            height: "400px",
+            padding: "20px",
+            paddingBottom: "0",
+            overflowY: "scroll",
+          }}
+        >
+          <div
+            id="chatBoxContainer"
+            style={{
+              minHeight: "300px",
+            }}
+          >
+            {allMessages.map((el) => el)}
+          </div>
 
-                  <div
-                    style={{
-                      position: "sticky",
-                      bottom: "0",
-                      width: "100%",
-                      left: "0",
-                      padding: "10px 0",
-                    }}
-                  >
-                    <Input
-                      placeholder="Type here..."
-                      multiline={true}
-                      className="input rounded px-2"
-                      rightButtons={chatInputButton}
-                      referance={inputRef}
-                      autoHeight={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div
+            style={{
+              position: "sticky",
+              bottom: "0",
+              width: "100%",
+              left: "0",
+              padding: "10px 0",
+            }}
+          >
+            <Input
+              placeholder="Type here..."
+              multiline={true}
+              className="input rounded px-2"
+              rightButtons={chatInputButton}
+              referance={inputRef}
+              autoHeight={true}
+            />
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

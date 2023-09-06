@@ -14,7 +14,7 @@ import Col from 'react-bootstrap/Col';
 import { Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import "react-chat-elements/dist/main.css"
-import SmsModal from "./smsModal";
+import CommunicationModal from "./communicationModal";
 
 const addSearchFilters = {
     name: "",
@@ -41,7 +41,7 @@ const WidgetContentBox = () => {
     const [selectedApplicant, setSelectedApplicant] = useState()
 
     // sms email toggle
-    const [mailModal, showMailModal] = useState(false)
+    const [showMailModal, setShowMailModal] = useState(false)
     
     async function updateApplicationStatus (applicationStatus, applicationId) {
         // save updated applicant status
@@ -523,7 +523,7 @@ const WidgetContentBox = () => {
                                                     <a
                                                         href="#"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#sendSmsModal"
+                                                        data-bs-target="#communication-modal"
                                                         onClick={() => setSelectedApplicant(applicant)}
                                                         >
                                                         <span className="la la-send"></span>
@@ -602,9 +602,8 @@ const WidgetContentBox = () => {
                             {/* End .send-private-message-wrapper */}
                             </div>
                         </div>
-
-                        {/* Send SMS Modal Popup */}
-                        <SmsModal applicantData={selectedApplicant}/>
+                        {/* Send SMS/Email Modal Popup */}
+                        <CommunicationModal applicantData={selectedApplicant} />
                     </div>
                 </div>
             {/* End table widget content */}
