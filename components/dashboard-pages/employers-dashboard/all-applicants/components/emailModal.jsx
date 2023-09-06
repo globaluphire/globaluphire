@@ -1,14 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
+import QuillTextEditor from "./quillTextEditor";
 
 function EmailModal({ applicantData }) {
   const user = useSelector((state) => state.candidate.user);
   const [receiversName, setReceiversName] = useState("");
   const [receiversEmail, setReceiversEmail] = useState("");
   const [phoneNumberDisabled, setPhoneNumberDisabled] = useState(false);
+  const [emailMessage, setEmailMessage] = useState("");
 
-  const sendEmail = async (content, recipient) => {
+  const handleSendEmail = async (content, recipient) => {
     try {
       const response = await fetch("/api/sms", {
         method: "POST",
@@ -33,28 +35,18 @@ function EmailModal({ applicantData }) {
   };
 
   const handleSetModalData = async (applicantData) => {
-    console.log(applicantData)
     setReceiversName(applicantData?.name);
-    if(applicantData?.email){
-        setReceiversEmail(applicantData?.email);
+    if (applicantData?.email) {
+      setReceiversEmail(applicantData?.email);
     } else {
-        setReceiversEmail("");
+      setReceiversEmail("");
     }
   };
-
-  const chatInputButton = (
-    <Button
-      className="theme-btn btn-style-one btn-submit"
-      //   onClick={handleButtonClick}
-      //   disabled={receiversEmail.match("^\\+[0-9]{10,13}$") ? false : true}
-    >
-      Send
-    </Button>
-  );
 
   useEffect(() => {
     handleSetModalData(applicantData);
   }, [applicantData]);
+
   return (
     <>
       <form>
@@ -93,6 +85,21 @@ function EmailModal({ applicantData }) {
             </div>
           </div>
         </div>
+        <div id="text-editor" className="mt-3">
+          <QuillTextEditor
+            emailMessage={emailMessage}
+            setEmailMessage={setEmailMessage}
+          />
+        </div>
+        <chatInputButton />
+        <Button
+          style={{ marginTop: "20px" }}
+          className="theme-btn btn-style-one btn-submit"
+          // onClick={handleSendEmail}
+          disabled={!receiversEmail}
+        >
+          Send
+        </Button>
       </form>
     </>
   );

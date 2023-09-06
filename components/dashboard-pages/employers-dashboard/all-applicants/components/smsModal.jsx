@@ -13,7 +13,6 @@ function SmsModal({ applicantData }) {
   const [phoneNumberDisabled, setPhoneNumberDisabled] = useState(false);
   const [allMessages, setAllMessages] = useState([]);
   const inputRef = useRef(null);
-  const [smsModalOpen, setSmsModalOpen] = useState(true);
 
   const sendSms = async (content, recipient) => {
     try {
@@ -137,7 +136,6 @@ function SmsModal({ applicantData }) {
 
   useEffect(() => {
     handleSetModalData(applicantData);
-    console.log("applicantData:", applicantData);
   }, [applicantData]);
   return (
     <>
