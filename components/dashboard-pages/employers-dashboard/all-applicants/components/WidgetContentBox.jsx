@@ -303,6 +303,30 @@ const WidgetContentBox = () => {
         
     }
 
+    const sendSms = async (content, recipient) => {
+        try {
+            const response = await fetch("/api/sms", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                content,
+                recipient,
+              }),
+            });
+      
+            if (response.ok) {
+              const data = await response.json();
+              return data;
+            } else {
+              throw new Error("Failed to send SMS");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const scrollToBottom = (id) => {
         // chatBoxContainer
         const element = document.getElementById(id);
@@ -346,7 +370,7 @@ const WidgetContentBox = () => {
         setSelectedUserData(applicantData);
         setReceiversName(applicantData.name);
         setReceiversPhoneNumber("")
-        // if(receiversPhoneNumber.replace("+","") === ""){
+
         const { data, error } = await supabase
         .from('sms_messages')
         .select()
@@ -371,7 +395,8 @@ const WidgetContentBox = () => {
                     message: message,
                     direction: "outbound"
                 }
-                // call api for twilio
+                // api call for twilio uncomment this code for it to work
+                // await sendSms(message, receiversPhoneNumber)
                 await supabase.from('sms_messages').insert(messageObj)
                 setAllMessages((previous)=>
                 [...previous,
