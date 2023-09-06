@@ -11,7 +11,9 @@ export default async function handler(req, res) {
     // fetch user details
     const receiverData = await supabase
       .from("sms_messages")
-      .filter("receiver_phone", "eq", twilioResponse.from);
+      .filter("receiver_phone", "eq", twilioResponse.from)
+      .limit(1)
+      .single();
     console.log("receiverData",receiverData);
     const messageObj = {
       sender_name: receiverData.receiver_name,
