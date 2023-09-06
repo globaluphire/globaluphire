@@ -2,20 +2,27 @@ import { supabase } from "../../config/supabaseClient";
 
 export default async function handler(req, res) {
   if (req.method == "POST") {
-    const twilioData = req.body;
-    console.log(twilioData);
+    // test required
+    const twilioResponse = req.body;
+    console.log("twilioData", twilioResponse);
+    console.log("req.body", req.body);
+    console.log("req", req);
+    // console.log(twilioResponse);
     // fetch user details
-    await supabase.from('sms_messages').insert(messageObj)
-    
+    const receiverData = await supabase
+      .from("sms_messages")
+      .filter("receiver_phone", "eq", twilioResponse.from);
+    console.log("receiverData",receiverData);
     const messageObj = {
-        sender_name: user.name,
-        sender_user_id: user.id,
-        sender_email: user.email,
-        receiver_name: receiversName ? receiversName : selectedUserData.name,
-        receiver_email: selectedUserData.email,
-        receiver_phone: receiversPhoneNumber,
-        message: message,
-    }
+      sender_name: receiverData.receiver_name,
+      sender_user_id: null,
+      sender_email: receiverData.receiver_email,
+      receiver_name: receiverData.sender_name,
+      receiver_email: receiverData.sender_email,
+      receiver_phone: twilioResponse.from,
+      message: twilioResponse.body,
+      direction: "inbound"
+    };
     await supabase.from('sms_messages').insert(messageObj)
     res.status(200).json({ message: "success" });
   } else {

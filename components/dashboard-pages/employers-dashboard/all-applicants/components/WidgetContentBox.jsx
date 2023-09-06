@@ -303,11 +303,59 @@ const WidgetContentBox = () => {
         
     }
 
-    const handleSetUserData = (applicantData) => {
+    const scrollToBottom = (id) => {
+        // chatBoxContainer
+        const element = document.getElementById(id);
+        element.scrollTop = element.scrollHeight;
+    }
+
+    const handleSetMessages = async (data) => {
+        if(!data){
+            console.log("error retriving messages")
+            return;
+        }
+        setAllMessages(()=>
+        [
+            data.map((el)=>{
+                if(el.direction === "inbound"){
+                    return (
+                        <MessageBox
+                            position={"left"}
+                            type={"text"}
+                            title={el.name}
+                            text={el.message}
+                        />
+                    )
+                } else {
+                    return (
+                        <MessageBox
+                            position={"right"}
+                            type={"text"}
+                            title={"You"}
+                            text={el.message}
+                        />
+                    )
+                }
+            })
+        ]);
+        scrollToBottom("chatBoxContainer")
+    }
+
+    
+    const handleSetModalData = async (applicantData) => {
         setSelectedUserData(applicantData);
         setReceiversName(applicantData.name);
-        // console.log(selectedUserData)
-        console.log(user)
+        setReceiversPhoneNumber("")
+        // if(receiversPhoneNumber.replace("+","") === ""){
+        const { data, error } = await supabase
+        .from('sms_messages')
+        .select()
+        .match({ receiver_name: applicantData.name })
+
+        if(data[0]?.receiver_phone){
+            setReceiversPhoneNumber(data[0].receiver_phone)
+        }
+        handleSetMessages(data);
       };
 
     const handleButtonClick = async () => {
@@ -551,7 +599,7 @@ const WidgetContentBox = () => {
                                                         href="#"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#sendSmsModal"
-                                                        onClick={() => handleSetUserData(applicant)}
+                                                        onClick={() => handleSetModalData(applicant)}
                                                         >
                                                         <span className="la la-send"></span>
                                                     </a>
@@ -664,6 +712,7 @@ const WidgetContentBox = () => {
                                                             onChange={(e) => {
                                                                 setReceiversName(e.target.value);
                                                             }}
+                                                            disabled
                                                         />
                                                     </div>
                                                     <div className="form-group mt-3">
@@ -687,6 +736,7 @@ const WidgetContentBox = () => {
                                                                     setReceiversPhoneNumber(e.target.value.trim());
                                                                 }
                                                             }}
+                                                            disabled={receiversPhoneNumber? true: false}
                                                         />
                                                     </div>
                                                 </form>
@@ -704,8 +754,9 @@ const WidgetContentBox = () => {
                                                         padding:"20px", 
                                                         paddingBottom:"0", 
                                                         overflowY:"scroll"}}
-                                                >
+                                                        >
                                                     <div
+                                                        id="chatBoxContainer"
                                                         style={{ 
                                                             minHeight:"300px", 
                                                         }}
