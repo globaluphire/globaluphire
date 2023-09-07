@@ -417,7 +417,6 @@ const PostBoxForm = () => {
           >
             <option></option>
             <option>Per hour</option>
-            <option>PRN</option>
             <option>Per month</option>
             <option>Per year</option>
           </select>
