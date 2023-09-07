@@ -387,7 +387,7 @@ const PostBoxForm = () => {
         </div>
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
-          <label>Offered Salary <span className="optional">(optional)</span></label>
+          <label>Offered Salary <span className="required">(required)</span></label>
           <input
             type="text"
             name="globaluphire-salary"
@@ -399,10 +399,11 @@ const PostBoxForm = () => {
                 salary: e.target.value
               }))
             }}
+            required
           />
         </div>
         <div className="form-group col-lg-6 col-md-12">
-          <label>Salary Rate <span className="optional">(optional)</span></label>
+          <label>Salary Rate <span className="required">(required)</span></label>
           <select
             className="chosen-single form-select"
             value={salaryRate}
@@ -412,6 +413,7 @@ const PostBoxForm = () => {
                 salaryRate: e.target.value
               }))
             }}
+            required
           >
             <option></option>
             <option>Per hour</option>
