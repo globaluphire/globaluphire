@@ -136,7 +136,7 @@ const JobFavouriteTable = () => {
                           <option value='Full Time'>Full Time</option>
                           <option value='Part Time'>Part Time</option>
                           <option value='Both'>Both</option>
-                          <option value='Per Diem'>Per Diem</option>
+                          <option value='PRN'>PRN</option>
                       </Form.Select>
                   </Form.Group>
                 </Col>

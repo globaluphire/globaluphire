@@ -43,8 +43,8 @@ const initialState = {
         },
         {
             id: 4,
-            name: "Per Diem",
-            value: "Per Diem",
+            name: "PRN",
+            value: "PRN",
             isChecked: false,
         },
     ],

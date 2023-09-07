@@ -357,7 +357,7 @@ const PostBoxForm = () => {
             <option>Full Time</option>
             <option>Part Time</option>
             <option>Both</option>
-            <option>Per Diem</option>
+            <option>PRN</option>
           </select>
         </div>
         <div className="form-group col-lg-6 col-md-12">
@@ -415,7 +415,7 @@ const PostBoxForm = () => {
           >
             <option></option>
             <option>Per hour</option>
-            <option>Per diem</option>
+            <option>PRN</option>
             <option>Per month</option>
             <option>Per year</option>
           </select>
