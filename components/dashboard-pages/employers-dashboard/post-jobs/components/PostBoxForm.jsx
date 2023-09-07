@@ -161,18 +161,18 @@ const PostBoxForm = () => {
   ]
 
   const facilityNames = [
-    "Keizer",
-    "French Prairie",
-    "Green Valley",
-    "HearthStone",
-    "Highland House",
-    "Rose Haven",
-    "Royale Gardens",
-    "South Hills",
-    "Umpqua Valley",
-    "Corvallis Manor",
-    "Hillside Heights",
-    "Hale Nani",
+    "Keizer Nursing and Rehabilitation",
+    "French Prairie Nursing & Rehabilitation",
+    "Green Valley Rehabilitation Health",
+    "Hearthstone Nursing & Rehabilitation",
+    "Highland House Nursing & Rehabilitation",
+    "Rose Haven Nursing",
+    "Royale Gardens Health & Rehabilitation",
+    "South Hills Rehabilitation",
+    "Umpqua Valley Nursing & Rehabilitation",
+    "Corvallis Manor Nursing & Rehabilitation",
+    "Hillside Heights Rehabilitation",
+    "Hale Nani Rehab & Nursing",
     "Eugene Home Office",
     "Louisville Home Office",
     "Chateau Napoleon Caring",
@@ -180,6 +180,7 @@ const PostBoxForm = () => {
     "Lakeshore Manor Nursing and Rehab",
     "St. Bernard Nursing & Rehab"
   ]
+
 
   useEffect(() => {
     jobData.facility = facilitySingleSelections[0]
