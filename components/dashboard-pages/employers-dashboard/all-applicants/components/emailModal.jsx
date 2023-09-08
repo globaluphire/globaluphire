@@ -10,25 +10,25 @@ function EmailModal({ applicantData }) {
   const [phoneNumberDisabled, setPhoneNumberDisabled] = useState(false);
   const [emailMessage, setEmailMessage] = useState("");
 
-  const handleSendEmail = async (content, recipient) => {
+  const handleSendEmail = async (recipient, content) => {
     try {
-      const response = await fetch("/api/sms", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content,
-          recipient,
-        }),
-      });
+      // const response = await fetch("/api/sms", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     content,
+      //     recipient,
+      //   }),
+      // });
 
-      if (response.ok) {
-        const data = await response.json();
-        return data;
-      } else {
-        throw new Error("Failed to send SMS");
-      }
+      // if (response.ok) {
+      //   const data = await response.json();
+      //   return data;
+      // } else {
+      //   throw new Error("Failed to send SMS");
+      // }
     } catch (error) {
       console.error(error);
     }
@@ -70,11 +70,9 @@ function EmailModal({ applicantData }) {
             <div className="form-group">
               <label htmlFor="email">Email:</label>
               <input
-                type="text"
+                type="email"
                 id="email"
                 className="form-control"
-                maxLength={13}
-                minLength={11}
                 value={receiversEmail}
                 placeholder="user@example.com"
                 onChange={(e) => {
@@ -95,8 +93,8 @@ function EmailModal({ applicantData }) {
         <Button
           style={{ marginTop: "20px" }}
           className="theme-btn btn-style-one btn-submit"
-          // onClick={handleSendEmail}
-          disabled={!receiversEmail}
+          onClick={()=>{handleSendEmail(receiversEmail, emailMessage)}}
+          disabled={!receiversEmail && !emailMessage}
         >
           Send
         </Button>
