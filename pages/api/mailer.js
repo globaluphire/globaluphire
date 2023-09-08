@@ -67,7 +67,7 @@ export default function handler(req, res) {
                     <body>
                         <div class="body">
                             <div class="content" style="box-shadow: 5px 5px 20px 0px rgba(0,0,0,0.3);">
-                                ${body}
+                                ${req.body.content}
                             </div>
                         </div>
                     </body>
