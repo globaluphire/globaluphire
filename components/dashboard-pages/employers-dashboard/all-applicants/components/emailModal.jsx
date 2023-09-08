@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 // import { useSelector, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import QuillTextEditor from "./quillTextEditor";
+import { toast, ToastContainer } from "react-toastify";
 
 function EmailModal({ applicantData }) {
   // const user = useSelector((state) => state.candidate.user);
@@ -25,13 +26,39 @@ function EmailModal({ applicantData }) {
         }),
       });
       if (response.ok) {
-        const data = await response.json();
-        return data;
+        toast.success("Mail Sent!", {
+          position: "bottom-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       } else {
-        throw new Error("Failed to send Mail!");
+        toast.error("Failed to send Mail!", {
+          position: "bottom-right",
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       }
     } catch (error) {
-      console.error(error);
+      toast.error("Some Error Occured!", {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 
