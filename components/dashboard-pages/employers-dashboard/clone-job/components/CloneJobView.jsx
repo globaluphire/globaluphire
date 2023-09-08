@@ -143,18 +143,18 @@ const CloneJobView = () => {
   ]
 
   const facilityNames = [
-    "Keizer",
-    "French Prairie",
-    "Green Valley",
-    "HearthStone",
-    "Highland House",
-    "Rose Haven",
-    "Royale Gardens",
-    "South Hills",
-    "Umpqua Valley",
-    "Corvallis Manor",
-    "Hillside Heights",
-    "Hale Nani",
+    "Keizer Nursing and Rehabilitation",
+    "French Prairie Nursing & Rehabilitation",
+    "Green Valley Rehabilitation Health",
+    "Hearthstone Nursing & Rehabilitation",
+    "Highland House Nursing & Rehabilitation",
+    "Rose Haven Nursing",
+    "Royale Gardens Health & Rehabilitation",
+    "South Hills Rehabilitation",
+    "Umpqua Valley Nursing & Rehabilitation",
+    "Corvallis Manor Nursing & Rehabilitation",
+    "Hillside Heights Rehabilitation",
+    "Hale Nani Rehab & Nursing",
     "Eugene Home Office",
     "Louisville Home Office",
     "Chateau Napoleon Caring",
@@ -370,7 +370,7 @@ const CloneJobView = () => {
             <option>Full Time</option>
             <option>Part Time</option>
             <option>Both</option>
-            <option>Per Diem</option>
+            <option>PRN</option>
           </select>
         </div>
         <div className="form-group col-lg-6 col-md-12">
@@ -429,7 +429,7 @@ const CloneJobView = () => {
             >
                 <option></option>
                 <option>Per hour</option>
-                <option>Per diem</option>
+                <option>PRN</option>
                 <option>Per month</option>
                 <option>Per year</option>
             </select>
