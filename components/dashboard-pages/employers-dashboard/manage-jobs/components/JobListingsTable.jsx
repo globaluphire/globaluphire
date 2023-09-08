@@ -438,13 +438,13 @@ const JobListingsTable = () => {
                       <ul className="option-list">
                         { item.notify_me ? 
                             <li onClick={()=>{ disableNotifyMeFlag(item.job_id) }}>
-                              <button data-text="Notify job owner when application recieved" disabled>
+                              <button data-text="Notify job owner when application recieved">
                                 <span className="la la-bell"></span>
                               </button>
                             </li>
                             :
                             <li onClick={()=>{ enableNotifyMeFlag(item.job_id) }}>
-                              <button data-text="Notify job owner when application recieved" disabled>
+                              <button data-text="Notify job owner when application recieved">
                                 <span className="la la-bell-slash"></span>
                               </button>
                             </li>
@@ -471,7 +471,7 @@ const JobListingsTable = () => {
                           </button>
                         </li>
                         <li onClick={()=>{ unpublishJob(item.job_id, item.status) }}>
-                          <button data-text="Unpublish Job" disabled>
+                          <button data-text="Unpublish Job">
                             <span className="la la-trash"></span>
                           </button>
                         </li>
