@@ -343,7 +343,7 @@ const UnpublishedJobListingsTable = () => {
                           </button>
                         </li>
                         <li onClick={()=>{ unpublishJob(item.job_id, item.status) }}>
-                          <button data-text="Unpublish Job" disabled>
+                          <button data-text="Unpublish Job">
                             <span className="la la-trash"></span>
                           </button>
                         </li>
