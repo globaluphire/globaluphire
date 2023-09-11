@@ -12,7 +12,7 @@ function EmailModal({ applicantData }) {
   const [mailSubject, setMailSubject] = useState("");
   // const [emailDisabled, setEmailDisabled] = useState(false);
   const [emailMessage, setEmailMessage] = useState("");
-  const [isLoading, setIsLoading] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSendEmail = async (recipient, subject, content) => {
     try {
@@ -149,7 +149,10 @@ function EmailModal({ applicantData }) {
         >
           {isLoading ? (
             <>
-              Sending... <Spinner />
+              <div>Sending...</div>
+              <div style={{paddingLeft:"20px", alignItems:"center"}}>
+                <Spinner />
+              </div>
             </>
           ) : (
             "Send"
