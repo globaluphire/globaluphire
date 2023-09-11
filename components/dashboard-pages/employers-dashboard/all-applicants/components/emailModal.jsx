@@ -1,9 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 // import { useSelector, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
-import QuillTextEditor from "./quillTextEditor";
 import { toast, ToastContainer } from "react-toastify";
 import { Spinner } from "react-bootstrap";
+import dynamic from "next/dynamic";
+import "suneditor/dist/css/suneditor.min.css";
+
+const SunEditor = dynamic(() => import("suneditor-react"), {
+  ssr: false,
+});
 
 function EmailModal({ applicantData }) {
   // const user = useSelector((state) => state.candidate.user);
@@ -132,9 +137,34 @@ function EmailModal({ applicantData }) {
         </div>
         <div id="text-editor" className="mt-3">
           <label htmlFor="text">Content:</label>
-          <QuillTextEditor
-            emailMessage={emailMessage}
-            setEmailMessage={setEmailMessage}
+          <SunEditor
+            setOptions={{
+              buttonList: [
+                ["fontSize", "formatBlock"],
+                [
+                  "bold",
+                  "underline",
+                  "italic",
+                  "strike",
+                  "subscript",
+                  "superscript",
+                ],
+                ["align", "horizontalRule", "list", "table"],
+                ["fontColor", "hiliteColor"],
+                ["outdent", "indent"],
+                ["undo", "redo"],
+                ["removeFormat"],
+                ["outdent", "indent"],
+                ["link"],
+                ["preview", "print"],
+                ["fullScreen", "showBlocks", "codeView"],
+              ],
+            }}
+            setDefaultStyle="color:black;"
+            placeholder="Write from here..."
+            onChange={(e) => {
+              setEmailMessage(e);
+            }}
           />
         </div>
         <chatInputButton />
@@ -150,7 +180,7 @@ function EmailModal({ applicantData }) {
           {isLoading ? (
             <>
               <div>Sending...</div>
-              <div style={{paddingLeft:"20px", alignItems:"center"}}>
+              <div style={{ paddingLeft: "20px", alignItems: "center" }}>
                 <Spinner />
               </div>
             </>
