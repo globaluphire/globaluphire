@@ -7,13 +7,11 @@ import { supabase } from "../../../../../config/supabaseClient";
 import { Spinner } from "react-bootstrap";
 import ViewModal from "./ViewModal";
 
-function SmsModal({ applicantData }) {
+function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setReceiversPhoneNumber }) {
   const user = useSelector((state) => state.candidate.user);
   const [selectedUserData, setSelectedUserData] = useState();
   const [receiversName, setReceiversName] = useState("");
-  const [receiversPhoneNumber, setReceiversPhoneNumber] = useState("+");
-  const [phoneNumberDisabled, setPhoneNumberDisabled] = useState(false);
-  const [allMessages, setAllMessages] = useState([]);
+  const [receiversPhoneNumberDisabled, setReceiversPhoneNumberDisabled] = useState(false);
   const inputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -42,76 +40,18 @@ function SmsModal({ applicantData }) {
       console.error(error);
     }
   };
-
-  const handleSetMessages = async (data) => {
-    if (!data) {
-      console.log("error retriving messages");
-      return;
-    }
-    setAllMessages(() => [
-      data.map((el) => {
-        if (el.direction === "inbound") {
-          return (
-            <div 
-              className="small text-start text-muted mt-3"
-              style={{
-                fontSize: "0.7rem"
-              }}
-            >
-            <span className="la la-comments"></span> {" "}
-            {el.sender_name} {" "}
-            {new Date(el.created_at).toLocaleString()}
-            <MessageBox
-              className="fw-normal"
-              position={"left"}
-              type={"text"}
-              title={el.name}
-              text={el.message}
-              />
-            </div>
-          );
-        } else {
-          return (
-            <div 
-              className="small text-end fw-bold text-muted mt-3"
-              style={{
-                fontSize: "0.7rem"
-              }}
-            >
-              {/* <span className="la la-envelope"></span> {" "} */}
-              <span className="la la-comments"></span> {" "}
-              {el.sender_name} {" "}
-              {new Date(el.created_at).toLocaleString()}
-              <MessageBox
-                className="fw-normal"
-                position={"right"}
-                type={"text"}
-                text={el.message}
-              />
-            </div>
-          );
-        }
-      }),
-    ]);
-  };
+  
 
   const handleSetModalData = async (applicantData) => {
     setSelectedUserData(applicantData);
     setReceiversName(applicantData?.name);
-    setReceiversPhoneNumber("");
 
-    const { data, error } = await supabase
-      .from("sms_messages")
-      .select()
-      .match({ receiver_name: applicantData?.name });
-
-    if (data[0]?.receiver_phone) {
-      setReceiversPhoneNumber(data[0].receiver_phone);
-      setPhoneNumberDisabled(true);
+    if (receiversPhoneNumber) {
+      setReceiversPhoneNumberDisabled(true);
     } else {
-      setPhoneNumberDisabled(false);
+      setReceiversPhoneNumberDisabled(false);
     }
-    handleSetMessages(data);
+
   };
 
   const handleButtonClick = async () => {
@@ -219,7 +159,7 @@ function SmsModal({ applicantData }) {
                   setReceiversPhoneNumber(e.target.value.trim());
                 }
               }}
-              disabled={phoneNumberDisabled}
+              disabled={receiversPhoneNumberDisabled}
             />
           </div>
           <div className="form-group mt-3">
@@ -236,7 +176,6 @@ function SmsModal({ applicantData }) {
           </div>
         </form>
       </div>
-      <ViewModal data={allMessages} />
     </>
   );
 }

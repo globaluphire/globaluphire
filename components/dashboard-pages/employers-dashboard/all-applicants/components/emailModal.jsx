@@ -6,18 +6,17 @@ import { Spinner } from "react-bootstrap";
 import dynamic from "next/dynamic";
 import { supabase } from "../../../../../config/supabaseClient";
 import "suneditor/dist/css/suneditor.min.css";
-import ViewModal from "./ViewModal";
+import { MessageBox } from "react-chat-elements";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
 });
 
-function EmailModal({ applicantData }) {
+function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiversEmail }) {
   const user = useSelector((state) => state.candidate.user);
   const [receiversName, setReceiversName] = useState("");
-  const [receiversEmail, setReceiversEmail] = useState("");
+  const [receiversEmailDisabled, setReceiversEmailDisabled] = useState(false);
   const [mailSubject, setMailSubject] = useState("");
-  // const [emailDisabled, setEmailDisabled] = useState(false);
   const [emailMessage, setEmailMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,6 +46,28 @@ function EmailModal({ applicantData }) {
           type: "email",
         };
         await supabase.from("sms_messages").insert(messageObj);
+        setAllMessages((prev) => [...prev, 
+          <div 
+              className="small text-end fw-bold text-muted mt-3"
+              style={{
+                fontSize: "0.7rem"
+              }}
+            >
+              {/* <span className="la la-envelope"></span> {" "} */}
+              <span className="la la-comments"></span> {" "}
+              {user.name} {" "}
+              {new Date().toLocaleString()}
+              <MessageBox
+                className="fw-normal"
+                position={"right"}
+                type={"text"}
+                text={`
+                  to: ${receiversEmail}
+                  message: ${emailMessage}
+                `}
+              />
+            </div>,
+        ]);
         toast.success("Mail Sent!", {
           position: "bottom-right",
           autoClose: 4000,
@@ -86,18 +107,22 @@ function EmailModal({ applicantData }) {
     }
   };
 
-  const handleSetModalData = async (applicantData) => {
+  const handleSetModalData = async () => {
     setReceiversName(applicantData?.name);
-    if (applicantData?.email) {
+    if (setAllMessages[0]?.email) {
       setReceiversEmail(applicantData?.email);
-      // setEmailDisabled(true)
     } else {
       setReceiversEmail("");
     }
   };
 
   useEffect(() => {
-    handleSetModalData(applicantData);
+    handleSetModalData();
+    if (receiversEmail) {
+      setReceiversEmailDisabled(true);
+    } else {
+      setReceiversEmailDisabled(false);
+    }
   }, [applicantData]);
 
   return (
@@ -132,7 +157,7 @@ function EmailModal({ applicantData }) {
                 onChange={(e) => {
                   setReceiversEmail(e.target.value);
                 }}
-                // disabled={emailDisabled}
+                disabled={receiversEmailDisabled}
               />
             </div>
           </div>
@@ -214,7 +239,6 @@ function EmailModal({ applicantData }) {
         </Button>
       </form>
     </div>
-    <ViewModal data={[]} />
     </>
   );
 }
