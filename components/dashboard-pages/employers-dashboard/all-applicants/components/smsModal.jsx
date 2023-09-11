@@ -4,6 +4,7 @@ import { MessageBox, Input, MessageList } from "react-chat-elements";
 import styles from "../../../../../styles/WidgetContentBox.module.css";
 import Button from "react-bootstrap/Button";
 import { supabase } from "../../../../../config/supabaseClient";
+import { Spinner } from "react-bootstrap";
 
 function SmsModal({ applicantData }) {
   const user = useSelector((state) => state.candidate.user);
@@ -14,6 +15,7 @@ function SmsModal({ applicantData }) {
   const [allMessages, setAllMessages] = useState([]);
   const inputRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const sendSms = async (content, recipient) => {
     try {
@@ -32,9 +34,11 @@ function SmsModal({ applicantData }) {
         const data = await response.json();
         return data;
       } else {
+        setIsLoading(false);
         throw new Error("Failed to send SMS");
       }
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
@@ -97,6 +101,7 @@ function SmsModal({ applicantData }) {
   };
 
   const handleButtonClick = async () => {
+    setIsLoading(true);
     const message = inputRef.current.value;
     if (message != "") {
       const messageObj = {
@@ -123,17 +128,24 @@ function SmsModal({ applicantData }) {
       ]);
       inputRef.current.value = "";
       scrollToBottom();
-    } else {
-      return;
     }
+    setIsLoading(false);
   };
   const chatInputButton = (
     <Button
       className="theme-btn btn-style-one btn-submit"
-      onClick={handleButtonClick}
+      onClick={() => {
+        handleButtonClick();
+      }}
       disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") ? false : true}
     >
-      Send
+      {isLoading ? (
+        <div>
+          <Spinner />
+        </div>
+      ) : (
+        "Send"
+      )}
     </Button>
   );
 
