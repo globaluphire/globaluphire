@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, use } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { MessageBox, Input, MessageList } from "react-chat-elements";
 import styles from "../../../../../styles/WidgetContentBox.module.css";
@@ -15,6 +15,7 @@ function SmsModal({ applicantData }) {
   const [allMessages, setAllMessages] = useState([]);
   const inputRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const focusScrollRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const sendSms = async (content, recipient) => {
@@ -44,10 +45,9 @@ function SmsModal({ applicantData }) {
   };
 
   const scrollToBottom = () => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
-    }
+    console.log('scrolling');
+    console.log(focusScrollRef.current);
+    focusScrollRef?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const handleSetMessages = async (data) => {
@@ -80,6 +80,10 @@ function SmsModal({ applicantData }) {
     ]);
     scrollToBottom();
   };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [allMessages]);
 
   const handleSetModalData = async (applicantData) => {
     setSelectedUserData(applicantData);
@@ -128,7 +132,6 @@ function SmsModal({ applicantData }) {
         />,
       ]);
       inputRef.current.value = "";
-      scrollToBottom();
     }
     setIsLoading(false);
   };
@@ -220,6 +223,10 @@ function SmsModal({ applicantData }) {
           >
             {allMessages.map((el) => el)}
           </div>
+
+          <div ref={focusScrollRef} style={{
+            marginBottom: "40px"
+          }}></div>
 
           <div
             style={{
