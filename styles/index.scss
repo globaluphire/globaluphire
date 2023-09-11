@@ -2,3 +2,19 @@
 @import "slick-carousel/slick/slick-theme.css";
 @import "~bootstrap/scss/bootstrap";
 @import "public/scss/main.scss";
+
+:root{
+    --msg-primary: #173b37;
+}
+
+.rce-mbox {
+    background-color: var(--msg-primary) !important;
+}
+
+.rce-mbox .rce-mbox-body {
+    color: white !important;
+}
+
+.rce-mbox svg {
+    fill: var(--msg-primary) !important;
+}

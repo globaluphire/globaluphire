@@ -5,6 +5,7 @@ import styles from "../../../../../styles/WidgetContentBox.module.css";
 import Button from "react-bootstrap/Button";
 import { supabase } from "../../../../../config/supabaseClient";
 import { Spinner } from "react-bootstrap";
+import ViewModal from "./ViewModal";
 
 function SmsModal({ applicantData }) {
   const user = useSelector((state) => state.candidate.user);
@@ -14,8 +15,6 @@ function SmsModal({ applicantData }) {
   const [phoneNumberDisabled, setPhoneNumberDisabled] = useState(false);
   const [allMessages, setAllMessages] = useState([]);
   const inputRef = useRef(null);
-  const chatContainerRef = useRef(null);
-  const focusScrollRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const sendSms = async (content, recipient) => {
@@ -44,12 +43,6 @@ function SmsModal({ applicantData }) {
     }
   };
 
-  const scrollToBottom = () => {
-    console.log('scrolling');
-    console.log(focusScrollRef.current);
-    focusScrollRef?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
   const handleSetMessages = async (data) => {
     if (!data) {
       console.log("error retriving messages");
@@ -59,31 +52,48 @@ function SmsModal({ applicantData }) {
       data.map((el) => {
         if (el.direction === "inbound") {
           return (
+            <div 
+              className="small text-start text-muted mt-3"
+              style={{
+                fontSize: "0.7rem"
+              }}
+            >
+            <span className="la la-comments"></span> {" "}
+            {el.sender_name} {" "}
+            {new Date(el.created_at).toLocaleString()}
             <MessageBox
+              className="fw-normal"
               position={"left"}
               type={"text"}
               title={el.name}
               text={el.message}
-            />
+              />
+            </div>
           );
         } else {
           return (
-            <MessageBox
-              position={"right"}
-              type={"text"}
-              title={`Admin: ${el.sender_name}`}
-              text={el.message}
-            />
+            <div 
+              className="small text-end fw-bold text-muted mt-3"
+              style={{
+                fontSize: "0.7rem"
+              }}
+            >
+              {/* <span className="la la-envelope"></span> {" "} */}
+              <span className="la la-comments"></span> {" "}
+              {el.sender_name} {" "}
+              {new Date(el.created_at).toLocaleString()}
+              <MessageBox
+                className="fw-normal"
+                position={"right"}
+                type={"text"}
+                text={el.message}
+              />
+            </div>
           );
         }
       }),
     ]);
-    scrollToBottom();
   };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [allMessages]);
 
   const handleSetModalData = async (applicantData) => {
     setSelectedUserData(applicantData);
@@ -124,12 +134,23 @@ function SmsModal({ applicantData }) {
       await supabase.from("sms_messages").insert(messageObj);
       setAllMessages((previous) => [
         ...previous,
-        <MessageBox
-          position={"right"}
-          type={"text"}
-          title={`Admin: ${user.name}`}
-          text={message}
-        />,
+        <div 
+              className="small text-end fw-bold text-muted mt-3"
+              style={{
+                fontSize: "0.7rem"
+              }}
+            >
+              {/* <span className="la la-envelope"></span> {" "} */}
+              <span className="la la-comments"></span> {" "}
+              {user.name} {" "}
+              {new Date().toLocaleString()}
+              <MessageBox
+                className="fw-normal"
+                position={"right"}
+                type={"text"}
+                text={message}
+              />
+            </div>,
       ]);
       inputRef.current.value = "";
     }
@@ -142,6 +163,10 @@ function SmsModal({ applicantData }) {
         handleButtonClick();
       }}
       disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") ? false : true}
+      style={{
+        backgroundColor: "var(--msg-primary)",
+        border: "none"
+      }}
     >
       {isLoading ? (
         <div>
@@ -197,57 +222,21 @@ function SmsModal({ applicantData }) {
               disabled={phoneNumberDisabled}
             />
           </div>
+          <div className="form-group mt-3">
+            <label htmlFor="phoneNumber">Your Message:</label>
+            <Input
+                placeholder="Type Here..."
+                multiline={true}
+                className="input rounded px-2 form-control"
+                rightButtons={chatInputButton}
+                referance={inputRef}
+                autoHeight={true}
+                height={100}
+              />
+          </div>
         </form>
       </div>
-      <div className="col-md-6">
-        <div
-          className={styles.smsMessageBox + " container"}
-          ref={chatContainerRef}
-          style={{
-            position: "relative",
-            background: "#EEEEEE",
-            borderRadius: "20px",
-            width: "500px",
-            minHeight: "400px",
-            height: "400px",
-            padding: "20px",
-            paddingBottom: "0",
-            overflowY: "scroll",
-          }}
-        >
-          <div
-            id="chatBoxContainer"
-            style={{
-              minHeight: "300px",
-            }}
-          >
-            {allMessages.map((el) => el)}
-          </div>
-
-          <div ref={focusScrollRef} style={{
-            marginBottom: "40px"
-          }}></div>
-
-          <div
-            style={{
-              position: "sticky",
-              bottom: "0",
-              width: "100%",
-              left: "0",
-              padding: "10px 0",
-            }}
-          >
-            <Input
-              placeholder="Type here..."
-              multiline={true}
-              className="input rounded px-2"
-              rightButtons={chatInputButton}
-              referance={inputRef}
-              autoHeight={true}
-            />
-          </div>
-        </div>
-      </div>
+      <ViewModal data={allMessages} />
     </>
   );
 }

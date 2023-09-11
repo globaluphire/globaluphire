@@ -25,10 +25,28 @@ function CommunicationModal({ applicantData }) {
                 defaultValue={1}
                 style={{ paddingBottom: "20px" }}
               >
-                <ToggleButton id="tbg-radio-1" value={1} onClick={()=>setActiveTab(1)}>
+                <ToggleButton 
+                  id="tbg-radio-1" 
+                  value={1} 
+                  onClick={()=>setActiveTab(1)} 
+                  style={{
+                    backgroundColor:"var(--msg-primary)",
+                    filter: activeTab === 1 ? "none" : "brightness(0.5)",
+                    border: "none"
+                  }}
+                >
                   SMS
                 </ToggleButton>
-                <ToggleButton id="tbg-radio-2" value={2} onClick={()=>setActiveTab(2)}>
+                <ToggleButton 
+                  id="tbg-radio-2" 
+                  value={2} 
+                  onClick={()=>setActiveTab(2)} 
+                  style={{
+                    backgroundColor:"var(--msg-primary)",
+                    filter: activeTab === 2 ? "none" : "brightness(0.5)",
+                    border: "none"
+                  }}
+                >
                   Email
                 </ToggleButton>
               </ToggleButtonGroup>

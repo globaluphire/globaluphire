@@ -6,6 +6,7 @@ import { Spinner } from "react-bootstrap";
 import dynamic from "next/dynamic";
 import { supabase } from "../../../../../config/supabaseClient";
 import "suneditor/dist/css/suneditor.min.css";
+import ViewModal from "./ViewModal";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
@@ -101,6 +102,7 @@ function EmailModal({ applicantData }) {
 
   return (
     <>
+    <div className="col-md-6">
       <form>
         <div className="row">
           <div className="col-md-6">
@@ -182,7 +184,11 @@ function EmailModal({ applicantData }) {
         </div>
         <chatInputButton />
         <Button
-          style={{ marginTop: "20px" }}
+          style={{ 
+            marginTop: "20px",
+            backgroundColor: "var(--msg-primary)",
+            border: "none"
+          }}
           className="theme-btn btn-style-one btn-submit"
           onClick={() => {
             handleSendEmail(receiversEmail, mailSubject, emailMessage);
@@ -193,7 +199,12 @@ function EmailModal({ applicantData }) {
           {isLoading ? (
             <>
               <div>Sending...</div>
-              <div style={{ paddingLeft: "20px", alignItems: "center" }}>
+              <div style={{ 
+                paddingLeft: "20px", 
+                alignItems: "center",
+                backgroundColor: "var(--msg-primary)",
+                border: "none"
+              }}>
                 <Spinner />
               </div>
             </>
@@ -202,6 +213,8 @@ function EmailModal({ applicantData }) {
           )}
         </Button>
       </form>
+    </div>
+    <ViewModal data={[]} />
     </>
   );
 }
