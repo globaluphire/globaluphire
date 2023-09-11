@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import Button from "react-bootstrap/Button";
 import QuillTextEditor from "./quillTextEditor";
 import { toast, ToastContainer } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 
 function EmailModal({ applicantData }) {
   // const user = useSelector((state) => state.candidate.user);
@@ -11,6 +12,7 @@ function EmailModal({ applicantData }) {
   const [mailSubject, setMailSubject] = useState("");
   // const [emailDisabled, setEmailDisabled] = useState(false);
   const [emailMessage, setEmailMessage] = useState("");
+  const [isLoading, setIsLoading] = useState("");
 
   const handleSendEmail = async (recipient, subject, content) => {
     try {
@@ -36,6 +38,7 @@ function EmailModal({ applicantData }) {
           progress: undefined,
           theme: "colored",
         });
+        setIsLoading(false);
       } else {
         toast.error("Failed to send Mail!", {
           position: "bottom-right",
@@ -47,6 +50,7 @@ function EmailModal({ applicantData }) {
           progress: undefined,
           theme: "colored",
         });
+        setIsLoading(false);
       }
     } catch (error) {
       toast.error("Some Error Occured!", {
@@ -59,6 +63,7 @@ function EmailModal({ applicantData }) {
         progress: undefined,
         theme: "colored",
       });
+      setIsLoading(false);
     }
   };
 
@@ -138,10 +143,17 @@ function EmailModal({ applicantData }) {
           className="theme-btn btn-style-one btn-submit"
           onClick={() => {
             handleSendEmail(receiversEmail, mailSubject, emailMessage);
+            setIsLoading(true);
           }}
           disabled={!receiversEmail && !emailMessage}
         >
-          Send
+          {isLoading ? (
+            <>
+              Sending... <Spinner />
+            </>
+          ) : (
+            "Send"
+          )}
         </Button>
       </form>
     </>
