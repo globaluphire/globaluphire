@@ -13,6 +13,7 @@ function SmsModal({ applicantData }) {
   const [phoneNumberDisabled, setPhoneNumberDisabled] = useState(false);
   const [allMessages, setAllMessages] = useState([]);
   const inputRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   const sendSms = async (content, recipient) => {
     try {
@@ -38,10 +39,11 @@ function SmsModal({ applicantData }) {
     }
   };
 
-  const scrollToBottom = (id) => {
-    // chatBoxContainer
-    const element = document.getElementById(id);
-    element.scrollTop = element.scrollHeight;
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
   };
 
   const handleSetMessages = async (data) => {
@@ -65,14 +67,14 @@ function SmsModal({ applicantData }) {
             <MessageBox
               position={"right"}
               type={"text"}
-              title={"You"}
+              title={`Admin: ${el.sender_name}`}
               text={el.message}
             />
           );
         }
       }),
     ]);
-    scrollToBottom("chatBoxContainer");
+    scrollToBottom();
   };
 
   const handleSetModalData = async (applicantData) => {
@@ -115,11 +117,12 @@ function SmsModal({ applicantData }) {
         <MessageBox
           position={"right"}
           type={"text"}
-          title={"You"}
+          title={`Admin: ${user.name}`}
           text={message}
         />,
       ]);
       inputRef.current.value = "";
+      scrollToBottom();
     } else {
       return;
     }
@@ -183,6 +186,7 @@ function SmsModal({ applicantData }) {
       <div className="col-md-6">
         <div
           className={styles.smsMessageBox + " container"}
+          ref={chatContainerRef}
           style={{
             position: "relative",
             background: "#EEEEEE",
@@ -201,7 +205,12 @@ function SmsModal({ applicantData }) {
               minHeight: "300px",
             }}
           >
-            {allMessages.map((el) => el)}
+            <MessageList
+              className="message-list"
+              lockable={true}
+              toBottomHeight={"100%"}
+              dataSource={allMessages[0].map((el) => el.props)}
+            />
           </div>
 
           <div
