@@ -113,6 +113,7 @@ function SmsModal({ applicantData }) {
         receiver_phone: receiversPhoneNumber,
         message: message,
         direction: "outbound",
+        type: "sms",
       };
       // api call for twilio uncomment this code for it to work
       // await sendSms(message, receiversPhoneNumber)

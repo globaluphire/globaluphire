@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-// import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "react-bootstrap/Button";
 import { toast, ToastContainer } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import dynamic from "next/dynamic";
+import { supabase } from "../../../../../config/supabaseClient";
 import "suneditor/dist/css/suneditor.min.css";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
@@ -11,7 +12,7 @@ const SunEditor = dynamic(() => import("suneditor-react"), {
 });
 
 function EmailModal({ applicantData }) {
-  // const user = useSelector((state) => state.candidate.user);
+  const user = useSelector((state) => state.candidate.user);
   const [receiversName, setReceiversName] = useState("");
   const [receiversEmail, setReceiversEmail] = useState("");
   const [mailSubject, setMailSubject] = useState("");
@@ -33,6 +34,18 @@ function EmailModal({ applicantData }) {
         }),
       });
       if (response.ok) {
+        const messageObj = {
+          sender_name: user.name,
+          sender_user_id: user.id,
+          sender_email: user.email,
+          receiver_name: receiversName,
+          receiver_email: receiversEmail,
+          // receiver_phone: receiversPhoneNumber,
+          message: emailMessage,
+          direction: "outbound",
+          type: "email",
+        };
+        await supabase.from("sms_messages").insert(messageObj);
         toast.success("Mail Sent!", {
           position: "bottom-right",
           autoClose: 4000,
