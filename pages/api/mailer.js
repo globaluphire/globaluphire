@@ -76,10 +76,10 @@ export default function handler(req, res) {
     mail
       .send(msg)
       .then(() => {
-        res.status(200).json({ status: "SUCCESS" });
+        return res.status(200).json({ status: "SUCCESS" });
       })
       .catch((error) => {
-        res.status(400).json({ status: "FAILURE", error });
+        return res.status(400).json({ status: "FAILURE", error });
       });
   } else {
     res.status(405).json({ status: 405, message: "Method not allowed" });
