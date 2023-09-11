@@ -205,12 +205,7 @@ function SmsModal({ applicantData }) {
               minHeight: "300px",
             }}
           >
-            <MessageList
-              className="message-list"
-              lockable={true}
-              toBottomHeight={"100%"}
-              dataSource={allMessages[0].map((el) => el.props)}
-            />
+            {allMessages.map((el) => el)}
           </div>
 
           <div
