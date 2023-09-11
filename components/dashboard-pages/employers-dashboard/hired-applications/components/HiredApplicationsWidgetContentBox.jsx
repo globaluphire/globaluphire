@@ -12,6 +12,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import Router from "next/router";
 
 const addSearchFilters = {
     name: "",
@@ -390,6 +391,13 @@ const HiredApplicationsWidgetContentBox = () => {
                                                         <span className="la la-download"></span>
                                                     </button>
                                                 </li>
+                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: applicant}}>
+                                                    <li>
+                                                        <button data-text="Send Documents">
+                                                            <span className="la la-send"></span>
+                                                        </button>
+                                                    </li>
+                                                </Link>
                                                 {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
                                                     <button data-text="Qualified">
                                                     <span className="la la-check"></span>
