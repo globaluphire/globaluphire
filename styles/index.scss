@@ -11,9 +11,33 @@
     background-color: var(--msg-primary) !important;
 }
 
-.rce-mbox .rce-mbox-body {
+.rce-mbox .rce-mbox-body,
+.rce-mbox .rce-mbox-body p,
+.rce-mbox .rce-mbox-body a,
+.rce-mbox .rce-mbox-body div,
+.rce-mbox .rce-mbox-body span,
+.rce-mbox .rce-mbox-body h1,
+.rce-mbox .rce-mbox-body h2,
+.rce-mbox .rce-mbox-body h3,
+.rce-mbox .rce-mbox-body h4,
+.rce-mbox .rce-mbox-body h5,
+.rce-mbox .rce-mbox-body h6,
+.rce-mbox .rce-mbox-body ul,
+.rce-mbox .rce-mbox-body ol,
+.rce-mbox .rce-mbox-body li,
+.rce-mbox .rce-mbox-body table,
+.rce-mbox .rce-mbox-body tr,
+.rce-mbox .rce-mbox-body td,
+.rce-mbox .rce-mbox-body th,
+.rce-mbox .rce-mbox-body tbody,
+.rce-mbox .rce-mbox-body thead,
+.rce-mbox .rce-mbox-body tfoot,
+.rce-mbox .rce-mbox-body blockquote,
+.rce-mbox .rce-mbox-body pre{
     color: white !important;
 }
+
+
 
 .rce-mbox svg {
     fill: var(--msg-primary) !important;
