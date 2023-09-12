@@ -48,7 +48,7 @@ const index = () => {
                   <div className="widget-content">
                     <UserDetails />
                     {/* End job steps form */}
-                    {/* <UserDocuments /> */}
+                    <UserDocuments />
                     {/* End post box form */}
                   </div>
                 </div>
