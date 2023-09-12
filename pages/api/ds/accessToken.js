@@ -5,25 +5,26 @@ import { supabase } from "../../../config/supabaseClient";
 export default async function handler(req, res) {
   if (req.method == "GET") {
     const { email } = req.query;
-    console.log(email);
     const { data } = await supabase
       .from("users")
       .select("*")
       .filter("email", "eq", email);
 
-    if (data.role !== "ADMIN") {
+    const user = data[0];
+    if (user.role !== "ADMIN") {
       return res
         .status(405)
         .json({ status: 405, message: "Method not allowed" });
     }
     const generatedJWT = await createJWT();
     const response = await getDsAccessToken(generatedJWT);
-    return res.status(200).json({ message: "success", data: response });
+    return res.status(200).json({ message: "success", data: response.data });
   } else {
     return res.status(405).json({ status: 405, message: "Method not allowed" });
   }
 }
 
+// create jwt grant using your keys for docusign
 async function createJWT() {
   const payload = {
     iss: process.env.NEXT_DOCUSIGN_INTEGRATION_KEY,
@@ -83,6 +84,7 @@ YceL+58htUuvErAIfxB7vduvHjr0754SJk9t11TNC6V/kTIO8txw6w==
   }
 }
 
+// request docuSign for access_token
 async function getDsAccessToken(generatedJWT) {
   try {
     const response = await axios.post(
