@@ -1,20 +1,18 @@
-const axios = require("axios");
+const docusign = require("docusign-esign");
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
     try {
       const { token } = req.query;
-      const response = await axios.get(
-        `${process.env.NEXT_DOCUSIGN_API_URL}/restapi/v2.1/accounts/${process.env.NEXT_DOCUSIGN_ACCOUNT_ID}/templates`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      let dsApiClient = new docusign.ApiClient();
+      dsApiClient.setBasePath(process.env.NEXT_DOCUSIGN_API_URL);
+      dsApiClient.addDefaultHeader(
+        "Authorization",
+        "Bearer " + token
       );
-      const templates = await response.data;
+      let templatesApi = new docusign.TemplatesApi(dsApiClient);
+      const templates = await templatesApi.listTemplates(process.env.NEXT_DOCUSIGN_ACCOUNT_ID)
       return res.status(200).json({ message: "Success", data: templates });
-      
     } catch (error) {
       if (error.response.status === 401 || error.response.status === 403) {
         return res.status(401).json({ message: "Token expired or invalid" });
