@@ -35,6 +35,11 @@
 .rce-mbox .rce-mbox-body blockquote,
 .rce-mbox .rce-mbox-body pre{
     color: white !important;
+    margin-bottom: 0 !important;
+}
+
+.rce-mbox-text.right::after{
+    display: none !important;
 }
 
 
