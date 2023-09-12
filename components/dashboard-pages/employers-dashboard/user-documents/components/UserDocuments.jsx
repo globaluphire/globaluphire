@@ -7,11 +7,13 @@ const UserDocuments = () => {
   const user = useSelector((state) => state.candidate.user);
   const [allTemplates, setAllTemplates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [imgSrc, setImgSrc] = useState(null);
 
   // Function to fetch templates and update the state
   const fetchTemplates = async () => {
     try {
       const token = await getAccessToken(user.email);
+      console.log('token', token.data.access_token);
       const response = await fetch(
         `/api/ds/templates?token=${token.data.access_token}`,
         {
@@ -57,6 +59,33 @@ const UserDocuments = () => {
     }
   };
 
+  // Function to fetch one preview
+  const fetchOnePreview = async (templateId) => {
+    setImgSrc(false);
+    try {
+      const token = await getAccessToken(user.email);
+      const response = await fetch(
+        `/api/ds/preview`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            template:{
+              templateId: templateId,
+              documentId: 1,
+            },
+            token: token.data.access_token,
+          })
+      }).then(res => res.json());
+      setImgSrc(`data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`);
+    } catch (error) {
+      console.error(error);
+      setImgSrc(null);
+    }
+  }
+  
   useEffect(() => {
     fetchTemplates(); // Fetch templates when the component mounts
     setIsLoading(true);
@@ -72,7 +101,7 @@ const UserDocuments = () => {
           ) : allTemplates ? (
             <ListGroup as="ol" variant="numbered">
               {allTemplates?.map((template) => (
-                <ListGroup.Item key={template.id}>
+                <ListGroup.Item key={template.id} onClick={()=>fetchOnePreview(template.templateId)} style={{cursor: "pointer"}}>
                   {template.name}
                 </ListGroup.Item>
               ))}
@@ -84,11 +113,13 @@ const UserDocuments = () => {
         <div className="col-8">
           <div>Preview:</div>
           <ListGroup>
-            <ListGroup.Item>Cras justo odio</ListGroup.Item>
+            {imgSrc === null && <>No Preview To Show</>}  
+            {imgSrc === false ? <Spinner /> : <img src={imgSrc}/>}
+            {/* <ListGroup.Item>Cras justo odio</ListGroup.Item>
             <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
             <ListGroup.Item>Morbi leo risus</ListGroup.Item>
             <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item>
-            <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+            <ListGroup.Item>Vestibulum at eros</ListGroup.Item> */}
           </ListGroup>
         </div>
       </div>
