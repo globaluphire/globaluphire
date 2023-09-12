@@ -33,7 +33,16 @@ function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setRece
         return data;
       } else {
         setIsLoading(false);
-        throw new Error("Failed to send SMS");
+        toast.error("Failed to send Sms!", {
+          position: "bottom-right",
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       }
     } catch (error) {
       setIsLoading(false);
