@@ -12,10 +12,9 @@ export default async function handler(req, res) {
           },
         }
       );
-      if (response.response.status === 200) {
-        const templates = await response.data;
-        return res.status(200).json({ message: "Success", data: templates });
-      }
+      const templates = await response.data;
+      return res.status(200).json({ message: "Success", data: templates });
+      
     } catch (error) {
       if (error.response.status === 401 || error.response.status === 403) {
         return res.status(401).json({ message: "Token expired or invalid" });
