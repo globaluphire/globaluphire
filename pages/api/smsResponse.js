@@ -23,7 +23,14 @@ export default async function handler(req, res) {
       receiver_email: receiverData.sender_email,
       receiver_phone: twilioResponse.From,
       message: twilioResponse.Body,
-      direction: "inbound"
+      direction: "inbound",
+      sms_message_sid: twilioResponse.SmsMessageSid,
+      sms_sid: twilioResponse.SmsSid,
+      message_sid: twilioResponse.MessageSid,
+      from_country:twilioResponse.FromCountry,
+      from_city: twilioResponse.FromCity,
+      from_state: twilioResponse.FromState,
+      from_zip: twilioResponse.FromZip,
     };
     await supabase.from('sms_messages').insert(messageObj)
     res.status(200).json({ message: "success" });
