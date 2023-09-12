@@ -7,7 +7,7 @@ const UserDocuments = () => {
   const user = useSelector((state) => state.candidate.user);
   const [allTemplates, setAllTemplates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [imgSrc, setImgSrc] = useState(null);
+  const [imgData, setImgData] = useState(null);
 
   // Function to fetch templates and update the state
   const fetchTemplates = async () => {
@@ -61,7 +61,7 @@ const UserDocuments = () => {
 
   // Function to fetch one preview
   const fetchOnePreview = async (templateId) => {
-    setImgSrc(false);
+    setImgData(false);
     try {
       const token = await getAccessToken(user.email);
       const response = await fetch(
@@ -79,10 +79,10 @@ const UserDocuments = () => {
             token: token.data.access_token,
           })
       }).then(res => res.json());
-      setImgSrc(`data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`);
+      setImgData({templateId, data:`data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`});
     } catch (error) {
       console.error(error);
-      setImgSrc(null);
+      setImgData(null);
     }
   }
   
@@ -101,7 +101,12 @@ const UserDocuments = () => {
           ) : allTemplates ? (
             <ListGroup as="ol" variant="numbered">
               {allTemplates?.map((template) => (
-                <ListGroup.Item key={template.id} onClick={()=>fetchOnePreview(template.templateId)} style={{cursor: "pointer"}}>
+                <ListGroup.Item 
+                  key={template.id} 
+                  onClick={()=>fetchOnePreview(template.templateId)} 
+                  style={{cursor: "pointer"}} 
+                  disabled={imgData === false || imgData?.templateId === template.templateId}
+                >
                   {template.name}
                 </ListGroup.Item>
               ))}
@@ -113,8 +118,8 @@ const UserDocuments = () => {
         <div className="col-8">
           <div>Preview:</div>
           <ListGroup>
-            {imgSrc === null && <>No Preview To Show</>}  
-            {imgSrc === false ? <Spinner /> : <img src={imgSrc}/>}
+            {imgData === null && <>No Preview To Show</>}  
+            {imgData === false ? <Spinner /> : <img src={imgData?.data}/>}
             {/* <ListGroup.Item>Cras justo odio</ListGroup.Item>
             <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
             <ListGroup.Item>Morbi leo risus</ListGroup.Item>
