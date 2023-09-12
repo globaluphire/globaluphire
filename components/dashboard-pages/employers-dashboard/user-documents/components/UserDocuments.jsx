@@ -13,7 +13,6 @@ const UserDocuments = () => {
   const fetchTemplates = async () => {
     try {
       const token = await getAccessToken(user.email);
-      console.log('token', token.data.access_token);
       const response = await fetch(
         `/api/ds/templates?token=${token.data.access_token}`,
         {
