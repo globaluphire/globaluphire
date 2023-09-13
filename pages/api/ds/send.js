@@ -60,6 +60,8 @@ async function createEnvelopes(
         sender_email: user.email,
         receiver_name: applicant.name,
         receiver_email: recipient.email,
+        application_id: applicant.application_id,
+        applicant_name: applicant.name,
         envelope_id: results.envelopeId,
         template_id: doc.templateId,
         uri: results.uri,
