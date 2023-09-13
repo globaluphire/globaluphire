@@ -13,7 +13,6 @@ export default async function handler(req, res) {
         from: process.env.NEXT_TWILIO_NUMBER,
         to: req.body.recipient,
       });
-      console.log(response)
       return res.status(200).json({ status: "success", data: response });
     } catch (error) {
       console.log(error);
