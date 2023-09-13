@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Button, ListGroup, ListGroupItem } from "react-bootstrap";
+import { Button, Form, ListGroup, ListGroupItem } from "react-bootstrap";
 import { Spinner } from "react-bootstrap";
 
 const UserDocuments = ({ applicantData }) => {
@@ -9,10 +9,24 @@ const UserDocuments = ({ applicantData }) => {
   const [selectedTemplates, setSelectedTemplates] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [imgData, setImgData] = useState(null);
+  const applicantForm = useRef(null);
 
   // Function to fetch templates and update the state
   const sendDocumentsForSigning = async () => {
+    console.log('sendDocumentsForSigning');
     try {
+      if (!applicantForm.current) {
+        return;
+      }
+      const applicantEmail = applicantForm.current.querySelector("#applicantEmail").value;
+      const applicantName = applicantForm.current.querySelector("#applicantName").value;
+      const applicantroleName = applicantForm.current.querySelector("#applicantroleName").value;
+      const applicant = {
+        email: applicantEmail,
+        name: applicantName,
+        roleName: applicantroleName,
+      };
+      console.log('applicant', applicant);
       const token = await getAccessToken(user.email);
       const response = await fetch(`/api/ds/send`, {
         method: "POST",
@@ -24,13 +38,8 @@ const UserDocuments = ({ applicantData }) => {
           user,
           applicant: applicantData,
           // send selectedTemplates here
-          template: allTemplates,
-          recipient: {
-            // add form to allow user to fill these details
-            email: "aniket.gupta@asambhav.org.in",
-            name: "Aniket Gupta",
-            roleName: "Signer",
-          },
+          template: selectedTemplates,
+          recipient: applicant,
         }),
       });
       if (response.ok) {
@@ -134,26 +143,63 @@ const UserDocuments = ({ applicantData }) => {
     }
   }, [applicantData]);
 
+  const handleCheckChange = (template, checked) => {
+    if (checked) {
+      setSelectedTemplates([...selectedTemplates, template]);
+    } else {
+      setSelectedTemplates(
+        selectedTemplates.filter((t) => t.templateId !== template.templateId)
+      );
+    }
+  }
+
   return (
     <form className="default-form">
       <div className="row">
-        <div className="col-4">
-          <div>Documents:</div>
+        <div 
+          className="col-4"
+        >
+          <h5 className="mb-3">Documents</h5>
           {isLoading ? (
             <Spinner />
           ) : allTemplates ? (
-            <ListGroup as="ol" variant="numbered">
+            <ListGroup 
+              as="ol" 
+              variant="numbered"
+              style={{
+                height: "30rem",
+                overflow: "auto",
+              }}
+            >
               {allTemplates?.map((template) => (
                 <ListGroup.Item
                   key={template.id}
-                  onClick={() => fetchOnePreview(template.templateId)}
-                  style={{ cursor: "pointer" }}
-                  disabled={
-                    imgData === false ||
-                    imgData?.templateId === template.templateId
-                  }
+                  onClick={() =>!(imgData === false ||
+                    imgData?.templateId === template.templateId) && fetchOnePreview(template.templateId)}
+                  style={{ 
+                    cursor: "pointer",
+                    backgroundColor: imgData?.templateId === template.templateId ? "#007bff" : "white",
+                    color: imgData?.templateId === template.templateId ? "white" : "black",
+                    display: "grid",
+                    gridTemplateColumns: "auto 1fr auto",
+                  }}
                 >
-                  {template.name}
+                    <span 
+                      // style={{width: "100%"}} 
+                      disabled={
+                      imgData === false ||
+                      imgData?.templateId === template.templateId
+                    }>
+                      {template.name}
+                    </span>
+                    <input 
+                      type="checkbox" 
+                      checked={template.shared !== "false"}
+                      disabled={template.shared !== "false"}
+                      aria-label="Checkbox for following text input"
+                      className="form-check-input float-right"
+                      onChange={(e) => handleCheckChange(template, e.target.checked)}
+                    />
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -161,16 +207,77 @@ const UserDocuments = ({ applicantData }) => {
             <>No templates found!</>
           )}
         </div>
-        <div className="col-8">
-          <div>Preview:</div>
-          <ListGroup>
+        <div 
+          className="col-4"
+          
+        >
+          <h5>Preview</h5>
+          <ListGroup
+            className="border"
+            style={{
+              height: "30rem",
+              overflow: "auto",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             {imgData === null && <>No Preview To Show</>}
-            {imgData === false ? <Spinner /> : <img src={imgData?.data} />}
+            {imgData === false ? <Spinner /> : <img src={imgData?.data} style={{
+              width: "100%",
+            }}/>}
           </ListGroup>
+          {/* <Button
+            onClick={() => {
+              sendDocumentsForSigning();
+            }}
+          >
+            {" "}
+            send
+          </Button> */}
+        </div>
+        <div className="col-4"
+            style={{
+              height: "30rem",
+              overflow: "auto",
+            }}
+        >
+          <Form
+            ref={applicantForm}
+          >
+            <Form.Group className="form-group">
+              <Form.Label htmlFor="applicantEmail">Email</Form.Label>
+              <Form.Control
+                className="form-control form-control-sm"
+                type="email"
+                defaultValue="aniket.gupta@asambhav.org.in"
+                id="applicantEmail"
+              />
+            </Form.Group>
+            <Form.Group className="form-group">
+                <Form.Label htmlFor="applicantName"> Name</Form.Label>
+                <Form.Control
+                  className="form-control form-control-sm"
+                  type="text"
+                  defaultValue="Aniket Gupta"
+                  id="applicantName"
+                />
+            </Form.Group>
+            <Form.Group className="form-group">
+              <Form.Label htmlFor="applicantroleName">Role</Form.Label>
+              <Form.Control
+                className="form-control form-control-sm"
+                type="text"
+                defaultValue="Signer"
+                id="applicantroleName"
+              />
+            </Form.Group>
+          </Form>
           <Button
             onClick={() => {
               sendDocumentsForSigning();
             }}
+            className="w-100"
           >
             {" "}
             send
@@ -182,3 +289,5 @@ const UserDocuments = ({ applicantData }) => {
 };
 
 export default UserDocuments;
+
+//
