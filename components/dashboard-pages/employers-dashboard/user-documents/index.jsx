@@ -5,7 +5,6 @@ import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardEmployerSidebar from "../../../header/DashboardEmployerSidebar";
 import BreadCrumb from "../../BreadCrumb";
 import CopyrightFooter from "../../CopyrightFooter";
-// import PostJobSteps from "./components/PostJobSteps";
 import UserDetails from "./components/UserDetails";
 import UserDocuments from "./components/UserDocuments";
 import MenuToggler from "../../MenuToggler";
