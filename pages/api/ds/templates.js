@@ -21,19 +21,24 @@ export default async function handler(req, res) {
           sender_email: user.email,
         });
 
-      const updatedTemplates = templates.envelopeTemplates.map(
-        (template) => {
+      let envelopesApi = new docusign.EnvelopesApi(dsApiClient);
+
+      // Promise for async
+      const updatedTemplates = await Promise.all(
+        templates.envelopeTemplates.map(async (template) => {
           const matchingUserTemplate = userTemplates.data.find(
             (userTemplate) => userTemplate.template_id === template.templateId
           );
           if (matchingUserTemplate) {
-            template.status = matchingUserTemplate.status;
-            template.envelopeId = matchingUserTemplate.envelope_id;
-            template.envelopeUri = matchingUserTemplate.uri;
-            template.sentAt = matchingUserTemplate.created_at;
+            const response = await envelopesApi.getEnvelope(
+              process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
+              matchingUserTemplate.envelope_id
+            );
+            // console.log(response)
+            template.envelope = response
           }
           return template;
-        }
+        })
       );
       // add status to all templates for a specific user
       return res.status(200).json({ message: "Success", data: updatedTemplates });
