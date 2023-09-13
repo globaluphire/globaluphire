@@ -86,7 +86,7 @@ function SmsModal({
         type: "sms",
       };
       // api call for twilio uncomment this code for it to work
-      // const smsResponse = await sendSms(message, receiversPhoneNumber);
+      const smsResponse = await sendSms(message, receiversPhoneNumber);
       if (smsResponse.status !== "success") {
         return;
       }
