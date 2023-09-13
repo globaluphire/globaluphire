@@ -10,10 +10,11 @@ const UserDocuments = ({ applicantData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [imgData, setImgData] = useState(null);
   const applicantForm = useRef(null);
+  const [sendDocumentsForSigningLoading, setSendDocumentsForSigningLoading] = useState(false);
 
   // Function to fetch templates and update the state
   const sendDocumentsForSigning = async () => {
-    console.log('sendDocumentsForSigning');
+    setSendDocumentsForSigningLoading(true);
     try {
       if (!applicantForm.current) {
         return;
@@ -52,6 +53,7 @@ const UserDocuments = ({ applicantData }) => {
       setIsLoading(false);
       console.error(error);
     }
+    setSendDocumentsForSigningLoading(false);
   };
 
   // Function to fetch templates and update the state
@@ -194,7 +196,7 @@ const UserDocuments = ({ applicantData }) => {
                     </span>
                     <input 
                       type="checkbox" 
-                      checked={template.shared !== "false"}
+                      defaultChecked={template.shared !== "false"}
                       disabled={template.shared !== "false"}
                       aria-label="Checkbox for following text input"
                       className="form-check-input float-right"
@@ -278,9 +280,8 @@ const UserDocuments = ({ applicantData }) => {
               sendDocumentsForSigning();
             }}
             className="w-100"
-          >
-            {" "}
-            send
+            disabled={sendDocumentsForSigningLoading}
+          >{sendDocumentsForSigningLoading ? <Spinner /> : "Send"}
           </Button>
         </div>
       </div>
