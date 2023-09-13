@@ -28,6 +28,9 @@ export default async function handler(req, res) {
           );
           if (matchingUserTemplate) {
             template.status = matchingUserTemplate.status;
+            template.envelopeId = matchingUserTemplate.envelope_id;
+            template.envelopeUri = matchingUserTemplate.uri;
+            template.sentAt = matchingUserTemplate.created_at;
           }
           return template;
         }
