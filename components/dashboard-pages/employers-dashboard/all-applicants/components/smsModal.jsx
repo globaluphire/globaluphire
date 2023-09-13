@@ -6,12 +6,20 @@ import Button from "react-bootstrap/Button";
 import { supabase } from "../../../../../config/supabaseClient";
 import { Spinner } from "react-bootstrap";
 import ViewModal from "./ViewModal";
+import { toast, ToastContainer } from "react-toastify";
 
-function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setReceiversPhoneNumber }) {
+function SmsModal({
+  applicantData,
+  setAllMessages,
+  receiversPhoneNumber,
+  setReceiversPhoneNumber,
+  receiversPhoneNumberDisabled,
+  setReceiversPhoneNumberDisabled,
+}) {
   const user = useSelector((state) => state.candidate.user);
   const [selectedUserData, setSelectedUserData] = useState();
   const [receiversName, setReceiversName] = useState("");
-  const [receiversPhoneNumberDisabled, setReceiversPhoneNumberDisabled] = useState(false);
+
   const inputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,9 +55,9 @@ function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setRece
     } catch (error) {
       setIsLoading(false);
       console.error(error);
+      return;
     }
   };
-  
 
   const handleSetModalData = async (applicantData) => {
     setSelectedUserData(applicantData);
@@ -60,7 +68,6 @@ function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setRece
     } else {
       setReceiversPhoneNumberDisabled(false);
     }
-
   };
 
   const handleButtonClick = async () => {
@@ -79,28 +86,41 @@ function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setRece
         type: "sms",
       };
       // api call for twilio uncomment this code for it to work
-      // await sendSms(message, receiversPhoneNumber)
+      // const smsResponse = await sendSms(message, receiversPhoneNumber);
+      if (smsResponse.status !== "success") {
+        return;
+      }
       await supabase.from("sms_messages").insert(messageObj);
       setAllMessages((previous) => [
         ...previous,
-        <div 
-              className="small text-end fw-bold text-muted mt-3"
-              style={{
-                fontSize: "0.7rem"
-              }}
-            >
-              {/* <span className="la la-envelope"></span> {" "} */}
-              <span className="la la-comments"></span> {" "}
-              {user.name} {" "}
-              {new Date().toLocaleString()}
-              <MessageBox
-                className="fw-normal"
-                position={"right"}
-                type={"text"}
-                text={message}
-              />
-            </div>,
+        <div
+          className="small text-end fw-bold text-muted mt-3"
+          style={{
+            fontSize: "0.7rem",
+          }}
+        >
+          {/* <span className="la la-envelope"></span> {" "} */}
+          <span className="la la-comments"></span> {user.name}{" "}
+          {new Date().toLocaleString()}
+          <MessageBox
+            className="fw-normal"
+            position={"right"}
+            type={"text"}
+            text={message}
+          />
+        </div>,
       ]);
+
+      toast.success("SMS Sent!", {
+        position: "bottom-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
       inputRef.current.value = "";
     }
     setIsLoading(false);
@@ -114,7 +134,7 @@ function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setRece
       disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") ? false : true}
       style={{
         backgroundColor: "var(--msg-primary)",
-        border: "none"
+        border: "none",
       }}
     >
       {isLoading ? (
@@ -129,7 +149,7 @@ function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setRece
 
   useEffect(() => {
     handleSetModalData(applicantData);
-  }, [applicantData, receiversPhoneNumber]);
+  }, [applicantData]);
   return (
     <>
       <div className="col-md-6">
@@ -174,14 +194,14 @@ function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setRece
           <div className="form-group mt-3">
             <label htmlFor="phoneNumber">Your Message:</label>
             <Input
-                placeholder="Type Here..."
-                multiline={true}
-                className="input rounded px-2 form-control"
-                rightButtons={chatInputButton}
-                referance={inputRef}
-                autoHeight={true}
-                height={100}
-              />
+              placeholder="Type Here..."
+              multiline={true}
+              className="input rounded px-2 form-control"
+              rightButtons={chatInputButton}
+              referance={inputRef}
+              autoHeight={true}
+              height={100}
+            />
           </div>
         </form>
       </div>

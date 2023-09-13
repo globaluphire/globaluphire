@@ -11,6 +11,7 @@ function CommunicationModal({ applicantData }) {
   const [allMessages, setAllMessages] = useState([]);
   const [receiversPhoneNumber, setReceiversPhoneNumber] = useState("+");
   const [receiversEmail, setReceiversEmail] = useState("");
+  const [receiversPhoneNumberDisabled, setReceiversPhoneNumberDisabled] = useState(false);
 
   const handleSetMessages = async (data) => {
     if (!data) {
@@ -70,19 +71,20 @@ function CommunicationModal({ applicantData }) {
       .select()
       .match({ receiver_name: applicantData?.name });
     if (data[0]?.receiver_phone) {
-      console.log("fetched phone number:",data[0]?.receiver_phone)
       setReceiversPhoneNumber(data[0].receiver_phone);
       setReceiversEmail(data[0].receiver_email);
+      setReceiversPhoneNumberDisabled(true)
     } else {
       setReceiversPhoneNumber("")
       setReceiversEmail("")
+      setReceiversPhoneNumberDisabled(false)
     }
     handleSetMessages(data);
   };
 
   useEffect(() => {
     handleSetModalData(applicantData);
-  }, [applicantData, receiversPhoneNumber]);
+  }, [applicantData]);
 
   return (
     <div className="modal fade" id="communication-modal">
@@ -136,6 +138,8 @@ function CommunicationModal({ applicantData }) {
                   setAllMessages={setAllMessages}
                   receiversPhoneNumber={receiversPhoneNumber}
                   setReceiversPhoneNumber={setReceiversPhoneNumber}
+                  receiversPhoneNumberDisabled={receiversPhoneNumberDisabled}
+                  setReceiversPhoneNumberDisabled={setReceiversPhoneNumberDisabled}
                 />
               )}
               {activeTab === 2 && (
