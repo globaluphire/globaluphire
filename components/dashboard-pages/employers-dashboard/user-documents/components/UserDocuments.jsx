@@ -3,9 +3,10 @@ import { useSelector } from "react-redux";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import { Spinner } from "react-bootstrap";
 
-const UserDocuments = () => {
+const UserDocuments = ({applicantData}) => {
   const user = useSelector((state) => state.candidate.user);
   const [allTemplates, setAllTemplates] = useState([]);
+  const [selectedTemplates, setSelectedTemplates] = useState([])
   const [isLoading, setIsLoading] = useState(false);
   const [imgData, setImgData] = useState(null);
 

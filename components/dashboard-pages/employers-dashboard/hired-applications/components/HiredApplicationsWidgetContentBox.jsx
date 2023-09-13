@@ -391,7 +391,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                                         <span className="la la-download"></span>
                                                     </button>
                                                 </li>
-                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: applicant}}>
+                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}}>
                                                     <li>
                                                         <button data-text="Send Documents">
                                                             <span className="la la-send"></span>
