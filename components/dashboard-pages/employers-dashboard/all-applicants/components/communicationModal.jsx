@@ -70,16 +70,19 @@ function CommunicationModal({ applicantData }) {
       .select()
       .match({ receiver_name: applicantData?.name });
     if (data[0]?.receiver_phone) {
+      console.log("fetched phone number:",data[0]?.receiver_phone)
       setReceiversPhoneNumber(data[0].receiver_phone);
       setReceiversEmail(data[0].receiver_email);
+    } else {
+      setReceiversPhoneNumber("")
+      setReceiversEmail("")
     }
     handleSetMessages(data);
   };
 
   useEffect(() => {
     handleSetModalData(applicantData);
-    console.log('applicantData', applicantData);
-  }, [applicantData]);
+  }, [applicantData, receiversPhoneNumber]);
 
   return (
     <div className="modal fade" id="communication-modal">

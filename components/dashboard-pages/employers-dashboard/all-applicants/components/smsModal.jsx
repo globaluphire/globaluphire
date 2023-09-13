@@ -129,7 +129,7 @@ function SmsModal({ applicantData, setAllMessages, receiversPhoneNumber, setRece
 
   useEffect(() => {
     handleSetModalData(applicantData);
-  }, [applicantData]);
+  }, [applicantData, receiversPhoneNumber]);
   return (
     <>
       <div className="col-md-6">
