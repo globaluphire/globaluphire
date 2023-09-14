@@ -285,16 +285,26 @@ const UserDocuments = ({ applicantData }) => {
                       justifyContent: "space-between",
                     }}
                   >
-                    {template.name}
-                    <span 
+                    <div
                       style={{
-                        color: template?.envelope?.status ? "green" : "red"
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "1rem"
                       }}
                     >
+                    {template.name}
+                    <span 
+                      className={`badge`}
+                      style={{
+                        backgroundColor: template?.envelope?.status === "completed" ? "green" : "red",
+                      }}
+                      >
                       {template?.envelope?.status
                         ? template?.envelope?.status
                         : "not sent"}
                     </span>
+                    </div>
                     {!(template?.envelope?.status) && 
                       <input
                         type="checkbox"
@@ -371,7 +381,7 @@ const UserDocuments = ({ applicantData }) => {
               overflow: "auto",
               display: "flex",
               alignItems: "center",
-              justifyContent: "flex-start",
+              justifyContent: `${imgData === null ? "center" : "flex-start"}`
             }}
           >
             {imgData === null && <>No Preview To Show</>}
