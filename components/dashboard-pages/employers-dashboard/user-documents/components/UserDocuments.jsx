@@ -177,6 +177,31 @@ const UserDocuments = ({ applicantData }) => {
     }
   };
 
+  // Function to fetch signed document preview
+  const fetchSignedPreview = async (envelopeId, templateId) => {
+    setImgData(false);
+    try {
+      const token = await getAccessToken(user.email);
+      const response = await fetch(`/api/ds/previewCompleted`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token.data.access_token,
+          envelopeId,
+        }),
+      }).then((res) => res.json());
+      setImgData({
+        templateId,
+        data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
+      });
+    } catch (error) {
+      console.error(error);
+      setImgData(null);
+    }
+  };
+
   useEffect(() => {
     if (applicantData) {
       fetchTemplates(applicantData);
@@ -199,22 +224,21 @@ const UserDocuments = ({ applicantData }) => {
   return (
     <form className="default-form">
       <div className="row">
-        <div 
-          className="col-4"
-        >
+        <div className="col-4">
           <h5 className="mb-3">Documents</h5>
           {isLoading ? (
-          <div style={{              
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Spinner />
-          </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Spinner />
+            </div>
           ) : allTemplates ? (
-            <ListGroup 
-              as="ol" 
+            <ListGroup
+              as="ol"
               variant="numbered"
               style={{
                 height: "40rem",
@@ -224,35 +248,63 @@ const UserDocuments = ({ applicantData }) => {
               {allTemplates?.map((template) => (
                 <ListGroup.Item
                   key={template.id}
-                  onClick={() =>!(imgData === false ||
-                    imgData?.templateId === template.templateId) && fetchOnePreview(template.templateId)}
-                  style={{ 
+                  onClick={() =>
+                    template?.envelope?.status === "completed"
+                      ? !(
+                          imgData === false ||
+                          imgData?.templateId === template.templateId
+                        ) &&
+                        fetchSignedPreview(
+                          template?.envelope?.envelopeId,
+                          template.templateId
+                        )
+                      : !(
+                          imgData === false ||
+                          imgData?.templateId === template.templateId
+                        ) && fetchOnePreview(template.templateId)
+                  }
+                  style={{
                     cursor: "pointer",
-                    backgroundColor: imgData?.templateId === template.templateId ? "#007bff" : "white",
-                    color: imgData?.templateId === template.templateId ? "white" : "black",
+                    backgroundColor:
+                      imgData?.templateId === template.templateId
+                        ? "#007bff"
+                        : "white",
+                    color:
+                      imgData?.templateId === template.templateId
+                        ? "white"
+                        : "black",
                     display: "grid",
                     gridTemplateColumns: "auto 1fr auto",
                   }}
                 >
-                    <span 
-                      // style={{width: "100%"}} 
-                      disabled={
+                  <span
+                    // style={{width: "100%"}}
+                    disabled={
                       imgData === false ||
                       imgData?.templateId === template.templateId
-                    }>
-                      {template.name}
-                      <span style={{marginLeft:"10rem"}}>
-                        Status: {template?.envelope?.status ? template?.envelope?.status : "not sent"}
-                      </span>
+                    }
+                  >
+                    {template.name}
+                    <span style={{ marginLeft: "10rem" }}>
+                      Status:{" "}
+                      {template?.envelope?.status
+                        ? template?.envelope?.status
+                        : "not sent"}
                     </span>
-                    <input 
-                      type="checkbox" 
-                      defaultChecked={template.shared !== "false"}
-                      disabled={template.shared !== "false"}
-                      aria-label="Checkbox for following text input"
-                      className="form-check-input float-right"
-                      onChange={(e) => handleCheckChange(template, e.target.checked)}
-                    />
+                  </span>
+                  <input
+                    type="checkbox"
+                    // defaultChecked={template.shared !== "false"}
+                    disabled={
+                      template?.envelope?.status === "sent" ||
+                      template?.envelope?.status === "completed"
+                    }
+                    aria-label="Checkbox for following text input"
+                    className="form-check-input float-right"
+                    onChange={(e) =>
+                      handleCheckChange(template, e.target.checked)
+                    }
+                  />
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -260,10 +312,7 @@ const UserDocuments = ({ applicantData }) => {
             <>No templates found!</>
           )}
         </div>
-        <div 
-          className="col-4"
-          
-        >
+        <div className="col-4">
           <h5>Preview</h5>
           <ListGroup
             className="border"
@@ -276,9 +325,16 @@ const UserDocuments = ({ applicantData }) => {
             }}
           >
             {imgData === null && <>No Preview To Show</>}
-            {imgData === false ? <Spinner /> : <img src={imgData?.data} style={{
-              width: "100%",
-            }}/>}
+            {imgData === false ? (
+              <Spinner />
+            ) : (
+              <img
+                src={imgData?.data}
+                style={{
+                  width: "100%",
+                }}
+              />
+            )}
           </ListGroup>
           {/* <Button
             onClick={() => {
@@ -289,15 +345,14 @@ const UserDocuments = ({ applicantData }) => {
             send
           </Button> */}
         </div>
-        <div className="col-4"
-            style={{
-              height: "40rem",
-              overflow: "auto",
-            }}
+        <div
+          className="col-4"
+          style={{
+            height: "40rem",
+            overflow: "auto",
+          }}
         >
-          <Form
-            ref={applicantForm}
-          >
+          <Form ref={applicantForm}>
             <Form.Group className="form-group">
               <Form.Label htmlFor="applicantEmail">Email</Form.Label>
               <Form.Control
@@ -308,13 +363,13 @@ const UserDocuments = ({ applicantData }) => {
               />
             </Form.Group>
             <Form.Group className="form-group">
-                <Form.Label htmlFor="applicantName"> Name</Form.Label>
-                <Form.Control
-                  className="form-control form-control-sm"
-                  type="text"
-                  defaultValue={applicantData?.name}
-                  id="applicantName"
-                />
+              <Form.Label htmlFor="applicantName"> Name</Form.Label>
+              <Form.Control
+                className="form-control form-control-sm"
+                type="text"
+                defaultValue={applicantData?.name}
+                id="applicantName"
+              />
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label htmlFor="applicantroleName">Role</Form.Label>
@@ -332,7 +387,8 @@ const UserDocuments = ({ applicantData }) => {
             }}
             className="w-100"
             disabled={sendDocumentsForSigningLoading}
-          >{sendDocumentsForSigningLoading ? <Spinner /> : "Send"}
+          >
+            {sendDocumentsForSigningLoading ? <Spinner /> : "Send"}
           </Button>
         </div>
       </div>
