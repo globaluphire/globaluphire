@@ -267,7 +267,7 @@ const UserDocuments = ({ applicantData }) => {
                     cursor: "pointer",
                     backgroundColor:
                       imgData?.templateId === template.templateId
-                        ? "#007bff"
+                        ? "#e8f0fa"
                         : "white",
                     color:
                       imgData?.templateId === template.templateId
@@ -324,6 +324,7 @@ const UserDocuments = ({ applicantData }) => {
                     type="email"
                     defaultValue={applicantData?.email ? applicantData?.email : ""}
                     id="applicantEmail"
+                    required
                   />
                 </Form.Group>
                 <Form.Group className="form-group">
@@ -333,6 +334,7 @@ const UserDocuments = ({ applicantData }) => {
                     type="text"
                     defaultValue={applicantData?.name}
                     id="applicantName"
+                    required
                   />
                 </Form.Group>
                 <Form.Group className="form-group">
@@ -342,6 +344,7 @@ const UserDocuments = ({ applicantData }) => {
                     type="text"
                     defaultValue="Signer"
                     id="applicantroleName"
+                    required
                   />
                 </Form.Group>
               </Form>
@@ -351,6 +354,9 @@ const UserDocuments = ({ applicantData }) => {
                 }}
                 className="w-100"
                 disabled={sendDocumentsForSigningLoading}
+                style={{
+                  backgroundColor: "var(--primary-hover-bg-color)",
+                }}
               >
                 {sendDocumentsForSigningLoading ? <Spinner /> : "Send"}
               </Button>
