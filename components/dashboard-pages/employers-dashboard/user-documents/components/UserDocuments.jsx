@@ -204,13 +204,20 @@ const UserDocuments = ({ applicantData }) => {
         >
           <h5 className="mb-3">Documents</h5>
           {isLoading ? (
+          <div style={{              
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <Spinner />
+          </div>
           ) : allTemplates ? (
             <ListGroup 
               as="ol" 
               variant="numbered"
               style={{
-                height: "30rem",
+                height: "40rem",
                 overflow: "auto",
               }}
             >
@@ -234,6 +241,9 @@ const UserDocuments = ({ applicantData }) => {
                       imgData?.templateId === template.templateId
                     }>
                       {template.name}
+                      <span style={{marginLeft:"10rem"}}>
+                        Status: {template?.envelope?.status ? template?.envelope?.status : "not sent"}
+                      </span>
                     </span>
                     <input 
                       type="checkbox" 
@@ -258,7 +268,7 @@ const UserDocuments = ({ applicantData }) => {
           <ListGroup
             className="border"
             style={{
-              height: "30rem",
+              height: "40rem",
               overflow: "auto",
               display: "flex",
               alignItems: "center",
@@ -281,7 +291,7 @@ const UserDocuments = ({ applicantData }) => {
         </div>
         <div className="col-4"
             style={{
-              height: "30rem",
+              height: "40rem",
               overflow: "auto",
             }}
         >
@@ -331,5 +341,3 @@ const UserDocuments = ({ applicantData }) => {
 };
 
 export default UserDocuments;
-
-//
