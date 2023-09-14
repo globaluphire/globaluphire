@@ -29,8 +29,6 @@ const index = () => {
 
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <BreadCrumb title="" />
           {/* breadCrumb */}
 
           <MenuToggler />
@@ -56,7 +54,6 @@ const index = () => {
             </div>
           </div>
           {/* End .row */}
-        </div>
         {/* End dashboard-outer */}
       </section>
       {/* <!-- End Dashboard --> */}
