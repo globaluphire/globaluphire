@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Button, Form, ListGroup, ListGroupItem } from "react-bootstrap";
 import { Spinner } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const UserDocuments = ({ applicantData }) => {
   const user = useSelector((state) => state.candidate.user);
@@ -22,12 +23,40 @@ const UserDocuments = ({ applicantData }) => {
       const applicantEmail = applicantForm.current.querySelector("#applicantEmail").value;
       const applicantName = applicantForm.current.querySelector("#applicantName").value;
       const applicantroleName = applicantForm.current.querySelector("#applicantroleName").value;
+    if(!applicantEmail || !applicantName || !applicantroleName){
+      toast.error('Please Fill the form!', {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      setSendDocumentsForSigningLoading(false)
+      return;
+    }
+
+    if(!selectedTemplates.length){
+      toast.error('Please Select at least one doucment!', {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      setSendDocumentsForSigningLoading(false)
+      return;
+    }
       const applicant = {
         email: applicantEmail,
         name: applicantName,
         roleName: applicantroleName,
       };
-
       const token = await getAccessToken(user.email);
       const response = await fetch(`/api/ds/send`, {
         method: "POST",
@@ -44,6 +73,16 @@ const UserDocuments = ({ applicantData }) => {
         }),
       });
       if (response.ok) {
+        toast.success('Documents sent for Signing!', {
+          position: "bottom-right",
+          autoClose: 8000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
         const data = await response.json();
       } else {
         setIsLoading(false);
