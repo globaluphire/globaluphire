@@ -12,6 +12,7 @@ export default async function handler(req, res) {
       const templates = await templatesApi.listTemplates(
         process.env.NEXT_DOCUSIGN_ACCOUNT_ID
       );
+      // get document details from supabase
       const userTemplates = await supabase
         .from("document_signing")
         .select("*")
@@ -26,22 +27,31 @@ export default async function handler(req, res) {
       // Promise for async
       const updatedTemplates = await Promise.all(
         templates.envelopeTemplates.map(async (template) => {
+          // match templateId from all the templates available to get envelope_id
           const matchingUserTemplate = userTemplates.data.find(
             (userTemplate) => userTemplate.template_id === template.templateId
           );
+          // matched templates are the ones which are sent/completed
           if (matchingUserTemplate) {
+            // get envelope data using envelope_id
             const response = await envelopesApi.getEnvelope(
               process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
               matchingUserTemplate.envelope_id
             );
-            // console.log(response)
-            template.envelope = response
+            // update documen_signing table
+            await supabase
+              .from("document_signing")
+              .update({ status: response.status })
+              .eq("id", matchingUserTemplate.id);
+            // appened envelope data
+            template.envelope = response;
           }
           return template;
         })
       );
-      // add status to all templates for a specific user
-      return res.status(200).json({ message: "Success", data: updatedTemplates });
+      return res
+        .status(200)
+        .json({ message: "Success", data: updatedTemplates });
     } catch (error) {
       console.log(error);
     }

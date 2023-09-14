@@ -45,9 +45,11 @@ async function createEnvelopes(
   recipient
 ) {
   const documentArray = []
+  // looping through all selected templates to send
   for (const doc of template) {
     let envelope = makeEnvelope(doc, recipient);
     try {
+      // send the envelope
       let results = await envelopesApi.createEnvelope(
         process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
         {
@@ -67,12 +69,14 @@ async function createEnvelopes(
         uri: results.uri,
         status: results.status,
       };
+      // store response in supabase
       await supabase.from("document_signing").insert(documentObj);
       documentArray.push(documentObj)
     } catch (error) {
       console.error(`Error creating envelope: ${error}`);
     }
   }
+  // returning array
   return documentArray;
 }
 
