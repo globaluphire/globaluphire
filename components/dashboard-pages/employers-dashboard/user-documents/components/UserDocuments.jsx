@@ -27,7 +27,7 @@ const UserDocuments = ({ applicantData }) => {
         name: applicantName,
         roleName: applicantroleName,
       };
-      console.log('applicant', applicant);
+
       const token = await getAccessToken(user.email);
       const response = await fetch(`/api/ds/send`, {
         method: "POST",
@@ -147,7 +147,9 @@ const UserDocuments = ({ applicantData }) => {
 
   const handleCheckChange = (template, checked) => {
     if (checked) {
-      setSelectedTemplates([...selectedTemplates, template]);
+      if (!selectedTemplates.some(t => t.templateId === template.templateId)) {
+        setSelectedTemplates([...selectedTemplates, template]);
+      }
     } else {
       setSelectedTemplates(
         selectedTemplates.filter((t) => t.templateId !== template.templateId)
@@ -252,7 +254,7 @@ const UserDocuments = ({ applicantData }) => {
               <Form.Control
                 className="form-control form-control-sm"
                 type="email"
-                defaultValue="aniket.gupta@asambhav.org.in"
+                defaultValue={applicantData?.email ? applicantData?.email : ""}
                 id="applicantEmail"
               />
             </Form.Group>
@@ -261,7 +263,7 @@ const UserDocuments = ({ applicantData }) => {
                 <Form.Control
                   className="form-control form-control-sm"
                   type="text"
-                  defaultValue="Aniket Gupta"
+                  defaultValue={applicantData?.name}
                   id="applicantName"
                 />
             </Form.Group>
