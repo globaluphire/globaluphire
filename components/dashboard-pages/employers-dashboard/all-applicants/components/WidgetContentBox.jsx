@@ -508,16 +508,6 @@ const WidgetContentBox = () => {
                                         <td>
                                             <div className="option-box">
                                                 <ul className="option-list">
-                                                <li onClick = { () => { ViewCV(applicant.application_id) }}>
-                                                    <button data-text="View CV">
-                                                        <span className="la la-file-download"></span>
-                                                    </button>
-                                                </li>
-                                                <li onClick={() => DownloadHandler(applicant)}>
-                                                    <button data-text="Download CV">
-                                                        <span className="la la-download"></span>
-                                                    </button>
-                                                </li>
                                                 <li>
                                                     <button data-text="Send Message">
                                                     <a
@@ -528,6 +518,16 @@ const WidgetContentBox = () => {
                                                         >
                                                         <span className="la la-send"></span>
                                                     </a>
+                                                    </button>
+                                                </li>
+                                                <li onClick = { () => { ViewCV(applicant.application_id) }}>
+                                                    <button data-text="View CV">
+                                                        <span className="la la-file-download"></span>
+                                                    </button>
+                                                </li>
+                                                <li onClick={() => DownloadHandler(applicant)}>
+                                                    <button data-text="Download CV">
+                                                        <span className="la la-download"></span>
                                                     </button>
                                                 </li>
                                                 {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >

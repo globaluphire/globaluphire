@@ -381,6 +381,13 @@ const HiredApplicationsWidgetContentBox = () => {
                                         <td>
                                             <div className="option-box">
                                                 <ul className="option-list">
+                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}}>
+                                                    <li>
+                                                        <button data-text="Send Documents">
+                                                            <span className="la la-send"></span>
+                                                        </button>
+                                                    </li>
+                                                </Link>
                                                 <li onClick = { () => { ViewCV(applicant.application_id) }}>
                                                     <button data-text="View CV">
                                                         <span className="la la-file-download"></span>
@@ -391,13 +398,6 @@ const HiredApplicationsWidgetContentBox = () => {
                                                         <span className="la la-download"></span>
                                                     </button>
                                                 </li>
-                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}}>
-                                                    <li>
-                                                        <button data-text="Send Documents">
-                                                            <span className="la la-send"></span>
-                                                        </button>
-                                                    </li>
-                                                </Link>
                                                 {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
                                                     <button data-text="Qualified">
                                                     <span className="la la-check"></span>
