@@ -269,10 +269,7 @@ const UserDocuments = ({ applicantData }) => {
                       imgData?.templateId === template.templateId
                         ? "#e8f0fa"
                         : "white",
-                    color:
-                      imgData?.templateId === template.templateId
-                        ? "white"
-                        : "black",
+                    color: "black",
                     display: "grid",
                     gridTemplateColumns: "auto 1fr auto",
                   }}
@@ -374,7 +371,7 @@ const UserDocuments = ({ applicantData }) => {
               overflow: "auto",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "flex-start",
             }}
           >
             {imgData === null && <>No Preview To Show</>}
