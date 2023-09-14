@@ -4,7 +4,8 @@
 @import "public/scss/main.scss";
 
 :root{
-    --msg-primary: #173b37;
+    --msg-primary: #e8f0fa;
+    --msg-secondary : 
 }
 
 .rce-mbox {
@@ -34,7 +35,7 @@
 .rce-mbox .rce-mbox-body tfoot,
 .rce-mbox .rce-mbox-body blockquote,
 .rce-mbox .rce-mbox-body pre{
-    color: white !important;
+    // color: white !important;
     margin-bottom: 0 !important;
 }
 

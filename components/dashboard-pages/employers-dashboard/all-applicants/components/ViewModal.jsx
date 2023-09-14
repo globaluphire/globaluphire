@@ -17,15 +17,16 @@ function ViewModal({ data }) {
 				ref={chatContainerRef}
 				style={{
 					position: "relative",
-					background: "#EEEEEE",
+					border: "1px solid #ddd",
 					borderRadius: "20px",
 					width: "500px",
 					minHeight: "400px",
-          height: "400px",
+					height: "400px",
 					maxHeight: "500px",
 					padding: "20px",
 					paddingBottom: "0",
 					overflowY: "scroll",
+					color: "#000",
 				}}
 			>
 				<div

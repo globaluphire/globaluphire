@@ -28,7 +28,7 @@ function CommunicationModal({ applicantData }) {
                 fontSize: "0.7rem"
               }}
             >
-            <span className="la la-comments"></span> {" "}
+            {el.type === "email" ? <span className="la la-envelope"></span> : <span className="la la-comments"></span>} {" "}
             {el.sender_name} {" "}
             {new Date(el.created_at).toLocaleString()}
             <MessageBox
@@ -112,9 +112,10 @@ function CommunicationModal({ applicantData }) {
                   value={1} 
                   onClick={()=>setActiveTab(1)} 
                   style={{
-                    backgroundColor:"var(--msg-primary)",
-                    filter: activeTab === 1 ? "none" : "brightness(0.5)",
-                    border: "none"
+                    backgroundColor:activeTab === 2 ? "var(--msg-primary)" : "var(--primary-hover-bg-color)",
+                    opacity: activeTab === 1 ? "1" : "0.5",
+                    border: "none",
+                    color: activeTab === 2 ? "#000" : "#fff"
                   }}
                 >
                   SMS
@@ -124,9 +125,10 @@ function CommunicationModal({ applicantData }) {
                   value={2} 
                   onClick={()=>setActiveTab(2)} 
                   style={{
-                    backgroundColor:"var(--msg-primary)",
-                    filter: activeTab === 2 ? "none" : "brightness(0.5)",
-                    border: "none"
+                    backgroundColor:activeTab === 1 ? "var(--msg-primary)" : "var(--primary-hover-bg-color)",
+                    opacity: activeTab === 2 ? "1" : "0.5",
+                    border: "none",
+                    color: activeTab === 1 ? "#000" : "#fff"
                   }}
                 >
                   Email

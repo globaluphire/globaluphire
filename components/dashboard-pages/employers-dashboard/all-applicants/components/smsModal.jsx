@@ -133,8 +133,9 @@ function SmsModal({
       }}
       disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") ? false : true}
       style={{
-        backgroundColor: "var(--msg-primary)",
+        backgroundColor: "var(--primary-hover-bg-color)",
         border: "none",
+        color: "#fff" 
       }}
     >
       {isLoading ? (

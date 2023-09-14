@@ -53,18 +53,17 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
                 fontSize: "0.7rem"
               }}
             >
-              {/* <span className="la la-envelope"></span> {" "} */}
-              <span className="la la-comments"></span> {" "}
+              <span className="la la-envelope"></span> {" "}
               {user.name} {" "}
               {new Date().toLocaleString()}
               <MessageBox
-                className="fw-normal"
+                className="fw-normal email"
                 position={"right"}
                 type={"text"}
-                text={`
-                  to: ${receiversEmail}
-                  message: ${emailMessage}
-                `}
+                text={<div dangerouslySetInnerHTML={{ __html: `
+                to: ${receiversEmail} <br/>
+                message:&#x2408;${emailMessage}
+              ` }}/>}
               />
             </div>,
         ]);
@@ -211,8 +210,9 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
         <Button
           style={{ 
             marginTop: "20px",
-            backgroundColor: "var(--msg-primary)",
-            border: "none"
+            backgroundColor: "var(--primary-hover-bg-color)",
+            border: "none",
+            color: "#fff"
           }}
           className="theme-btn btn-style-one btn-submit"
           onClick={() => {
@@ -227,8 +227,9 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
               <div style={{ 
                 paddingLeft: "20px", 
                 alignItems: "center",
-                backgroundColor: "var(--msg-primary)",
-                border: "none"
+                backgroundColor: "var(--primary-hover-bg-color)",
+                border: "none",
+                color: "#fff"
               }}>
                 <Spinner />
               </div>
