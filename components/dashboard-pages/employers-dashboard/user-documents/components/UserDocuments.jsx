@@ -224,7 +224,7 @@ const UserDocuments = ({ applicantData }) => {
   return (
     <form className="default-form">
       <div className="row">
-        <div className="col-4">
+        <div className="col-6">
           <h5 className="mb-3">Documents</h5>
           {isLoading ? (
             <div
@@ -278,41 +278,88 @@ const UserDocuments = ({ applicantData }) => {
                   }}
                 >
                   <span
-                    // style={{width: "100%"}}
                     disabled={
                       imgData === false ||
                       imgData?.templateId === template.templateId
                     }
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
                   >
                     {template.name}
-                    <span style={{ marginLeft: "10rem" }}>
-                      Status:{" "}
+                    <span 
+                      style={{
+                        color: template?.envelope?.status ? "green" : "red"
+                      }}
+                    >
                       {template?.envelope?.status
                         ? template?.envelope?.status
                         : "not sent"}
                     </span>
+                    {!(template?.envelope?.status) && 
+                      <input
+                        type="checkbox"
+                        // defaultChecked={template.shared !== "false"}
+                        disabled={
+                          template?.envelope?.status === "sent" ||
+                          template?.envelope?.status === "completed"
+                        }
+                        aria-label="Checkbox for following text input"
+                        className="form-check-input float-right"
+                        onChange={(e) =>
+                          handleCheckChange(template, e.target.checked)
+                        }
+                      />
+                    }
                   </span>
-                  <input
-                    type="checkbox"
-                    // defaultChecked={template.shared !== "false"}
-                    disabled={
-                      template?.envelope?.status === "sent" ||
-                      template?.envelope?.status === "completed"
-                    }
-                    aria-label="Checkbox for following text input"
-                    className="form-check-input float-right"
-                    onChange={(e) =>
-                      handleCheckChange(template, e.target.checked)
-                    }
-                  />
                 </ListGroup.Item>
               ))}
+              <Form ref={applicantForm} className="mt-5">
+                <Form.Group className="form-group">
+                  <Form.Label htmlFor="applicantEmail">Email</Form.Label>
+                  <Form.Control
+                    className="form-control form-control-sm"
+                    type="email"
+                    defaultValue={applicantData?.email ? applicantData?.email : ""}
+                    id="applicantEmail"
+                  />
+                </Form.Group>
+                <Form.Group className="form-group">
+                  <Form.Label htmlFor="applicantName"> Name</Form.Label>
+                  <Form.Control
+                    className="form-control form-control-sm"
+                    type="text"
+                    defaultValue={applicantData?.name}
+                    id="applicantName"
+                  />
+                </Form.Group>
+                <Form.Group className="form-group">
+                  <Form.Label htmlFor="applicantroleName">Role</Form.Label>
+                  <Form.Control
+                    className="form-control form-control-sm"
+                    type="text"
+                    defaultValue="Signer"
+                    id="applicantroleName"
+                  />
+                </Form.Group>
+              </Form>
+              <Button
+                onClick={() => {
+                  sendDocumentsForSigning();
+                }}
+                className="w-100"
+                disabled={sendDocumentsForSigningLoading}
+              >
+                {sendDocumentsForSigningLoading ? <Spinner /> : "Send"}
+              </Button>
             </ListGroup>
           ) : (
             <>No templates found!</>
           )}
         </div>
-        <div className="col-4">
+        <div className="col-6">
           <h5>Preview</h5>
           <ListGroup
             className="border"
@@ -344,52 +391,6 @@ const UserDocuments = ({ applicantData }) => {
             {" "}
             send
           </Button> */}
-        </div>
-        <div
-          className="col-4"
-          style={{
-            height: "40rem",
-            overflow: "auto",
-          }}
-        >
-          <Form ref={applicantForm}>
-            <Form.Group className="form-group">
-              <Form.Label htmlFor="applicantEmail">Email</Form.Label>
-              <Form.Control
-                className="form-control form-control-sm"
-                type="email"
-                defaultValue={applicantData?.email ? applicantData?.email : ""}
-                id="applicantEmail"
-              />
-            </Form.Group>
-            <Form.Group className="form-group">
-              <Form.Label htmlFor="applicantName"> Name</Form.Label>
-              <Form.Control
-                className="form-control form-control-sm"
-                type="text"
-                defaultValue={applicantData?.name}
-                id="applicantName"
-              />
-            </Form.Group>
-            <Form.Group className="form-group">
-              <Form.Label htmlFor="applicantroleName">Role</Form.Label>
-              <Form.Control
-                className="form-control form-control-sm"
-                type="text"
-                defaultValue="Signer"
-                id="applicantroleName"
-              />
-            </Form.Group>
-          </Form>
-          <Button
-            onClick={() => {
-              sendDocumentsForSigning();
-            }}
-            className="w-100"
-            disabled={sendDocumentsForSigningLoading}
-          >
-            {sendDocumentsForSigningLoading ? <Spinner /> : "Send"}
-          </Button>
         </div>
       </div>
     </form>
