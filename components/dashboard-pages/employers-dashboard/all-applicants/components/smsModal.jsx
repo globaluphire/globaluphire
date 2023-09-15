@@ -88,6 +88,16 @@ function SmsModal({
       // api call for twilio uncomment this code for it to work
       const smsResponse = await sendSms(message, receiversPhoneNumber);
       if (smsResponse.status !== "success") {
+        toast.error("Failed to send Sms!", {
+          position: "bottom-right",
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
         return;
       }
       await supabase.from("sms_messages").insert(messageObj);
@@ -133,8 +143,9 @@ function SmsModal({
       }}
       disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") ? false : true}
       style={{
-        backgroundColor: "var(--msg-primary)",
+        backgroundColor: "var(--primary-hover-bg-color)",
         border: "none",
+        color: "#fff" 
       }}
     >
       {isLoading ? (

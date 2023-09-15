@@ -1,15 +1,34 @@
+import { useState, useEffect } from "react";
 import MobileMenu from "../../../header/MobileMenu";
 import DashboardHeader from "../../../header/DashboardHeader";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardEmployerSidebar from "../../../header/DashboardEmployerSidebar";
 import BreadCrumb from "../../BreadCrumb";
 import CopyrightFooter from "../../CopyrightFooter";
-// import PostJobSteps from "./components/PostJobSteps";
-import UserDetails from "./components/UserDetails"
+import UserDetails from "./components/UserDetails";
 import UserDocuments from "./components/UserDocuments";
 import MenuToggler from "../../MenuToggler";
+import { supabase } from "../../../../config/supabaseClient";
 
 const index = () => {
+  const [applicantData, setApplicantData] = useState()
+  
+  async function getApplicant(){
+    const params = new URLSearchParams(window.location.search);
+    const applicationId = params.get("applicationId");
+    let { data, error } = await supabase
+    .from('applicants_view')
+    .select("*")
+    .eq('status', 'Hired')
+    .eq('application_id', applicationId)
+    .single();
+    setApplicantData(data)
+  }
+
+  useEffect(()=>{
+    getApplicant()
+  },[])
+
   return (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
@@ -44,9 +63,9 @@ const index = () => {
                   </div>
 
                   <div className="widget-content">
-                    <UserDetails />
+                    <UserDetails applicantData={applicantData} />
                     {/* End job steps form */}
-                    <UserDocuments />
+                    <UserDocuments applicantData={applicantData} />
                     {/* End post box form */}
                   </div>
                 </div>

@@ -381,9 +381,9 @@ const HiredApplicationsWidgetContentBox = () => {
                                         <td>
                                             <div className="option-box">
                                                 <ul className="option-list">
-                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: applicant}}>
+                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}}>
                                                     <li>
-                                                        <button data-text="Onboarding">
+                                                        <button data-text="Send Documents">
                                                             <span className="la la-send"></span>
                                                         </button>
                                                     </li>
