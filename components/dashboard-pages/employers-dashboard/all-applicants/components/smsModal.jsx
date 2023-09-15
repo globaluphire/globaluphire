@@ -86,8 +86,18 @@ function SmsModal({
         type: "sms",
       };
       // api call for twilio uncomment this code for it to work
-      // const smsResponse = await sendSms(message, receiversPhoneNumber);
+      const smsResponse = await sendSms(message, receiversPhoneNumber);
       if (smsResponse.status !== "success") {
+        toast.error("Failed to send Sms!", {
+          position: "bottom-right",
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
         return;
       }
       await supabase.from("sms_messages").insert(messageObj);
