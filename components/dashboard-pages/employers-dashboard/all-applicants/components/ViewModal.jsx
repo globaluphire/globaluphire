@@ -3,6 +3,7 @@ import styles from "../../../../../styles/WidgetContentBox.module.css";
 
 
 function ViewModal({ data }) {
+	console.log('data', data);
 	const chatContainerRef = useRef(null);
 	const focusScrollRef = useRef(null);
   
@@ -35,7 +36,7 @@ function ViewModal({ data }) {
 						minHeight: "300px",
 					}}
 				>
-					{data.map((el) => el)}
+					{data[0].length ? data.map((el) => el) : "No messages or emails..."}
 				</div>
 
 				<div
