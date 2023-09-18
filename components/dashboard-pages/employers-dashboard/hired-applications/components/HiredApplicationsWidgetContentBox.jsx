@@ -300,6 +300,7 @@ const HiredApplicationsWidgetContentBox = () => {
                             <th>Job Title</th>
                             <th>Facility</th>
                             <th>Status</th>
+                            <th>Onboarding Status</th>
                             <th>Notes</th>
                             <th>Actions</th>
                             </tr>
@@ -349,6 +350,11 @@ const HiredApplicationsWidgetContentBox = () => {
                                                     <option value={option.ref_dspl}>{option.ref_dspl}</option>
                                                 ))}
                                             </select>
+                                        </td>
+                                        <td>
+                                            <div style={{ textAlign:"center" }}>
+                                                {applicant.onboarding_status}
+                                            </div>
                                         </td>
                                         <td>
                                             <ul className="option-list">
