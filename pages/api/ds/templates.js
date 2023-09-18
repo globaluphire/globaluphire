@@ -1,6 +1,10 @@
 const docusign = require("docusign-esign");
 import { supabase } from "../../../config/supabaseClient";
 
+async function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
@@ -45,6 +49,7 @@ export default async function handler(req, res) {
               .eq("id", matchingUserTemplate.id);
             // appened envelope data
             template.envelope = response;
+            delay(100)
           }
           return template;
         })

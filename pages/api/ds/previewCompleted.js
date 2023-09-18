@@ -4,7 +4,6 @@ export default async function handler(req, res) {
   if (req.method == "POST") {
     const { token, envelope, pageCount } = req.body;
     // create ds client
-    console.log(envelope);
     let dsApiClient = new docusign.ApiClient();
     dsApiClient.setBasePath(process.env.NEXT_DOCUSIGN_API_URL);
     dsApiClient.addDefaultHeader("Authorization", "Bearer " + token);
