@@ -317,9 +317,6 @@ const HiredApplicationsWidgetContentBox = () => {
                                                 <img src={item.logo} alt="logo" />
                                                 </span> */}
                                                 <h4>
-                                                {/* <Link href={`/employers-dashboard/edit-job/${applicant.user_id}`}>
-                                                    {applicant.name}
-                                                </Link> */}
                                                 <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}}>
                                                 {applicant.name}
                                                 </Link>

@@ -408,6 +408,7 @@ const UserDocuments = ({ applicantData }) => {
               height: "40rem",
               overflow: "auto",
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: `${imgData === null ? "center" : "flex-start"}`
             }}

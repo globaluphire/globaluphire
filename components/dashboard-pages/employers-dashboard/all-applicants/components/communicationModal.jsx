@@ -9,7 +9,7 @@ import ViewModal from "./ViewModal";
 function CommunicationModal({ applicantData }) {
   const [activeTab, setActiveTab] = useState(1); // State to track the active tab (1 for SMS, 2 for Email)
   const [allMessages, setAllMessages] = useState([]);
-  const [receiversPhoneNumber, setReceiversPhoneNumber] = useState("+");
+  const [receiversPhoneNumber, setReceiversPhoneNumber] = useState("+1");
   const [receiversEmail, setReceiversEmail] = useState("");
   const [receiversPhoneNumberDisabled, setReceiversPhoneNumberDisabled] =
     useState(false);

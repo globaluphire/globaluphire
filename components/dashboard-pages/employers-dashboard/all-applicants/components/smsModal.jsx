@@ -190,10 +190,10 @@ function SmsModal({
               placeholder="+1 123 456 7890"
               onChange={(e) => {
                 if (e.target.value.trim() === "") {
-                  setReceiversPhoneNumber("+");
+                  setReceiversPhoneNumber("+1");
                   return;
                 }
-                const number = e.target.value.replace("+", "");
+                const number = e.target.value.replace("+1", "");
                 if (isNaN(number)) return;
                 if (e.target.value.length <= 13) {
                   setReceiversPhoneNumber(e.target.value.trim());
@@ -212,6 +212,7 @@ function SmsModal({
               referance={inputRef}
               autoHeight={true}
               height={100}
+              maxlength={10}
             />
           </div>
         </form>
