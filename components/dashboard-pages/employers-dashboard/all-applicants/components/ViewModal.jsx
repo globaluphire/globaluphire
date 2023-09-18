@@ -36,7 +36,7 @@ function ViewModal({ data }) {
 						minHeight: "300px",
 					}}
 				>
-					{data[0].length ? data.map((el) => el) : "No messages or emails..."}
+					{data[0]?.length ? data.map((el) => el) : "No messages or emails..."}
 				</div>
 
 				<div
