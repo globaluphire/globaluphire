@@ -13,7 +13,8 @@ export default async function handler(req, res) {
     const preview = await templatesApi.getPages(
       process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
       template.templateId,
-      1
+      "1",
+      { count: template.pageCount }
     );
     return res.status(200).send(preview);
   } else {

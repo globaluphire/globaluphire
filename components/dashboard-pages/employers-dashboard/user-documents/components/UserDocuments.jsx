@@ -150,7 +150,7 @@ const UserDocuments = ({ applicantData }) => {
   };
 
   // Function to fetch one preview
-  const fetchOnePreview = async (templateId) => {
+  const fetchOnePreview = async (template) => {
     setImgData(false);
     try {
       const token = await getAccessToken(user.email);
@@ -160,15 +160,12 @@ const UserDocuments = ({ applicantData }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          template: {
-            templateId: templateId,
-            documentId: 1,
-          },
+          template,
           token: token.data.access_token,
         }),
       }).then((res) => res.json());
       setImgData({
-        templateId,
+        templateId: template.templateId,
         data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
       });
     } catch (error) {
@@ -178,7 +175,7 @@ const UserDocuments = ({ applicantData }) => {
   };
 
   // Function to fetch signed document preview
-  const fetchSignedPreview = async (envelopeId, templateId) => {
+  const fetchSignedPreview = async (envelope, template) => {
     setImgData(false);
     try {
       const token = await getAccessToken(user.email);
@@ -189,11 +186,12 @@ const UserDocuments = ({ applicantData }) => {
         },
         body: JSON.stringify({
           token: token.data.access_token,
-          envelopeId,
+          envelope,
+          pageCount: template.pageCount,
         }),
       }).then((res) => res.json());
       setImgData({
-        templateId,
+        templateId: template.templateId,
         data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
       });
     } catch (error) {
@@ -255,13 +253,13 @@ const UserDocuments = ({ applicantData }) => {
                           imgData?.templateId === template.templateId
                         ) &&
                         fetchSignedPreview(
-                          template?.envelope?.envelopeId,
-                          template.templateId
+                          template?.envelope,
+                          template
                         )
                       : !(
                           imgData === false ||
                           imgData?.templateId === template.templateId
-                        ) && fetchOnePreview(template.templateId)
+                        ) && fetchOnePreview(template)
                   }
                   style={{
                     cursor: "pointer",
