@@ -12,6 +12,7 @@ const UserDocuments = ({ applicantData }) => {
   const [imgData, setImgData] = useState(null);
   const applicantForm = useRef(null);
   const [sendDocumentsForSigningLoading, setSendDocumentsForSigningLoading] = useState(false);
+  const [refreshDisabled, setRefreshDisabled ] = useState(false);
 
   // Function to fetch templates and update the state
   const sendDocumentsForSigning = async () => {
@@ -98,6 +99,7 @@ const UserDocuments = ({ applicantData }) => {
   // Function to fetch templates and update the state
   const fetchTemplates = async (applicantData) => {
     setIsLoading(true);
+    setRefreshDisabled(true);
     try {
       const token = await getAccessToken(user.email);
       const response = await fetch(
@@ -117,13 +119,16 @@ const UserDocuments = ({ applicantData }) => {
 
       if (response.ok) {
         const data = await response.json();
+        setRefreshDisabled(false)
         setIsLoading(false);
         setAllTemplates(data?.data); // Update the state with fetched data
       } else {
+        setRefreshDisabled(false)
         setIsLoading(false);
         console.error("Failed to fetch templates");
       }
     } catch (error) {
+      setRefreshDisabled(false)
       setIsLoading(false);
       console.error(error);
     }
@@ -240,9 +245,10 @@ const UserDocuments = ({ applicantData }) => {
           <h5 className="mb-3" style={{display:"flex"}}>Documents          
             <span style={{marginLeft:"15px"}}>
               <Button 
-              className="flaticon-reload" 
-              style={{fontSize:"0.6em"}} 
-              onClick={()=>fetchTemplates(applicantData)}
+                className="flaticon-reload" 
+                style={{fontSize:"0.6em"}} 
+                onClick={()=>fetchTemplates(applicantData)}
+                disabled={refreshDisabled}
               >
               </Button>
             </span>
