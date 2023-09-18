@@ -97,6 +97,7 @@ const UserDocuments = ({ applicantData }) => {
 
   // Function to fetch templates and update the state
   const fetchTemplates = async (applicantData) => {
+    setIsLoading(true);
     try {
       const token = await getAccessToken(user.email);
       const response = await fetch(
@@ -217,7 +218,6 @@ const UserDocuments = ({ applicantData }) => {
   useEffect(() => {
     if (applicantData) {
       fetchTemplates(applicantData);
-      setIsLoading(true);
     }
   }, [applicantData]);
 
@@ -237,7 +237,17 @@ const UserDocuments = ({ applicantData }) => {
     <form className="default-form">
       <div className="row">
         <div className="col-6">
-          <h5 className="mb-3">Documents</h5>
+          <h5 className="mb-3" style={{display:"flex"}}>Documents          
+            <span style={{marginLeft:"15px"}}>
+              <Button 
+              className="flaticon-reload" 
+              style={{fontSize:"0.6em"}} 
+              onClick={()=>fetchTemplates(applicantData)}
+              >
+              </Button>
+            </span>
+          </h5>
+
           {isLoading ? (
             <div
               style={{
