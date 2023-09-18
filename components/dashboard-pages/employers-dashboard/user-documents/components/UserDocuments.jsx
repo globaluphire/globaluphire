@@ -266,6 +266,8 @@ const UserDocuments = ({ applicantData }) => {
               <span 
                 className="flaticon-reload" 
                 style={{
+                  fontWeight: "bold",
+                  color: refreshDisabled ? "grey" : "var(--primary-hover-bg-color)",
                   cursor: refreshDisabled ? "not-allowed" :"pointer",
                 }} 
                 onClick={()=>fetchTemplates(applicantData)}
