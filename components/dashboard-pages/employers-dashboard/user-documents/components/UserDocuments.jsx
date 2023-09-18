@@ -164,10 +164,17 @@ const UserDocuments = ({ applicantData }) => {
           token: token.data.access_token,
         }),
       }).then((res) => res.json());
-      setImgData({
+      const imageArray = response.pages.map((page, index) => ({
         templateId: template.templateId,
-        data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
-      });
+        data: `data:image/${page.mimeType};base64,${page.imageBytes}`,
+        pageId: index,
+      }));
+      
+      setImgData(imageArray);
+      // setImgData({
+      //   templateId: template.templateId,
+      //   data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
+      // });
     } catch (error) {
       console.error(error);
       setImgData(null);
@@ -190,10 +197,17 @@ const UserDocuments = ({ applicantData }) => {
           pageCount: template.pageCount,
         }),
       }).then((res) => res.json());
-      setImgData({
+      const imageArray = response.pages.map((page, index) => ({
         templateId: template.templateId,
-        data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
-      });
+        data: `data:image/${page.mimeType};base64,${page.imageBytes}`,
+        pageId: index,
+      }));
+
+      setImgData(imageArray);
+      // setImgData({
+      //   templateId: template.templateId,
+      //   data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
+      // });
     } catch (error) {
       console.error(error);
       setImgData(null);
@@ -386,12 +400,19 @@ const UserDocuments = ({ applicantData }) => {
             {imgData === false ? (
               <Spinner />
             ) : (
-              <img
-                src={imgData?.data}
-                style={{
-                  width: "100%",
-                }}
-              />
+              <div>
+                {imgData?.map((el, index) => (
+                  <img
+                    key={index}
+                    src={el.data}
+                    style={{
+                      width: "100%",
+                      marginBottom: "20px",
+                    }}
+                    alt={`Page ${index + 1}`}
+                  />
+                ))}
+              </div>
             )}
           </ListGroup>
           {/* <Button
