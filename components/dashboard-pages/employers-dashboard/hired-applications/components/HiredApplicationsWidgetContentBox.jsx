@@ -319,7 +319,9 @@ const HiredApplicationsWidgetContentBox = () => {
                                                 {/* <Link href={`/employers-dashboard/edit-job/${applicant.user_id}`}>
                                                     {applicant.name}
                                                 </Link> */}
+                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}}>
                                                 {applicant.name}
+                                                </Link>
                                                 </h4>
                                             </div>
                                         </div>
@@ -381,13 +383,6 @@ const HiredApplicationsWidgetContentBox = () => {
                                         <td>
                                             <div className="option-box">
                                                 <ul className="option-list">
-                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}}>
-                                                    <li>
-                                                        <button data-text="Send Documents">
-                                                            <span className="la la-send"></span>
-                                                        </button>
-                                                    </li>
-                                                </Link>
                                                 <li onClick = { () => { ViewCV(applicant.application_id) }}>
                                                     <button data-text="View CV">
                                                         <span className="la la-file-download"></span>
