@@ -238,19 +238,40 @@ const UserDocuments = ({ applicantData }) => {
     }
   }
 
+  const determineBadgeColor = (status) => {
+    switch (status?.toLowerCase()) {
+        case 'sent':
+            return 'orange'
+        case 'delivered':
+            return 'sky'
+        case 'read':
+            return 'sky'
+        case 'signed':
+            return 'green'
+        case 'completed':
+            return 'green'
+        case 'not sent':
+            return 'red'
+        default:
+            return 'red'
+    }
+}
+
   return (
     <form className="default-form">
       <div className="row">
         <div className="col-6">
           <h5 className="mb-3" style={{display:"flex"}}>Documents          
             <span style={{marginLeft:"15px"}}>
-              <Button 
+              <span 
                 className="flaticon-reload" 
-                style={{fontSize:"0.6em"}} 
+                style={{
+                  cursor: refreshDisabled ? "not-allowed" :"pointer",
+                }} 
                 onClick={()=>fetchTemplates(applicantData)}
                 disabled={refreshDisabled}
               >
-              </Button>
+              </span>
             </span>
           </h5>
 
@@ -325,7 +346,7 @@ const UserDocuments = ({ applicantData }) => {
                     <span 
                       className={`badge`}
                       style={{
-                        backgroundColor: template?.envelope?.status === "completed" ? "green" : "red",
+                        backgroundColor: determineBadgeColor(template?.envelope?.status),
                       }}
                       >
                       {template?.envelope?.status

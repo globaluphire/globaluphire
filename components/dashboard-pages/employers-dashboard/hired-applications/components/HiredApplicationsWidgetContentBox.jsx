@@ -210,6 +210,25 @@ const HiredApplicationsWidgetContentBox = () => {
         }
     }
 
+    const determineBadgeColor = (status) => {
+        switch (status.toLowerCase()) {
+            case 'sent':
+                return 'orange'
+            case 'delivered':
+                return 'sky'
+            case 'read':
+                return 'sky'
+            case 'signed':
+                return 'green'
+            case 'completed':
+                return 'green'
+            case 'not sent':
+                return 'red'
+            default:
+                return 'grey'
+        }
+    }
+
     return (
         <div className="tabs-box">
             <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
@@ -317,7 +336,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                                 <img src={item.logo} alt="logo" />
                                                 </span> */}
                                                 <h4>
-                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}}>
+                                                <Link href={{ pathname: `/employers-dashboard/user-documents`, query: {applicationId: applicant.application_id}}} style={{whiteSpace: "nowrap"}}>
                                                 {applicant.name}
                                                 </Link>
                                                 </h4>
@@ -349,7 +368,13 @@ const HiredApplicationsWidgetContentBox = () => {
                                             </select>
                                         </td>
                                         <td>
-                                            <div style={{ textAlign:"center" }}>
+                                            <div 
+                                                className="badge"
+                                                style={{
+                                                    backgroundColor: determineBadgeColor(applicant.onboarding_status),
+                                                    margin: 'auto',
+                                                }}
+                                            >
                                                 {applicant.onboarding_status}
                                             </div>
                                         </td>
