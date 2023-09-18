@@ -408,7 +408,7 @@ const UserDocuments = ({ applicantData }) => {
                 onClick={() => {
                   sendDocumentsForSigning();
                 }}
-                className="w-100"
+                className="w-100 mb-5"
                 disabled={sendDocumentsForSigningLoading}
                 style={{
                   backgroundColor: "var(--primary-hover-bg-color)",
