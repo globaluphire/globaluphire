@@ -246,19 +246,13 @@ const UserDocuments = ({ applicantData }) => {
   const determineBadgeColor = (status) => {
     switch (status?.toLowerCase()) {
         case 'sent':
-            return 'orange'
+            return {color: 'orange', tag: 'Sent'}
         case 'delivered':
-            return '#87CEEB'
-        case 'read':
-            return '#87CEEB'
-        case 'signed':
-            return 'green'
+            return {color: '#87CEEB', tag: 'Read'}
         case 'completed':
-            return 'green'
-        case 'not sent':
-            return 'red'
+            return {color: 'green', tag: 'Signed'}
         default:
-            return 'red'
+            return {color: 'red', tag: 'Not Sent'}
     }
 }
 
@@ -353,12 +347,10 @@ const UserDocuments = ({ applicantData }) => {
                     <span 
                       className={`badge`}
                       style={{
-                        backgroundColor: determineBadgeColor(template?.envelope?.status),
+                        backgroundColor: determineBadgeColor(template?.envelope?.status).color,
                       }}
                       >
-                      {template?.envelope?.status
-                        ? template?.envelope?.status
-                        : "not sent"}
+                      {determineBadgeColor(template?.envelope?.status).tag}
                     </span>
                     </div>
                     {!(template?.envelope?.status) && 

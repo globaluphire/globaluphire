@@ -213,19 +213,13 @@ const HiredApplicationsWidgetContentBox = () => {
     const determineBadgeColor = (status) => {
         switch (status.toLowerCase()) {
             case 'sent':
-                return 'orange'
+                return {color: 'orange', tag: 'Sent'}
             case 'delivered':
-                return '#87CEEB'
-            case 'read':
-                return '#87CEEB'
-            case 'signed':
-                return 'green'
+                return {color: '#87CEEB', tag: 'Read'}
             case 'completed':
-                return 'green'
-            case 'not sent':
-                return 'red'
+                return {color: 'green', tag: 'Signed'}
             default:
-                return 'grey'
+                return {color: 'red', tag: 'Not Sent'}
         }
     }
 
@@ -371,11 +365,11 @@ const HiredApplicationsWidgetContentBox = () => {
                                             <div 
                                                 className="badge"
                                                 style={{
-                                                    backgroundColor: determineBadgeColor(applicant.onboarding_status),
+                                                    backgroundColor: determineBadgeColor(applicant.onboarding_status).color,
                                                     margin: 'auto',
                                                 }}
                                             >
-                                                {applicant.onboarding_status}
+                                                {determineBadgeColor(applicant.onboarding_status).tag}
                                             </div>
                                         </td>
                                         <td>
