@@ -16,6 +16,9 @@ export default async function handler(req, res) {
       const templates = await templatesApi.listTemplates(
         process.env.NEXT_DOCUSIGN_ACCOUNT_ID
       );
+      if(!templates){
+        return res.status(404).json({ status: 404, message: "No templates found!" });
+      }
       // get document details from supabase
       const userTemplates = await supabase
         .from("document_signing")
@@ -42,6 +45,13 @@ export default async function handler(req, res) {
               process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
               matchingUserTemplate.envelope_id
             );
+            // check
+            // const tabs = await templatesApi.getDocumentTabs(
+            //   process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
+            //   matchingUserTemplate.template_id,
+            //   1
+            // );
+            // console.log(tabs)
             // update documen_signing table
             await supabase
               .from("document_signing")

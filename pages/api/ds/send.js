@@ -44,11 +44,11 @@ async function createEnvelopes(
   template,
   recipient
 ) {
-  const documentArray = []
+  const documentArray = [];
   // looping through all selected templates to send
   for (const doc of template) {
-    let envelope = makeEnvelope(doc, recipient);
     try {
+      let envelope = makeEnvelope(doc, recipient, user);
       // send the envelope
       let results = await envelopesApi.createEnvelope(
         process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
@@ -71,7 +71,7 @@ async function createEnvelopes(
       };
       // store response in supabase
       await supabase.from("document_signing").insert(documentObj);
-      documentArray.push(documentObj)
+      documentArray.push(documentObj);
     } catch (error) {
       console.error(`Error creating envelope: ${error}`);
     }
@@ -80,7 +80,7 @@ async function createEnvelopes(
   return documentArray;
 }
 
-function makeEnvelope(template, recipient) {
+function makeEnvelope(template, recipient, user) {
   // Create the envelope definition
   let env = new docusign.EnvelopeDefinition();
   env.templateId = template.templateId;
@@ -89,10 +89,15 @@ function makeEnvelope(template, recipient) {
   // Create template role elements to connect the signer and cc recipients
   // to the template
   // We're setting the parameters via the object creation
-  let signer1 = docusign.TemplateRole.constructFromObject({
+  let hr = docusign.TemplateRole.constructFromObject({
+    email: user.email,
+    name: user.name,
+    roleName: "HR",
+  });
+  let signer = docusign.TemplateRole.constructFromObject({
     email: recipient.email,
     name: recipient.name,
-    roleName: recipient.roleName,
+    roleName: "Signer",
   });
 
   // Create a cc template role.
@@ -104,7 +109,7 @@ function makeEnvelope(template, recipient) {
 
   // Add the TemplateRole objects to the envelope object
   //   env.templateRoles = [signer1, cc1];
-  env.templateRoles = [signer1];
+  env.templateRoles = [hr, signer];
   env.status = "sent"; // We want the envelope to be sent
 
   return env;

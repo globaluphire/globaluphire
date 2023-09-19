@@ -16,7 +16,7 @@ const UserDocuments = ({ applicantData }) => {
   const [refreshDisabled, setRefreshDisabled ] = useState(false);
 
   // Function to send documents for signing
-  const sendDocumentsForSigning = async () => {
+  const sendDocumentsForSigning = async (user) => {
     setSendDocumentsForSigningLoading(true);
     try {
       if (!applicantForm.current) {
@@ -24,8 +24,7 @@ const UserDocuments = ({ applicantData }) => {
       }
       const applicantEmail = applicantForm.current.querySelector("#applicantEmail").value;
       const applicantName = applicantForm.current.querySelector("#applicantName").value;
-      const applicantroleName = applicantForm.current.querySelector("#applicantroleName").value;
-    if(!applicantEmail || !applicantName || !applicantroleName){
+    if(!applicantEmail || !applicantName){
       toast.error('Please Fill the form!', {
         position: "bottom-right",
         autoClose: false,
@@ -57,7 +56,6 @@ const UserDocuments = ({ applicantData }) => {
       const applicant = {
         email: applicantEmail,
         name: applicantName,
-        roleName: applicantroleName,
       };
       const token = await getAccessToken(user.email);
       const response = await fetch(`/api/ds/send`, {
@@ -123,10 +121,10 @@ const UserDocuments = ({ applicantData }) => {
         setRefreshDisabled(false)
         setIsLoading(false);
         setAllTemplates(data?.data);
-        const hasSentDelivered = data?.data.some((item) => item.envelope.status === "delivered");
-        const hasSentItem = data?.data.some((item) => item.envelope.status === "sent");
+        const hasSentDelivered = data?.data?.some((item) => item?.envelope?.status === "delivered");
+        const hasSentItem = data?.data?.some((item) => item?.envelope?.status === "sent");
         if (hasSentDelivered || hasSentItem) {
-          const allItemsCompleted = data?.data.every((item) => item.status === "completed");
+          const allItemsCompleted = data?.data.every((item) => item?.status === "completed");
           const newStatus = allItemsCompleted ? "completed" : hasSentDelivered ? "delivered" : "sent";
           // update onboarding_status in table applications
           console.log("status:",newStatus)
@@ -233,7 +231,7 @@ const UserDocuments = ({ applicantData }) => {
 
   const handleCheckChange = (template, checked) => {
     if (checked) {
-      if (!selectedTemplates.some(t => t.templateId === template.templateId)) {
+      if (!selectedTemplates?.some(t => t.templateId === template.templateId)) {
         setSelectedTemplates([...selectedTemplates, template]);
       }
     } else {
@@ -393,7 +391,7 @@ const UserDocuments = ({ applicantData }) => {
                     required
                   />
                 </Form.Group>
-                <Form.Group className="form-group">
+                {/* <Form.Group className="form-group">
                   <Form.Label htmlFor="applicantroleName">Role</Form.Label>
                   <Form.Control
                     className="form-control form-control-sm"
@@ -402,11 +400,11 @@ const UserDocuments = ({ applicantData }) => {
                     id="applicantroleName"
                     required
                   />
-                </Form.Group>
+                </Form.Group> */}
               </Form>
               <Button
                 onClick={() => {
-                  sendDocumentsForSigning();
+                  sendDocumentsForSigning(user);
                 }}
                 className="w-100 mb-5"
                 disabled={sendDocumentsForSigningLoading}
