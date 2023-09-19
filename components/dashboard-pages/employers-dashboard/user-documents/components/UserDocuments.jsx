@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Button, Form, ListGroup, ListGroupItem } from "react-bootstrap";
 import { Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { supabase } from "../../../../../config/supabaseClient";
 
 const UserDocuments = ({ applicantData }) => {
   const user = useSelector((state) => state.candidate.user);
@@ -14,7 +15,7 @@ const UserDocuments = ({ applicantData }) => {
   const [sendDocumentsForSigningLoading, setSendDocumentsForSigningLoading] = useState(false);
   const [refreshDisabled, setRefreshDisabled ] = useState(false);
 
-  // Function to fetch templates and update the state
+  // Function to send documents for signing
   const sendDocumentsForSigning = async () => {
     setSendDocumentsForSigningLoading(true);
     try {
@@ -84,11 +85,11 @@ const UserDocuments = ({ applicantData }) => {
           progress: undefined,
           theme: "colored",
         });
-        const data = await response.json();
       } else {
         setIsLoading(false);
         console.error("Failed to fetch templates");
       }
+      fetchTemplates(applicantData)
     } catch (error) {
       setIsLoading(false);
       console.error(error);
@@ -121,7 +122,19 @@ const UserDocuments = ({ applicantData }) => {
         const data = await response.json();
         setRefreshDisabled(false)
         setIsLoading(false);
-        setAllTemplates(data?.data); // Update the state with fetched data
+        setAllTemplates(data?.data);
+        const hasSentDelivered = data?.data.some((item) => item.envelope.status === "delivered");
+        const hasSentItem = data?.data.some((item) => item.envelope.status === "sent");
+        if (hasSentDelivered || hasSentItem) {
+          const allItemsCompleted = data?.data.every((item) => item.status === "completed");
+          const newStatus = allItemsCompleted ? "completed" : hasSentDelivered ? "delivered" : "sent";
+          // update onboarding_status in table applications
+          console.log("status:",newStatus)
+          await supabase
+            .from("applications")
+            .update({ onboarding_status: newStatus })
+            .eq("application_id", applicantData.application_id);
+        }
       } else {
         setRefreshDisabled(false)
         setIsLoading(false);
@@ -177,10 +190,6 @@ const UserDocuments = ({ applicantData }) => {
       }));
       
       setImgData(imageArray);
-      // setImgData({
-      //   templateId: template.templateId,
-      //   data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
-      // });
     } catch (error) {
       console.error(error);
       setImgData(null);
@@ -210,10 +219,6 @@ const UserDocuments = ({ applicantData }) => {
       }));
 
       setImgData(imageArray);
-      // setImgData({
-      //   templateId: template.templateId,
-      //   data: `data:image/${response.pages[0].mimeType};base64,${response.pages[0].imageBytes}`,
-      // });
     } catch (error) {
       console.error(error);
       setImgData(null);
@@ -243,9 +248,9 @@ const UserDocuments = ({ applicantData }) => {
         case 'sent':
             return 'orange'
         case 'delivered':
-            return 'sky'
+            return '#87CEEB'
         case 'read':
-            return 'sky'
+            return '#87CEEB'
         case 'signed':
             return 'green'
         case 'completed':
@@ -362,6 +367,7 @@ const UserDocuments = ({ applicantData }) => {
                         // defaultChecked={template.shared !== "false"}
                         disabled={
                           template?.envelope?.status === "sent" ||
+                          template?.envelope?.status === "delivered" ||
                           template?.envelope?.status === "completed"
                         }
                         aria-label="Checkbox for following text input"

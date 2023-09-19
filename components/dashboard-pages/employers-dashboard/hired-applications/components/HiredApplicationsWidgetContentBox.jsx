@@ -215,9 +215,9 @@ const HiredApplicationsWidgetContentBox = () => {
             case 'sent':
                 return 'orange'
             case 'delivered':
-                return 'sky'
+                return '#87CEEB'
             case 'read':
-                return 'sky'
+                return '#87CEEB'
             case 'signed':
                 return 'green'
             case 'completed':
