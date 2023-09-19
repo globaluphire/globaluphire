@@ -289,7 +289,7 @@ const UserDocuments = ({ applicantData }) => {
               as="ol"
               variant="numbered"
               style={{
-                height: "40rem",
+                height: "300px",
                 overflow: "auto",
               }}
             >
@@ -370,7 +370,11 @@ const UserDocuments = ({ applicantData }) => {
                   </span>
                 </ListGroup.Item>
               ))}
-              <Form ref={applicantForm} className="mt-5">
+            </ListGroup>
+          ) : (
+            <>No templates found!</>
+          )}
+          <Form ref={applicantForm} className="mt-5">
                 <Form.Group className="form-group">
                   <Form.Label htmlFor="applicantEmail">Email</Form.Label>
                   <Form.Control
@@ -414,10 +418,6 @@ const UserDocuments = ({ applicantData }) => {
               >
                 {sendDocumentsForSigningLoading ? <Spinner /> : "Send"}
               </Button>
-            </ListGroup>
-          ) : (
-            <>No templates found!</>
-          )}
         </div>
         <div className="col-6">
           <h5>Preview</h5>
