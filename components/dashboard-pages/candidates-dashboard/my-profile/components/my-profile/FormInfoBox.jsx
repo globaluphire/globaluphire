@@ -28,7 +28,7 @@ const FormInfoBox = () => {
 
   let arrExistingDepartments = [];
   const [name, setName] = useState(user.name);
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('+1');
   const [email, setEmail] = useState('');
   const [currentSalary, setCurrentSalary] = useState('');
   const [expectedSalary, setExpectedSalary] = useState('');
@@ -192,7 +192,13 @@ const FormInfoBox = () => {
 
 
   return (
-    <form action="#" className="default-form">
+    <form 
+      action="#" 
+      className="default-form" 
+      onSubmit={(e)=>{
+        e.preventDefault();
+        submitCandidateProfile();
+    }}>
       <div className="row">
         {/* <!-- Input --> */}
         <div className="form-group col-lg-6 col-md-12">
@@ -203,6 +209,7 @@ const FormInfoBox = () => {
             value={name}
             required
             onChange={(e) => { setName(e.target.value) }}
+            disabled
           />
         </div>
 
@@ -210,7 +217,7 @@ const FormInfoBox = () => {
         <div className="form-group col-lg-6 col-md-12">
           <label>
             Phone Number <span className="required">(required)</span>
-            <a data-tooltip-id="phone-tooltip" data-tooltip-content="Phone number should be in (555)555-5555">
+            <a data-tooltip-id="phone-tooltip" data-tooltip-content="Phone number should be in +1123456890">
               <span className="lar la-question-circle" style={{ fontSize: '14px', margin: '5px' }}></span>
             </a>
             <Tooltip id="phone-tooltip" />
@@ -220,7 +227,18 @@ const FormInfoBox = () => {
             name="phone"
             value={phone}
             required
-            onChange={(e) => { setPhone(e.target.value) }}
+            minlength="12"
+            onChange={(e) => {
+              if (e.target.value.trim() === "") {
+                setPhone("+1");
+                return;
+              }
+              const number = e.target.value.replace("+1", "");
+              if (isNaN(number)) return;
+              if (e.target.value.length <= 12) {
+                setPhone(e.target.value.trim());
+              }
+            }}
           />
         </div>
 
@@ -228,11 +246,12 @@ const FormInfoBox = () => {
         <div className="form-group col-lg-6 col-md-12">
           <label>Email address <span className="required">(required)</span></label>
           <input
-            type="text"
+            type="email"
             name="email"
             readOnly
             value={email}
             required
+            disabled
           />
         </div>
 
@@ -405,10 +424,6 @@ const FormInfoBox = () => {
           <button
             type="submit"
             className="theme-btn btn-style-one"
-            onClick={(e) => {
-              e.preventDefault();
-              submitCandidateProfile();
-            }}
           >
             Save
           </button>
