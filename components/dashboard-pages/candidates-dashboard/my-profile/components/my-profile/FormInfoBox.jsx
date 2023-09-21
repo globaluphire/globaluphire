@@ -240,6 +240,10 @@ const FormInfoBox = () => {
               }
             }}
           />
+          <br />
+          <div style={{ marginTop: '-25px' }}>
+            <span className="optional">(By entering your number here, allows Employer to reach out about status of your applied job and setup interview if you sort listed!)</span>
+          </div>
         </div>
 
         {/* <!-- Input --> */}
