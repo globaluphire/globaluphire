@@ -252,28 +252,58 @@ const UserDocuments = ({ applicantData }) => {
         default:
             return {color: 'red', tag: 'Not Sent'}
     }
-}
+  }
+
+  const handleAllTemplatesSelect = (checked) => {
+    if (checked) {
+      setSelectedTemplates(allTemplates);
+    }
+    else {
+      setSelectedTemplates([]);
+    }
+  }
 
   return (
     <form className="default-form">
       <div className="row">
         <div className="col-6">
-          <h5 className="mb-3" style={{display:"flex"}}>Documents          
-            <span style={{marginLeft:"15px"}}>
-              <span 
-                className="flaticon-reload" 
-                style={{
-                  fontWeight: "bold",
-                  color: refreshDisabled ? "grey" : "var(--primary-hover-bg-color)",
-                  cursor: refreshDisabled ? "not-allowed" :"pointer",
-                }} 
-                onClick={()=>fetchTemplates(applicantData)}
-                disabled={refreshDisabled}
-              >
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+            <h5 className="mb-3" style={{display:"flex"}}>Documents          
+              <span style={{marginLeft:"15px"}}>
+                <span 
+                  className="flaticon-reload" 
+                  style={{
+                    fontWeight: "bold",
+                    color: refreshDisabled ? "grey" : "var(--primary-hover-bg-color)",
+                    cursor: refreshDisabled ? "not-allowed" :"pointer",
+                  }} 
+                  onClick={()=>fetchTemplates(applicantData)}
+                  disabled={refreshDisabled}
+                >
+                </span>
               </span>
+            </h5>
+            <span style={{ cursor: "pointer" }}>
+              <label htmlFor="selectAll">
+                Select All
+              </label>
+              {" "}
+              <input 
+                type="checkbox" 
+                id="selectAll" 
+                className="form-check-input" 
+                onChange={(e) => { handleAllTemplatesSelect(e.target.checked) }} 
+                style={{
+                  marginTop: "0.3rem",
+                  cursor: "pointer",
+                }}
+              />
             </span>
-          </h5>
-
+          </div>
           {isLoading ? (
             <div
               style={{
@@ -355,6 +385,7 @@ const UserDocuments = ({ applicantData }) => {
                       <input
                         type="checkbox"
                         // defaultChecked={template.shared !== "false"}
+                        checked={selectedTemplates?.some(t => t.templateId === template.templateId)}
                         disabled={
                           template?.envelope?.status === "sent" ||
                           template?.envelope?.status === "delivered" ||
