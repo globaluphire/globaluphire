@@ -48,7 +48,7 @@ async function createEnvelopes(
   // looping through all selected templates to send
   for (const doc of template) {
     try {
-      let envelope = makeEnvelope(doc, recipient, user);
+      let envelope = makeEnvelope(doc, recipient, user, applicant);
       // send the envelope
       let results = await envelopesApi.createEnvelope(
         process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
@@ -74,17 +74,75 @@ async function createEnvelopes(
       documentArray.push(documentObj);
     } catch (error) {
       console.error(`Error creating envelope: ${error}`);
+      throw error;
     }
   }
   // returning array
   return documentArray;
 }
 
-function makeEnvelope(template, recipient, user) {
+function makeEnvelope(template, recipient, user, applicant) {
   // Create the envelope definition
-  let env = new docusign.EnvelopeDefinition();
-  env.templateId = template.templateId;
-  env.documentId = 1;
+  let envelopeDefinition = new docusign.EnvelopeDefinition();
+  envelopeDefinition.templateId = template.templateId;
+  envelopeDefinition.documentId = 1;
+
+  const dateTime = new Date(applicant.hired_date);
+
+  // Convert the date to a more readable format
+  const options = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZoneName: "short",
+  };
+  const readableDate = dateTime.toLocaleDateString("en-US", options);
+
+  // email subject and body
+  let emailNotificationHR = {};
+  switch (true) {
+    case true:
+      emailNotificationHR =
+        docusign.RecipientEmailNotification.constructFromObject({
+          emailSubject: `Please review the document being sent to ${applicant.name}`,
+          emailBody: `Applicant Details:
+        Name: ${applicant.name}
+        Email: ${applicant.email}
+        Job Title: ${applicant.job_title}
+        Facility Name: ${applicant.facility_name}
+        Company Address: ${applicant.job_comp_add}
+        Hired Date : ${readableDate}`,
+        });
+        break;
+    case false:
+      emailNotificationHR = {}
+      break;
+  }
+
+  const prefillTabs = [];
+  if (template?.tabs?.textTabs) {
+    template.tabs.textTabs.forEach((tab) => {
+      if (tab.tabLabel.includes("employerName")) {
+        tab.value = applicant.facility_name;
+      }
+      if (tab.tabLabel.includes("mailingAddress")) {
+        tab.value = applicant.job_comp_add;
+      }
+      if (tab.tabLabel.includes("EIN")) {
+        tab.value = "123456";
+      }
+      if (
+        tab.tabLabel.includes("employerName") ||
+        tab.tabLabel.includes("mailingAddress") ||
+        tab.tabLabel.includes("EIN")
+      ) {
+        prefillTabs.push(tab);
+      }
+    });
+  }
 
   // Create template role elements to connect the signer and cc recipients
   // to the template
@@ -93,6 +151,7 @@ function makeEnvelope(template, recipient, user) {
     email: user.email,
     name: user.name,
     roleName: "HR",
+    emailNotification: emailNotificationHR,
   });
   let signer = docusign.TemplateRole.constructFromObject({
     email: recipient.email,
@@ -109,8 +168,13 @@ function makeEnvelope(template, recipient, user) {
 
   // Add the TemplateRole objects to the envelope object
   //   env.templateRoles = [signer1, cc1];
-  env.templateRoles = [hr, signer];
-  env.status = "sent"; // We want the envelope to be sent
+  let tabsToBeFilled = docusign.Tabs.constructFromObject({
+    textTabs: prefillTabs,
+  });
+  hr.tabs = tabsToBeFilled;
+  envelopeDefinition.templateRoles = [hr, signer];
+  envelopeDefinition.status = "sent"; // We want the envelope to be sent
 
-  return env;
+  console.log(envelopeDefinition.templateRoles[0].emailNotification);
+  return envelopeDefinition;
 }
