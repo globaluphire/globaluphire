@@ -85,7 +85,16 @@ const UserDocuments = ({ applicantData }) => {
         });
       } else {
         setIsLoading(false);
-        console.error("Failed to fetch templates");
+        toast.error('Some error occured! Please try again later.', {
+          position: "bottom-right",
+          autoClose: 8000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       }
       fetchTemplates(applicantData)
     } catch (error) {
@@ -127,7 +136,6 @@ const UserDocuments = ({ applicantData }) => {
           const allItemsCompleted = data?.data.every((item) => item?.status === "completed");
           const newStatus = allItemsCompleted ? "completed" : hasSentDelivered ? "delivered" : "sent";
           // update onboarding_status in table applications
-          console.log("status:",newStatus)
           await supabase
             .from("applications")
             .update({ onboarding_status: newStatus })
@@ -224,6 +232,7 @@ const UserDocuments = ({ applicantData }) => {
   };
 
   useEffect(() => {
+    setSelectedTemplates([])
     if (applicantData) {
       fetchTemplates(applicantData);
     }

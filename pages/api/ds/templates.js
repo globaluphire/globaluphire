@@ -29,11 +29,21 @@ export default async function handler(req, res) {
           sender_email: user.email,
         });
 
+      
       let envelopesApi = new docusign.EnvelopesApi(dsApiClient);
 
       // Promise for async
       const updatedTemplates = await Promise.all(
         templates.envelopeTemplates.map(async (template) => {
+          delay(50)
+          const tabs = await templatesApi.getDocumentTabs(
+            process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
+            template.templateId,
+            1
+          );
+          if(tabs){
+            template.tabs = tabs;
+          }
           // match templateId from all the templates available to get envelope_id
           const matchingUserTemplate = userTemplates.data.find(
             (userTemplate) => userTemplate.template_id === template.templateId
@@ -45,13 +55,6 @@ export default async function handler(req, res) {
               process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
               matchingUserTemplate.envelope_id
             );
-            // check
-            // const tabs = await templatesApi.getDocumentTabs(
-            //   process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
-            //   matchingUserTemplate.template_id,
-            //   1
-            // );
-            // console.log(tabs)
             // update documen_signing table
             await supabase
               .from("document_signing")
@@ -69,6 +72,7 @@ export default async function handler(req, res) {
         .json({ message: "Success", data: updatedTemplates });
     } catch (error) {
       console.log(error);
+      return res.status(400).json({ status: 400, message: "Some Error Occured!"})
     }
   } else {
     return res.status(405).json({ status: 405, message: "Method not allowed" });
