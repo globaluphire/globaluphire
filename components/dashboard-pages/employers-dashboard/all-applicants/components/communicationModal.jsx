@@ -73,17 +73,20 @@ function CommunicationModal({ applicantData }) {
   };
 
   const handleSetModalData = async (applicantData) => {
+    if (applicantData?.email) {
+      setReceiversEmail(applicantData.email);
+    }
     const { data, error } = await supabase
       .from("sms_messages")
       .select()
       .match({ receiver_name: applicantData?.name });
     if (data[0]?.receiver_phone) {
       setReceiversPhoneNumber(data[0].receiver_phone);
-      setReceiversEmail(data[0].receiver_email);
+      // setReceiversEmail(data[0].receiver_email);
       setReceiversPhoneNumberDisabled(true);
     } else {
       setReceiversPhoneNumber("");
-      setReceiversEmail("");
+      // setReceiversEmail("");
       setReceiversPhoneNumberDisabled(false);
     }
     handleSetMessages(data);
@@ -91,7 +94,7 @@ function CommunicationModal({ applicantData }) {
 
   useEffect(() => {
     handleSetModalData(applicantData);
-  }, [applicantData]);
+  }, [applicantData, receiversEmail]);
 
   return (
     <div className="modal fade" id="communication-modal">
@@ -150,41 +153,39 @@ function CommunicationModal({ applicantData }) {
                   Email
                 </ToggleButton>
               </ToggleButtonGroup>
-              {activeTab === 1 &&
-                (receiversPhoneNumber ? (
-                  <SmsModal
-                    applicantData={applicantData}
-                    setAllMessages={setAllMessages}
-                    receiversPhoneNumber={receiversPhoneNumber}
-                    setReceiversPhoneNumber={setReceiversPhoneNumber}
-                    receiversPhoneNumberDisabled={receiversPhoneNumberDisabled}
-                    setReceiversPhoneNumberDisabled={
-                      setReceiversPhoneNumberDisabled
-                    }
-                  />
-                ) : (
-                  <div
-                    style={{
-                      margin: "auto",
-                      textAlign: "center",
-                    }}
-                  >
-                    No phone Number Provided!
-                  </div>
-                ))}
-              {activeTab === 2 &&
-                (receiversEmail ? (
-                  <EmailModal
-                    applicantData={applicantData}
-                    setAllMessages={setAllMessages}
-                    receiversEmail={receiversEmail}
-                    setReceiversEmail={setReceiversEmail}
-                  />
-                ) : (
-                  <div style={{ margin: "auto", textAlign: "center" }}>
-                    No email Provided!
-                  </div>
-                ))}
+              {activeTab === 1 && receiversPhoneNumber ? (
+                <SmsModal
+                  applicantData={applicantData}
+                  setAllMessages={setAllMessages}
+                  receiversPhoneNumber={receiversPhoneNumber}
+                  setReceiversPhoneNumber={setReceiversPhoneNumber}
+                  receiversPhoneNumberDisabled={receiversPhoneNumberDisabled}
+                  setReceiversPhoneNumberDisabled={
+                    setReceiversPhoneNumberDisabled
+                  }
+                />
+              ) : (
+                <div
+                  style={{
+                    margin: "auto",
+                    textAlign: "center",
+                  }}
+                >
+                  No phone Number Provided!
+                </div>
+              )}
+              {activeTab === 2 && receiversEmail ? (
+                <EmailModal
+                  applicantData={applicantData}
+                  setAllMessages={setAllMessages}
+                  receiversEmail={receiversEmail}
+                  setReceiversEmail={setReceiversEmail}
+                />
+              ) : (
+                <div style={{ margin: "auto", textAlign: "center" }}>
+                  No email Provided!
+                </div>
+              )}
               {(receiversPhoneNumber && activeTab === 1) ||
               (receiversEmail && activeTab === 2) ? (
                 <ViewModal data={allMessages} />

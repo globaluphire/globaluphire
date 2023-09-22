@@ -107,6 +107,11 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
   };
 
   const handleSetModalData = async () => {
+    if (receiversEmail) {
+      setReceiversEmailDisabled(true);
+    } else {
+      setReceiversEmailDisabled(false);
+    }
     setReceiversName(applicantData?.name);
     if (setAllMessages[0]?.email) {
       setReceiversEmail(applicantData?.email);
@@ -117,11 +122,6 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
 
   useEffect(() => {
     handleSetModalData();
-    if (receiversEmail) {
-      setReceiversEmailDisabled(true);
-    } else {
-      setReceiversEmailDisabled(false);
-    }
   }, [applicantData]);
 
   return (
