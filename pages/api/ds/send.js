@@ -116,34 +116,47 @@ function makeEnvelope(template, recipient, user, applicant) {
         Company Address: ${applicant.job_comp_add}
         Hired Date : ${readableDate}`,
         });
-        break;
+      break;
     case false:
-      emailNotificationHR = {}
+      emailNotificationHR = {};
       break;
   }
 
   const prefillTabs = [];
   if (template?.tabs?.textTabs) {
     template.tabs.textTabs.forEach((tab) => {
+      let check = false;
       if (tab.tabLabel.includes("employerName")) {
         tab.value = applicant.facility_name;
+        check = true
       }
       if (tab.tabLabel.includes("mailingAddress")) {
         tab.value = applicant.job_comp_add;
+        check = true
       }
       if (tab.tabLabel.includes("EIN")) {
         tab.value = "123456";
+        check = true
       }
-      if (
-        tab.tabLabel.includes("employerName") ||
-        tab.tabLabel.includes("mailingAddress") ||
-        tab.tabLabel.includes("EIN")
-      ) {
+      if (tab.tabLabel.includes("jobTitle")) {
+        tab.value = applicant.job_title;
+        check = true
+      }
+      if (check) {
         prefillTabs.push(tab);
       }
     });
   }
 
+  const jobTitle = [];
+  if (template?.tabs?.titleTabs) {
+    template.tabs.titleTabs.forEach((tab) => {
+      if (tab.tabLabel.includes("jobTitle")) {
+        tab.value = applicant.job_title;
+      }
+      jobTitle.push(tab);
+    });
+  }
   // Create template role elements to connect the signer and cc recipients
   // to the template
   // We're setting the parameters via the object creation
@@ -166,15 +179,17 @@ function makeEnvelope(template, recipient, user, applicant) {
   //   cc1.name = "";
   //   cc1.roleName = "cc";
 
-  // Add the TemplateRole objects to the envelope object
-  //   env.templateRoles = [signer1, cc1];
   let tabsToBeFilled = docusign.Tabs.constructFromObject({
     textTabs: prefillTabs,
   });
-  hr.tabs = tabsToBeFilled;
-  envelopeDefinition.templateRoles = [hr, signer];
-  envelopeDefinition.status = "sent"; // We want the envelope to be sent
 
-  console.log(envelopeDefinition.templateRoles[0].emailNotification);
+  hr.tabs = tabsToBeFilled;
+  signer.tabs = tabsToBeFilled;
+
+  // Add the TemplateRole objects to the envelope object
+  envelopeDefinition.templateRoles = [hr, signer];
+  // We want the envelope to be sent
+  envelopeDefinition.status = "sent";
+
   return envelopeDefinition;
 }

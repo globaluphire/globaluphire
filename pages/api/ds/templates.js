@@ -79,7 +79,6 @@ export default async function handler(req, res) {
       const removedNullTemplates = updatedTemplates.filter(
         (template) => (template !== null)
       );
-      console.log(removedNullTemplates)
       return res
         .status(200)
         .json({ message: "Success", data: removedNullTemplates });
