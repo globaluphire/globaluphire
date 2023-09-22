@@ -130,17 +130,22 @@ const UserDocuments = ({ applicantData }) => {
         setRefreshDisabled(false)
         setIsLoading(false);
         setAllTemplates(data?.data);
-        const hasSentDelivered = data?.data?.some((item) => item?.envelope?.status === "delivered");
-        const hasSentItem = data?.data?.some((item) => item?.envelope?.status === "sent");
-        if (hasSentDelivered || hasSentItem) {
-          const allItemsCompleted = data?.data.every((item) => item?.status === "completed");
-          const newStatus = allItemsCompleted ? "completed" : hasSentDelivered ? "delivered" : "sent";
-          // update onboarding_status in table applications
-          await supabase
-            .from("applications")
-            .update({ onboarding_status: newStatus })
-            .eq("application_id", applicantData.application_id);
+        const hasNotSent = data?.data?.every((item) => item?.envelope?.status === "not sent");
+        let newStatus = ""
+        if(hasNotSent){
+          newStatus = "Not Sent"
         }
+        const hasSent = data?.data?.some((item) => item?.envelope?.status === "sent");
+        const hasDelivered = data?.data?.some((item) => item?.envelope?.status === "delivered");
+        if (hasDelivered || hasSent) {
+          const allItemsCompleted = data?.data.every((item) => item?.status === "completed");
+          newStatus = allItemsCompleted ? "Signed" : hasDelivered ? "Read" : "Sent";
+          // update onboarding_status in table applications
+        }
+        await supabase
+          .from("applications")
+          .update({ onboarding_status: newStatus })
+          .eq("application_id", applicantData.application_id);
       } else {
         setRefreshDisabled(false)
         setIsLoading(false);
