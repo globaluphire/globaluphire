@@ -1,6 +1,7 @@
 const docusign = require("docusign-esign");
 import { supabase } from "../../../config/supabaseClient";
 
+// config for vercel
 export const config = {
   maxDuration: 60,
 };
