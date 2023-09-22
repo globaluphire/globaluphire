@@ -26,6 +26,20 @@ const JobListingsTable = () => {
   const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
   const { jobTitle, jobType } = useMemo(() => searchFilters, [searchFilters])
 
+  // add applicants popup
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState('+1');
+  const [licenseNumber, setLicenseNumber] = useState("");
+  const [firstNameError, setFirstNameError] = useState("");
+  const [lastNameError, setLastNameError] = useState("");
+  const [phoneNumberError, setPhoneNumberError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [licenseNumberError, setLicenseNumberError] = useState("");
+  const [guestSelectedFile, setGuestSelectedFile] = useState(null);
+  const [jobId, setJobId] = useState('');
+
   //const [jobStatus, setJobStatus] = useState('');
   const user = useSelector(state => state.candidate.user)
   const router = useRouter();
@@ -36,6 +50,206 @@ const JobListingsTable = () => {
   const dateFormat = (val) => {
     const date = new Date(val)
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+  }
+
+  function handleFileInputChange(event) {
+    setGuestSelectedFile(event.target.files[0]);
+  }
+
+  const validateForm = () => {
+    let isValid = true;
+    if (!firstName) {
+      setFirstNameError("Please enter your first name");
+      isValid = false;
+    } else {
+      setFirstNameError("");
+    }
+
+    if (!lastName) {
+      setLastNameError("Please enter your last name");
+      isValid = false;
+    } else {
+      setLastNameError("");
+    }
+
+    // if (!email) {
+    //   setEmailError("Please enter your email address");
+    //   isValid = false;
+    // } else if (!/\S+@\S+\.\S+/.test(email)) {
+    //   setEmailError("Please enter a valid email address");
+    //   isValid = false;
+    // }
+    if (phoneNumber && phoneNumber.length < 12) {
+      setPhoneNumberError("Phone number should be in +11234567890");
+      isValid = false;
+    } else {
+      setPhoneNumberError("");
+    }
+
+    return isValid;
+  };
+
+  const resetAddApplicantsFields = () => {
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPhoneNumber("+1");
+    setGuestSelectedFile(null)
+  }
+
+  // add applicants
+  async function addApplicants(event) {
+    event.preventDefault();
+    if (validateForm()) {
+        if (guestSelectedFile) {
+          let file;
+          let fileTimestamp = Date.now()
+
+          // upload document to applications/cv folder
+          const { data: guestFileUploadSuccess, error: guestFileUploadError } = await supabase
+              .storage 
+              .from('applications')
+              .upload('cv/' + fileTimestamp + '-' + guestSelectedFile.name, guestSelectedFile, file);
+          if (guestFileUploadError) {
+            if (guestFileUploadError.error == "Payload too large") {
+              toast.error('Failed to upload attachment.  Attachment size exceeded maximum allowed size!', {
+                position: "bottom-right",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            } else {
+              toast.error('System is unavailable.  Please try again later or contact tech support!', {
+                position: "bottom-right",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            }
+          } else {
+            // get document downloadable url
+            const { data: docURL, error: docURLError } = supabase
+                .storage
+                .from('applications')
+                .getPublicUrl('cv/' + fileTimestamp + '-' + guestSelectedFile.name)
+            if (docURLError) {
+              console.warn('Failed to get download URL for file')
+            }
+
+            // save applied application
+            const { data: applications, error: applicationsError } = await supabase
+                .from('applications')
+                .insert([
+                  { 
+                    email: email,
+                    name: firstName + " " + lastName,
+                    phn_nbr: phoneNumber,
+                    doc_name: guestSelectedFile.name,
+                    doc_size: guestSelectedFile.size,
+                    doc_typ: guestSelectedFile.type,
+                    job_id: jobId,
+                    doc_dwnld_url: docURL,
+                    status: 'New'
+                  }
+                ])
+
+            if (applicationsError) {
+              toast.error('Error while Applying in this job, Please try again later!', {
+                position: "bottom-right",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            } else {
+              let time = new Date()
+              const toBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                  let encoded = reader.result.toString().replace(/^data:(.*,)?/, '');
+                  if ((encoded.length % 4) > 0) {
+                    encoded += '='.repeat(4 - (encoded.length % 4));
+                  }
+                  resolve(encoded);
+                };
+                reader.onerror = reject;
+            });
+
+              // const fileBase64 = await toBase64(guestSelectedFile)
+              // const notifyMeEmail = company.notify_me ? company.email : 'support@globaluphire.com'
+
+              //   axios({
+              //     method: 'POST',
+              //     url: '/api/mail',
+              //     data: {
+              //       name: firstName + " " + lastName,
+              //       redirectionUrl: `https://globaluphire.com`,
+              //       time: time.toLocaleString('en-US'),
+              //       jobId: jobId,
+              //       jobTitle: company.job_title,
+              //       notifyMeEmail: notifyMeEmail,
+              //       facilityName: company.facility_name,
+              //       attachments: [
+              //         {
+              //           content: fileBase64,
+              //           filename: guestSelectedFile.name,
+              //           type: guestSelectedFile.type,
+              //           disposition: "attachment"
+              //         }
+              //       ]
+              //     }
+              //   })
+              // open toast
+              toast.success('Successfully Applied in this job!', {
+                position: "bottom-right",
+                autoClose: 8000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+              
+              // reset all fields
+              resetAddApplicantsFields();
+
+              // let { data:jobs, error } = await supabase
+              //     .from('jobs')
+              //     .select()
+              //     .eq('job_id', jobId)
+
+              // if (jobs) {
+              //     await supabase
+              //       .from('notification')
+              //       .insert([{
+              //               type: `New Candidate Applied`,
+              //               job_id: jobs[0].job_id,
+              //               user_id: `GUEST`,
+              //               facility: jobs[0].facility_name,
+              //               notification_text: `<b>${firstName + " " + lastName}</b> Applied in <b>${jobs[0].job_title}</b>`,
+              //               created_at: dateFormat(new Date())
+              //           }
+              //       ]);
+              // }
+            }
+          }
+        } else {
+          console.warn("No file selected.");
+        }
+    }
   }
 
   // enableNotifyMeFlag
@@ -475,6 +689,25 @@ const JobListingsTable = () => {
                             <span className="la la-trash"></span>
                           </button>
                         </li>
+                        {user.id == 'mHTljO3nNwWNfs2Cmp3lKTJhY002' ?
+                          <li>
+                              <button data-text="Add Applicants">
+                              <a
+                                  href="#"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#addApplicantsModal"
+                                  onClick = { () => {setJobId(item.job_id) }}
+                              >
+                                  <span className="la la-file-upload"></span>
+                              </a>
+                              </button>
+                          </li> : ''}
+
+                          {/* <li onClick={()=>{ addApplicant(item.job_id) }}>
+                            <button data-text="Add Applicant">
+                              <span className="la la-file-upload"></span>
+                            </button>
+                          </li> */}
                       </ul>
                     </div>
                   </td>
@@ -483,6 +716,162 @@ const JobListingsTable = () => {
             </tbody>
           }
         </Table>
+
+        {/* Add Notes Modal Popup */}
+        <div
+            className="modal fade"
+            id="addApplicantsModal"
+            tabIndex="-1"
+            aria-hidden="true"
+        >
+            <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div className="apply-modal-content modal-content">
+                <div className="text-center">
+                <h3 className="title">Add Applicants</h3>
+                <button
+                    type="button"
+                    id="notesCloseButton"
+                    className="closed-modal"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+                </div>
+                {/* End modal-header */}
+                <div className="widget-content">
+                  <form className="default-form" onSubmit={addApplicants}>
+                    <div className="form-group">
+                      <label>First Name<span className="required"> (required)</span></label>
+                      <input
+                        type="text"
+                        name="globaluphire-first_name"
+                        placeholder="Enter first name"
+                        value={firstName}
+                        onChange={(e) => {
+                          setFirstName(e.target.value);
+                          setFirstNameError("");
+                        }}
+                        required
+                      />
+                      {firstNameError && <div className="required">{firstNameError}</div>}
+                    </div>
+                    <div className="form-group">
+                      <label>Last Name<span className="required"> (required)</span></label>
+                      <input
+                        type="text"
+                        name="globaluphire-last_name"
+                        placeholder="Enter last name"
+                        value={lastName}
+                        onChange={(e) => {
+                          setLastName(e.target.value);
+                          setLastNameError("");
+                        }}
+                        required
+                      />
+                      {lastNameError && <div className="required">{lastNameError}</div>}
+                    </div>
+                    <div className="form-group">
+                      <label>Email Address</label>
+                      <input
+                        type="email"
+                        name="globaluphire-email"
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setEmailError("");
+                        }}
+                        placeholder="Enter your email"
+                      />
+                      {emailError && <div>{emailError}</div>}
+                    </div>
+                    {/* name */}
+
+                    <div className="form-group">
+                      <label>Phone Number <span className="optional">(optional)</span></label>
+                      <input
+                        type="text"
+                        name="phone"
+                        value={phoneNumber}
+                        required
+                        minlength="12"
+                        onChange={(e) => {
+                          if (e.target.value.trim() === "") {
+                            setPhoneNumber("+1");
+                            return;
+                          }
+                          const number = e.target.value.replace("+1", "");
+                          if (isNaN(number)) return;
+                          if (e.target.value.length <= 12) {
+                            setPhoneNumber(e.target.value.trim());
+                          }
+                        }}
+                      />
+                      {phoneNumberError && <div className="required">{phoneNumberError}</div>}
+                    </div>
+
+                    <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+                      <div className="uploading-outer apply-cv-outer">
+                        <div>
+                          <input
+                            className="uploadButton-input"
+                            type="file"
+                            name="attachments[]"
+                            accept="image/*, application/pdf"
+                            id="upload"
+                            required
+                            onChange={handleFileInputChange}
+                          />
+                          <label
+                            className="uploadButton-button ripple-effect"
+                            htmlFor="upload"
+                          >
+                            Upload CV (doc, docx, pdf)<br/>
+                            {guestSelectedFile && <p>Selected file: {guestSelectedFile.name}</p>}
+                            {!guestSelectedFile && <label className="required">Please select a file before Apply</label>}
+                          </label><br/>
+                          <label htmlFor="max_upload_size"> Max size 5MB allowed </label>
+                        </div>
+                      </div>
+                    </div>
+                    {/* End .col */}
+{/* 
+                    <div className="col-lg-12 col-md-12 col-sm-12 form-group">
+                      <div className="input-group">
+                        <label htmlFor="rememberMe" className="remember">
+                          <span className="custom-checkbox"></span> <i>* By applying into this job you accept our {" "}
+                          <span data-bs-dismiss="modal">
+                            <Link href="/terms">
+                              Terms and Conditions & Privacy Policy
+                            </Link>
+                          </span></i>
+                        </label>
+                      </div>
+                    </div> */}
+                    {/* End .col */}
+
+                    <div className="form-group">
+                      <button
+                        className="theme-btn btn-style-one"
+                        type="submit"
+                        onClick={addApplicants}
+                      >
+                        Add
+                      </button>
+                      <button
+                        className="theme-btn btn-style-one"
+                        onClick={resetAddApplicantsFields}
+                        style= {{ float: 'right' }}
+                      >
+                        Clear
+                      </button>
+                    </div>
+                    {/* login */}
+                  </form>
+                </div>
+                {/* End PrivateMessageBox */}
+            </div>
+            {/* End .send-private-message-wrapper */}
+            </div>
+        </div>
       </div>
       </div>
       {/* End table widget content */}
