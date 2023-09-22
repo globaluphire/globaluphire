@@ -134,10 +134,10 @@ function makeEnvelope(template, recipient, user, applicant) {
         tab.value = applicant.job_comp_add;
         check = true
       }
-      if (tab.tabLabel.includes("EIN")) {
-        tab.value = "123456";
-        check = true
-      }
+      // if (tab.tabLabel.includes("EIN")) {
+      //   tab.value = "Enter EIN";
+      //   check = true
+      // }
       if (tab.tabLabel.includes("jobTitle")) {
         tab.value = applicant.job_title;
         check = true
