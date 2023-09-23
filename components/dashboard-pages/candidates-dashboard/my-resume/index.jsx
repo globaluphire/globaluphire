@@ -30,7 +30,7 @@ const index = () => {
       {/* <!-- Dashboard --> */}
       <section className="user-dashboard">
         <div className="dashboard-outer">
-          <BreadCrumb title="My Resume!" />
+          {/* <BreadCrumb title="My Resume!" /> */}
           {/* breadCrumb */}
 
           <MenuToggler />
@@ -41,7 +41,7 @@ const index = () => {
               <div className="ls-widget">
                 <div className="tabs-box">
                   <div className="widget-title">
-                    <h4>My Profile</h4>
+                    <h4>My Career</h4>
                   </div>
                   {/* End widget-title */}
 
