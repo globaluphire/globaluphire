@@ -6,6 +6,7 @@ import CopyrightFooter from "../../CopyrightFooter";
 import JobAlertsTable from "./components/JobAlertsTable";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
+import DashboardHeader from "../../../header/DashboardHeader";
 
 const index = () => {
   return (
@@ -16,7 +17,8 @@ const index = () => {
       <LoginPopup />
       {/* End Login Popup Modal */}
 
-      <DashboardCandidatesHeader />
+      <DashboardHeader />
+      {/* <DashboardCandidatesHeader /> */}
       {/* End Header */}
 
       <MobileMenu />
