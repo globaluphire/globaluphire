@@ -79,7 +79,7 @@ const JobListingsTable = () => {
     //   setEmailError("Please enter a valid email address");
     //   isValid = false;
     // }
-    if (phoneNumber && phoneNumber.length < 12) {
+    if (phoneNumber && phoneNumber.length > 2 && phoneNumber.length < 12) {
       setPhoneNumberError("Phone number should be in +11234567890");
       isValid = false;
     } else {
