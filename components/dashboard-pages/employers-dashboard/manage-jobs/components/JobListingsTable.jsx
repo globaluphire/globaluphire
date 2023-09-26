@@ -791,7 +791,6 @@ const JobListingsTable = () => {
                         type="text"
                         name="phone"
                         value={phoneNumber}
-                        required
                         minlength="12"
                         onChange={(e) => {
                           if (e.target.value.trim() === "") {
