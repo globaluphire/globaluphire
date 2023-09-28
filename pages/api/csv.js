@@ -1,6 +1,12 @@
 import { createObjectCsvWriter } from "csv-writer";
 import { supabase } from "../../config/supabaseClient";
 
+function convertCamelCase(str) {
+	return str
+		.replace(/([A-Z])/g, " $1")
+		.replace(/^./, (s) => s.toUpperCase());
+}
+
 export default async function handler(req, res) {
 	if (req.method == "POST") {
 		const applicantionData = req.body;
@@ -67,7 +73,15 @@ export default async function handler(req, res) {
 		const dateOfHire = applicantData.hired_date;
 		const terminationDate = applicantData.termination_date ?? "";
 
-        const formattedHomePhone = applicantData.phn_nbr ? `(${applicantData.phn_nbr.slice(0, 3)}) ${applicantData.phn_nbr.slice(3, 6)}-${applicantData.phn_nbr.slice(6)}` : "";
+		const formattedHomePhone = applicantData.phn_nbr
+			? `(${applicantData.phn_nbr.slice(
+					0,
+					3
+			  )}) ${applicantData.phn_nbr.slice(
+					3,
+					6
+			  )}-${applicantData.phn_nbr.slice(6)}`
+			: "";
 		const homePhone = formattedHomePhone;
 		const mobilePhone = formattedHomePhone;
 		const pager = formattedHomePhone;
@@ -90,164 +104,63 @@ export default async function handler(req, res) {
 		const specialConsideration2 =
 			applicantData.special_considerations2 ?? "";
 
-		data = [
-			{
-				field: "Effective Date",
-				value: effectiveDate,
-			},
-			{
-				field: "Payroll Number",
-				value: payrollNumber,
-			},
-			{
-				field: "Company Code",
-				value: companyCode,
-			},
-			{
-				field: "Display Name",
-				value: displayName,
-			},
-			{
-				field: "Last Name",
-				value: lastName,
-			},
-			{
-				field: "First Name",
-				value: firstName,
-			},
-			{
-				field: "Middle Initial",
-				value: middleInitial,
-			},
-			{
-				field: "Suffix",
-				value: suffix,
-			},
-			{
-				field: "Employee Type",
-				value: employeeType,
-			},
-			{
-				field: "Position Code",
-				value: positionCode,
-			},
-			{
-				field: "Position Description",
-				value: positionDescription,
-			},
-			{
-				field: "Department Code",
-				value: departmentCode,
-			},
-			{
-				field: "Home Cost Center",
-				value: homeCostCenter,
-			},
-			{
-				field: "Badge ID",
-				value: badgeId,
-			},
-			{
-				field: "Exempt from Punching Status",
-				value: exemptFromPunchingStatus,
-			},
-			{
-				field: "Address",
-				value: address,
-			},
-			{
-				field: "City",
-				value: city,
-			},
-			{
-				field: "State",
-				value: state,
-			},
-			{
-				field: "Zip",
-				value: zip,
-			},
-			{
-				field: "SSN",
-				value: SSN,
-			},
-			{
-				field: "Date of Birth",
-				value: dateOfBirth,
-			},
-			{
-				field: "Date of Hire",
-				value: dateOfHire,
-			},
-			{
-				field: "Termination Date",
-				value: terminationDate,
-			},
-			{
-				field: "Home Phone",
-				value: homePhone,
-			},
-			{
-				field: "Mobile Phone",
-				value: mobilePhone,
-			},
-			{
-				field: "Pager",
-				value: pager,
-			},
-			{
-				field: "Fax",
-				value: fax,
-			},
-			{
-				field: "Alternate Phone",
-				value: alternatePhone,
-			},
-			{
-				field: "Employee Union",
-				value: employeeUnion,
-			},
-			{
-				field: "Gender",
-				value: gender,
-			},
-			{
-				field: "Race",
-				value: race,
-			},
-			{
-				field: "Pay Type",
-				value: payType,
-			},
-			{
-				field: "Pay Rate",
-				value: payRate,
-			},
-			{
-				field: "Work Hours",
-				value: workHours,
-			},
-			{
-				field: "Evaluation Date",
-				value: evaluationDate,
-			},
-			{
-				field: "Last Increase Date",
-				value: lastIncreaseDate,
-			},
-			{
-				field: "Daily Benefit Hours",
-				value: dailyBenefitHours,
-			},
-			{
-				field: "Special Consideration",
-				value: specialConsideration,
-			},
-			{
-				field: "Special Consideration 2",
-				value: specialConsideration2,
-			},
-		];
+		const dataObject = {
+			effectiveDate,
+			payrollNumber,
+			companyCode,
+			displayName,
+			lastName,
+			firstName,
+			middleInitial,
+			suffix,
+			employeeType,
+			positionCode,
+			positionDescription,
+			departmentCode,
+			homeCostCenter,
+			badgeId,
+			exemptFromPunchingStatus,
+			address,
+			city,
+			state,
+			zip,
+			SSN,
+			dateOfBirth,
+			dateOfHire,
+			terminationDate,
+			formattedHomePhone,
+			homePhone,
+			mobilePhone,
+			pager,
+			fax,
+			alternatePhone,
+			employeeUnion,
+			gender,
+			race,
+			payType,
+			payRate,
+			workHours,
+			evaluationDate,
+			lastIncreaseDate,
+			dailyBenefitHours,
+			specialConsideration,
+			specialConsideration2,
+		};
+
+		const obj = {};
+
+		for (const [key, value] of Object.entries(dataObject)) {
+			obj[key] = value;
+		}
+		data.push(obj);
+
+		console.log(data);
+
+		const headers = [];
+
+		for (const [key, value] of Object.entries(dataObject)) {
+			headers.push({ id: key, title: convertCamelCase(key) });
+		}
 
 		const currentDate = new Date();
 		const formattedDate = `${(currentDate.getMonth() + 1)
@@ -263,10 +176,7 @@ export default async function handler(req, res) {
 
 		const csvWriter = createObjectCsvWriter({
 			path: path, // Change to your desired file path
-			header: [
-				{ id: "field", title: "Field" },
-				{ id: "value", title: "Value" },
-			],
+			header: headers, // Change to your desired headers
 		});
 
 		csvWriter
