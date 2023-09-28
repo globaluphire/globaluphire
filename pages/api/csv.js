@@ -74,13 +74,7 @@ export default async function handler(req, res) {
 		const terminationDate = applicantData.termination_date ?? "";
 
 		const formattedHomePhone = applicantData.phn_nbr
-			? `(${applicantData.phn_nbr.slice(
-					0,
-					3
-			  )}) ${applicantData.phn_nbr.slice(
-					3,
-					6
-			  )}-${applicantData.phn_nbr.slice(6)}`
+			? `(${applicantData.phn_nbr.slice(0,3)}) ${applicantData.phn_nbr.slice(3,6)}-${applicantData.phn_nbr.slice(6)}`
 			: "";
 		const homePhone = formattedHomePhone;
 		const mobilePhone = formattedHomePhone;
@@ -94,8 +88,6 @@ export default async function handler(req, res) {
 		const payType = applicantData.pay_type ?? "";
 		const payRate = applicantData.pay_rate ?? "";
 		const workHours = applicantData.work_hours ?? "";
-
-		// date format yyyy-mm-dd
 
 		const evaluationDate = applicantData.evaluation_date ?? "";
 		const lastIncreaseDate = applicantData.last_increase_date ?? "";
@@ -154,10 +146,7 @@ export default async function handler(req, res) {
 		}
 		data.push(obj);
 
-		console.log(data);
-
 		const headers = [];
-
 		for (const [key, value] of Object.entries(dataObject)) {
 			headers.push({ id: key, title: convertCamelCase(key) });
 		}
