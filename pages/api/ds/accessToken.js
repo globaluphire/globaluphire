@@ -4,6 +4,19 @@ import { supabase } from "../../../config/supabaseClient";
 
 export default async function handler(req, res) {
   if (req.method == "GET") {
+    const { email } = req.query;
+    // validate user if admin or not
+    const { data } = await supabase
+      .from("users")
+      .select("*")
+      .filter("email", "eq", email);
+
+    const user = data[0];
+    if (user.role !== "ADMIN") {
+      return res
+        .status(405)
+        .json({ status: 405, message: "Method not allowed" });
+    }
     // create jwt using rsa and other keys
     const generatedJWT = await createJWT();
     // get access token from ds
