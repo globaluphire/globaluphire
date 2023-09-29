@@ -153,7 +153,8 @@ function CommunicationModal({ applicantData }) {
                   Email
                 </ToggleButton>
               </ToggleButtonGroup>
-              {activeTab === 1 && receiversPhoneNumber ? (
+
+              {activeTab === 1 ? receiversPhoneNumber ? (
                 <SmsModal
                   applicantData={applicantData}
                   setAllMessages={setAllMessages}
@@ -173,8 +174,9 @@ function CommunicationModal({ applicantData }) {
                 >
                   No phone Number Provided!
                 </div>
-              )}
-              {activeTab === 2 && receiversEmail ? (
+              ) : <></>}
+
+              {activeTab === 2 ? receiversEmail ? (
                 <EmailModal
                   applicantData={applicantData}
                   setAllMessages={setAllMessages}
@@ -185,7 +187,7 @@ function CommunicationModal({ applicantData }) {
                 <div style={{ margin: "auto", textAlign: "center" }}>
                   No email Provided!
                 </div>
-              )}
+              ) : <></>}
               {(receiversPhoneNumber && activeTab === 1) ||
               (receiversEmail && activeTab === 2) ? (
                 <ViewModal data={allMessages} />

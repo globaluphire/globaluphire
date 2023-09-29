@@ -137,8 +137,9 @@ const UserDocuments = ({ applicantData }) => {
         }
         const hasSent = data?.data?.some((item) => item?.envelope?.status === "sent");
         const hasDelivered = data?.data?.some((item) => item?.envelope?.status === "delivered");
-        if (hasDelivered || hasSent) {
-          const allItemsCompleted = data?.data.every((item) => item?.status === "completed");
+        const hasCompleted = data?.data?.some((item) => item?.envelope?.status === "completed");
+        if (hasDelivered || hasSent || hasCompleted) {
+          const allItemsCompleted = data?.data.every((item) => item?.envelope?.status === "completed");
           newStatus = allItemsCompleted ? "Signed" : hasDelivered ? "Read" : "Sent";
           // update onboarding_status in table applications
         }

@@ -218,6 +218,8 @@ const HiredApplicationsWidgetContentBox = () => {
                 return {color: '#87CEEB', tag: 'Read'}
             case 'completed':
                 return {color: 'green', tag: 'Signed'}
+            case 'signed':
+                return {color: 'green', tag: 'Signed'}
             default:
                 return {color: 'red', tag: 'Not Sent'}
         }
