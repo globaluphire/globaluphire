@@ -2,21 +2,19 @@ import { createObjectCsvWriter } from "csv-writer";
 import { supabase } from "../../config/supabaseClient";
 
 function convertCamelCase(str) {
-	return str
-		.replace(/([A-Z])/g, " $1")
-		.replace(/^./, (s) => s.toUpperCase());
+	return str.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase());
 }
 
 export default async function handler(req, res) {
 	if (req.method == "POST") {
-		const applicantionData = req.body;
+		const { application_id, org_id, facility_id } = req.body;
 
 		let data = [];
 
 		const application = await supabase
 			.from("applications")
 			.select("*") // You can specify specific columns if needed
-			.eq("application_id", applicantionData.application_id)
+			.eq("application_id", application_id)
 			.single();
 
 		const applicantData = application.data;
@@ -24,7 +22,7 @@ export default async function handler(req, res) {
 		const organization = await supabase
 			.from("org")
 			.select("*") // You can specify specific columns if needed
-			.eq("id", applicantionData.org_id)
+			.eq("org_id", org_id)
 			.single();
 
 		const organizationData = organization.data;
@@ -40,7 +38,7 @@ export default async function handler(req, res) {
 		const facilityDetail = await supabase
 			.from("facility_dtl")
 			.select("*") // You can specify specific columns if needed
-			.eq("facility_dtl_id", applicantionData.facility_id)
+			.eq("facility_id", facility_id)
 			.single();
 
 		const facilityDetailData = facilityDetail.data;
@@ -70,11 +68,17 @@ export default async function handler(req, res) {
 		const SSN = facilityDetailData.ein_nbr;
 
 		const dateOfBirth = applicantData.dob ?? "";
-		const dateOfHire = applicantData.hired_date;
+		const dateOfHire = applicantData.hired_date ? new Date(applicantData.hired_date).toISOString().slice(0, 10) : "";
 		const terminationDate = applicantData.termination_date ?? "";
 
 		const formattedHomePhone = applicantData.phn_nbr
-			? `(${applicantData.phn_nbr.slice(0,3)}) ${applicantData.phn_nbr.slice(3,6)}-${applicantData.phn_nbr.slice(6)}`
+			? `(${applicantData.phn_nbr.slice(
+					0,
+					3
+			  )}) ${applicantData.phn_nbr.slice(
+					3,
+					6
+			  )}-${applicantData.phn_nbr.slice(6)}`
 			: "";
 		const homePhone = formattedHomePhone;
 		const mobilePhone = formattedHomePhone;
@@ -158,7 +162,8 @@ export default async function handler(req, res) {
 			.getDate()
 			.toString()
 			.padStart(2, "0")}${currentDate.getFullYear()}`;
-		const path = `HrData_${displayName.replace(
+		const folderPath = "hrData/csv/";
+		const path = folderPath + `HrData_${displayName.replace(
 			" ",
 			"_"
 		)}_${formattedDate}.csv`;
