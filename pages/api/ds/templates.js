@@ -26,9 +26,7 @@ export default async function handler(req, res) {
         .from("document_signing")
         .select("*")
         .match({
-          sender_user_id: user.id,
           application_id: applicant.application_id,
-          sender_email: user.email,
         });
 
       let envelopesApi = new docusign.EnvelopesApi(dsApiClient);
