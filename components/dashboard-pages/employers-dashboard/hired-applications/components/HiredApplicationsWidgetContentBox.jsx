@@ -238,11 +238,11 @@ const HiredApplicationsWidgetContentBox = () => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            toast.success('CSV file SmartLinx successfully!');
+            toast.success('Sent to SmartLinx!');
         })
         .catch((error) => {
             console.error('Fetch error:', error);
-            toast.error('Error while CSV file SmartLinx.  Please try again later or contact tech support!')
+            toast.error('Error while sending CSV to SmartLinx.  Please try again later or contact tech support!')
             // Handle errors here, such as displaying an error message to the user
         });
     }
