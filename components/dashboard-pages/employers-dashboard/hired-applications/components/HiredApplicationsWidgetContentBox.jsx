@@ -225,6 +225,28 @@ const HiredApplicationsWidgetContentBox = () => {
         }
     }
 
+    
+    const CSVSmartLinx = async (applicant) => {
+        fetch('/api/csv', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(applicant),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            toast.success('CSV file SmartLinx successfully!');
+        })
+        .catch((error) => {
+            console.error('Fetch error:', error);
+            toast.error('Error while CSV file SmartLinx.  Please try again later or contact tech support!')
+            // Handle errors here, such as displaying an error message to the user
+        });
+    }
+
     return (
         <div className="tabs-box">
             <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
@@ -410,6 +432,11 @@ const HiredApplicationsWidgetContentBox = () => {
                                                 <li onClick = { () => { ViewCV(applicant.application_id) }}>
                                                     <button data-text="View CV">
                                                         <span className="la la-file-download"></span>
+                                                    </button>
+                                                </li>
+                                                <li onClick = { () => { CSVSmartLinx(applicant) }}>
+                                                    <button data-text="Transfer To Smartlinx">
+                                                        <span className="la la-file-csv"></span>
                                                     </button>
                                                 </li>
                                                 <li onClick={() => DownloadHandler(applicant)}>
