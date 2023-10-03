@@ -452,6 +452,7 @@ const WidgetContentBox = () => {
                             <th>Facility</th>
                             <th>Status</th>
                             <th>Notes</th>
+                            <th>Last <br/> Contacted</th>
                             <th>Actions</th>
                             </tr>
                         </thead>
@@ -526,8 +527,7 @@ const WidgetContentBox = () => {
                                             </ul>
                                         </td>
                                         <td>
-                                            <div className="option-box">
-                                                <ul className="option-list">
+                                            <ul className="option-list">
                                                 <li>
                                                     <button data-text="Send Message">
                                                     <a
@@ -536,10 +536,15 @@ const WidgetContentBox = () => {
                                                         data-bs-target="#communication-modal"
                                                         onClick={() => setSelectedApplicant(applicant)}
                                                         >
-                                                        <span className="la la-send"></span>
+                                                        <span className="flaticon-chat"></span>
                                                     </a>
-                                                    </button>
+                                                </button>
                                                 </li>
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <div className="option-box">
+                                                <ul className="option-list">
                                                 <li onClick = { () => { ViewCV(applicant.application_id) }}>
                                                     <button data-text="View CV">
                                                         <span className="la la-file-download"></span>
