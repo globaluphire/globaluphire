@@ -43,24 +43,44 @@ const WidgetContentBox = () => {
     // sms email toggle
     const [showMailModal, setShowMailModal] = useState(false)
     
-    async function updateApplicationStatus (applicationStatus, applicationId) {
+    async function updateApplicationStatus (applicationStatus, selectedApplicant) {
         // save updated applicant status
         if (applicationStatus == "Hired") {
+            // generate emp id
+
+            const today = new Date();
+            const month = today.getMonth()+1;
+            const year = today.getFullYear();
+
+            let { data, error } = await supabase
+                .from('sys_key')
+                .select("sys_seq_nbr")
+                .eq('tbl_nm', 'applications')
+
+            const seq_nbr = data[0].sys_seq_nbr + 1;
+
+            const empID = selectedApplicant.facility_id + "" + month + "" + year.toString().substring(2) + "" + seq_nbr;
+
             await supabase
                 .from('applications')
                 .update({
                     status: applicationStatus,
-                    hired_date: new Date()
+                    hired_date: new Date(),
+                    emp_id: empID
                 })
-                .eq('application_id', applicationId)
+                .eq('application_id', selectedApplicant.application_id)
+
+            await supabase
+                .rpc('increment_sys_key', { x: 1, tablename: 'applications' })
+
         } else {
             await supabase
                 .from('applications')
                 .update({ status: applicationStatus })
-                .eq('application_id', applicationId)
+                .eq('application_id', selectedApplicant.application_id)
         }
         await supabase
-            .rpc('increment', { x: 1, row_id: applicationId })
+            .rpc('increment', { x: 1, row_id: selectedApplicant.application_id })
 
         // this will prevent the page to keep filtered if have any search filters set
         let { data, error } = await supabase
@@ -469,7 +489,7 @@ const WidgetContentBox = () => {
                                             <select className="chosen-single form-select" 
                                                 value={applicant.status}
                                                 onChange={(e) => {
-                                                    updateApplicationStatus(e.target.value, applicant.application_id)
+                                                    updateApplicationStatus(e.target.value, applicant)
                                                 }}>
                                                 {applicationStatusReferenceOptions.map((option) => (
                                                     <option value={option.ref_dspl}>{option.ref_dspl}</option>
