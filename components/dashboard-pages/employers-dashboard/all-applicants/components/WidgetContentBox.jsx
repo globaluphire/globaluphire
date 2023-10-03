@@ -452,7 +452,7 @@ const WidgetContentBox = () => {
                             <th>Facility</th>
                             <th>Status</th>
                             <th>Notes</th>
-                            <th>Last <br/> Contacted</th>
+                            <th>Last Contacted</th>
                             <th>Actions</th>
                             </tr>
                         </thead>
@@ -540,6 +540,11 @@ const WidgetContentBox = () => {
                                                     </a>
                                                 </button>
                                                 </li>
+                                                <span style={{ marginLeft:"10px" }}>
+                                                {applicant?.last_contacted_at
+                                                    ? `Last Contacted at: ${new Date(applicant?.last_contacted_at).toLocaleString()}`
+                                                    : ""}
+                                                </span>
                                             </ul>
                                         </td>
                                         <td>
