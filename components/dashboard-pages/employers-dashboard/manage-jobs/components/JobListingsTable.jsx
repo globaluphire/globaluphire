@@ -689,7 +689,7 @@ const JobListingsTable = () => {
                             <span className="la la-trash"></span>
                           </button>
                         </li>
-                        {user.id == 'mHTljO3nNwWNfs2Cmp3lKTJhY002' ?
+                        {user.id == 'mHTljO3nNwWNfs2Cmp3lKTJhY002' || user.id == '2M0F2ed7HINNU5qiuoQzCOi4mL92' ?
                           <li>
                               <button data-text="Add Applicants">
                               <a

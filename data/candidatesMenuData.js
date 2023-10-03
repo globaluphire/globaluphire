@@ -8,16 +8,16 @@ module.exports = [
   },
   {
     id: 2,
-    name: "My Profile",
+    name: "Profile",
     icon: "la-user-tie",
     routePath: "/candidates-dashboard/my-profile",
     active: "",
   },
   {
     id: 3,
-    name: "My Resume",
+    name: "Career",
     icon: "la la-file-invoice",
-    routePath: "/candidates-dashboard/my-resume",
+    routePath: "/candidates-dashboard/my-career",
     active: "",
   },
   {
