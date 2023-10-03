@@ -19,6 +19,13 @@ function CommunicationModal({ applicantData }) {
       console.log("error retriving messages");
       return;
     }
+
+    const createdAt = data[data.length - 1]?.created_at;
+    supabase
+    .from("applications")
+    .update({ last_contacted_at: createdAt })
+    .eq("application_id", applicantData?.application_id)
+
     setAllMessages(() => [
       data.map((el) => {
         if (el.direction === "inbound") {
