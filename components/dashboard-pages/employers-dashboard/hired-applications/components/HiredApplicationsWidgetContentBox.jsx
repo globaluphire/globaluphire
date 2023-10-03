@@ -214,7 +214,7 @@ const HiredApplicationsWidgetContentBox = () => {
         switch (status.toLowerCase()) {
             case 'sent':
                 return {color: 'orange', tag: 'Sent'}
-            case 'delivered':
+            case 'read':
                 return {color: '#87CEEB', tag: 'Read'}
             case 'completed':
                 return {color: 'green', tag: 'Signed'}
