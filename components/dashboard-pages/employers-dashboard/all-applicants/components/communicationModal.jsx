@@ -79,7 +79,10 @@ function CommunicationModal({ applicantData }) {
     const { data, error } = await supabase
       .from("sms_messages")
       .select()
-      .match({ receiver_name: applicantData?.name });
+      // .match({ receiver_name: applicantData?.name });
+      .or(
+        `receiver_name.eq.${applicantData?.name}, sender_name.eq.${applicantData?.name}`
+      );
     if (data[0]?.receiver_phone) {
       setReceiversPhoneNumber(data[0].receiver_phone);
       // setReceiversEmail(data[0].receiver_email);
