@@ -11,6 +11,7 @@ import JobApplied from "./components/JobApplied";
 import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
 import Link from "next/link";
+import DashboardHeader from "../../../header/DashboardHeader";
 
 const Index = () => {
   const user = useSelector(state => state.candidate.user);
@@ -24,7 +25,8 @@ const Index = () => {
       <LoginPopup />
       {/* End Login Popup Modal */}
 
-      <DashboardCandidatesHeader />
+      <DashboardHeader />
+      {/* <DashboardCandidatesHeader /> */}
       {/* End Header */}
 
       <MobileMenu />
