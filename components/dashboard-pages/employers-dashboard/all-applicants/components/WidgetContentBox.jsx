@@ -43,6 +43,13 @@ const WidgetContentBox = () => {
     // sms email toggle
     const [showMailModal, setShowMailModal] = useState(false)
     
+    async function getOrgId() {
+      const { data, error } = await supabase
+        .from("org")
+        .select("*")
+      return data[0].org_id
+    }
+
     async function updateApplicationStatus (applicationStatus, selectedApplicant) {
         // save updated applicant status
         if (applicationStatus == "Hired") {
@@ -60,13 +67,14 @@ const WidgetContentBox = () => {
             const seq_nbr = data[0].sys_seq_nbr + 1;
 
             const empID = selectedApplicant.facility_id + "" + month + "" + year.toString().substring(2) + "" + seq_nbr;
-
+            const orgId = await getOrgId()
             await supabase
                 .from('applications')
                 .update({
                     status: applicationStatus,
                     hired_date: new Date(),
-                    emp_id: empID
+                    emp_id: empID,
+                    org_id: orgId,
                 })
                 .eq('application_id', selectedApplicant.application_id)
 
