@@ -271,14 +271,17 @@ const UserDocuments = ({ applicantData }) => {
     }
   }
 
-  const handleAllTemplatesSelect = (checked) => {
-    if (checked) {
-      const notSentTemplates = allTemplates.filter(
-        (template) => !template?.envelope?.status
-        );
-      setSelectedTemplates(notSentTemplates);
-    } else {
+  const handleAllTemplatesSelect = () => {
+    if (allTemplates.every(template => {
+      const status = template?.envelope?.status;
+      return status === "sent" || status === "delivered" || status === "completed";
+    })) {
+      setSelectAllDisabled(true);
       setSelectedTemplates([]);
+    } else {
+      const notSentTemplates = allTemplates.filter(template => !template?.envelope?.status);
+      setSelectedTemplates(notSentTemplates);
+      setSelectAllDisabled(false);
     }
   };
 
@@ -320,6 +323,7 @@ const UserDocuments = ({ applicantData }) => {
                   marginTop: "0.3rem",
                   cursor: "pointer",
                 }}
+                disabled={selectAllDisabled}
               />
             </span>
           </div>
