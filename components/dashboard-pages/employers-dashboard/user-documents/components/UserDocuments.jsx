@@ -14,6 +14,7 @@ const UserDocuments = ({ applicantData }) => {
   const applicantForm = useRef(null);
   const [sendDocumentsForSigningLoading, setSendDocumentsForSigningLoading] = useState(false);
   const [refreshDisabled, setRefreshDisabled ] = useState(false);
+  const [selectAllDisabled, setSelectAllDisabled ] = useState(false);
 
   // Function to send documents for signing
   const sendDocumentsForSigning = async (user) => {
@@ -239,6 +240,7 @@ const UserDocuments = ({ applicantData }) => {
 
   useEffect(() => {
     setSelectedTemplates([])
+    console.log(selectedTemplates)
     if (applicantData) {
       fetchTemplates(applicantData);
     }
@@ -269,14 +271,19 @@ const UserDocuments = ({ applicantData }) => {
     }
   }
 
-  const handleAllTemplatesSelect = (checked) => {
-    if (checked) {
-      setSelectedTemplates(allTemplates);
-    }
-    else {
+  const handleAllTemplatesSelect = () => {
+    if (allTemplates.every(template => {
+      const status = template?.envelope?.status;
+      return status === "sent" || status === "delivered" || status === "completed";
+    })) {
+      setSelectAllDisabled(true);
       setSelectedTemplates([]);
+    } else {
+      const notSentTemplates = allTemplates.filter(template => !template?.envelope?.status);
+      setSelectedTemplates(notSentTemplates);
+      setSelectAllDisabled(false);
     }
-  }
+  };
 
   return (
     <form className="default-form">
@@ -316,6 +323,7 @@ const UserDocuments = ({ applicantData }) => {
                   marginTop: "0.3rem",
                   cursor: "pointer",
                 }}
+                disabled={selectAllDisabled}
               />
             </span>
           </div>
