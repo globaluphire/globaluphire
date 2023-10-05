@@ -21,7 +21,7 @@ function CommunicationModal({ applicantData }) {
     }
 
     const createdAt = data[data.length - 1]?.created_at;
-    supabase
+    await supabase
     .from("applications")
     .update({ last_contacted_at: createdAt })
     .eq("application_id", applicantData?.application_id)
