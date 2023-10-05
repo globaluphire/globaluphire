@@ -11,6 +11,7 @@ export default async function handler(req, res) {
         .eq("receiver_phone", twilioResponse.From)
         .limit(1)
         .single();
+      console.log(receiverData)
       // console.log(receiverData)
       // create object
       const messageObj = {
@@ -31,9 +32,9 @@ export default async function handler(req, res) {
         from_zip: twilioResponse.FromZip,
       };
       await supabase.from("sms_messages").insert(messageObj);
-      await supabase.from("application")
-        .update({ new_message_received: true })
-        .eq('application_id', receiverData.application_id);
+      await supabase.from("applications")
+        .update({ 'new_message_received': true })
+        .eq('application_id', receiverData.data.application_id);
       return res.status(200).json({ message: "success" });
     } catch (error) {
       console.log(error);

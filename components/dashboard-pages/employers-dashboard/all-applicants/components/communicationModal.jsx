@@ -94,22 +94,22 @@ function CommunicationModal({ applicantData }) {
         .update({ new_message_received: false })
         .eq('application_id', applicantData?.application_id);
     }
-    if (data[0]?.receiver_phone) {
-      setReceiversPhoneNumber(data[0].receiver_phone);
-      // setReceiversEmail(data[0].receiver_email);
-      setReceiversPhoneNumberDisabled(true);
-    } else {
-      setReceiversPhoneNumber("");
-      // setReceiversEmail("");
-      setReceiversPhoneNumberDisabled(false);
-    }
+    setReceiversPhoneNumber(applicantData?.phn_nbr)
+    // if (data[0]?.receiver_phone) {
+    //   setReceiversPhoneNumber(data[0].receiver_phone);
+    //   // setReceiversEmail(data[0].receiver_email);
+    //   setReceiversPhoneNumberDisabled(true);
+    // } else {
+    //   setReceiversPhoneNumber("");
+    //   // setReceiversEmail("");
+    //   setReceiversPhoneNumberDisabled(false);
+    // }
     handleSetMessages(data);
   };
 
   useEffect(() => {
-    // console.log(applicantData)
     handleSetModalData(applicantData);
-  }, [applicantData, receiversEmail]);
+  }, [applicantData, receiversEmail, receiversPhoneNumber]);
 
   return (
     <div className="modal fade" id="communication-modal">
