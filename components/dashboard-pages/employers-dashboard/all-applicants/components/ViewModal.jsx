@@ -3,7 +3,7 @@ import styles from "../../../../../styles/WidgetContentBox.module.css";
 
 
 function ViewModal({ data }) {
-	console.log('data', data);
+	// console.log('data', data);
 	const chatContainerRef = useRef(null);
 	const focusScrollRef = useRef(null);
   

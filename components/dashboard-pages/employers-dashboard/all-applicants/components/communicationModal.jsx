@@ -21,7 +21,7 @@ function CommunicationModal({ applicantData }) {
     }
 
     const createdAt = data[data.length - 1]?.created_at;
-    supabase
+    await supabase
     .from("applications")
     .update({ last_contacted_at: createdAt })
     .eq("application_id", applicantData?.application_id)
@@ -31,7 +31,7 @@ function CommunicationModal({ applicantData }) {
         if (el.direction === "inbound") {
           return (
             <div
-              className="small text-start text-muted mt-3"
+              className="small text-start fw-bold text-muted mt-3"
               style={{
                 fontSize: "0.7rem",
               }}
@@ -46,7 +46,6 @@ function CommunicationModal({ applicantData }) {
                 className="fw-normal"
                 position={"left"}
                 type={"text"}
-                title={el.name}
                 text={<div dangerouslySetInnerHTML={{ __html: el.message }} />}
               />
             </div>
@@ -85,11 +84,16 @@ function CommunicationModal({ applicantData }) {
     }
     const { data, error } = await supabase
       .from("sms_messages")
-      .select()
-      // .match({ receiver_name: applicantData?.name });
+      .select("*")
+      // .match({ application_id: applicantData?.application_id });
       .or(
         `receiver_name.eq.${applicantData?.name}, sender_name.eq.${applicantData?.name}`
       );
+    if(applicantData?.new_message_received === true){
+      await supabase.from("application")
+        .update({ new_message_received: false })
+        .eq('application_id', applicantData?.application_id);
+    }
     if (data[0]?.receiver_phone) {
       setReceiversPhoneNumber(data[0].receiver_phone);
       // setReceiversEmail(data[0].receiver_email);
@@ -103,6 +107,7 @@ function CommunicationModal({ applicantData }) {
   };
 
   useEffect(() => {
+    // console.log(applicantData)
     handleSetModalData(applicantData);
   }, [applicantData, receiversEmail]);
 

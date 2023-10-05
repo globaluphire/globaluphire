@@ -535,7 +535,7 @@ const WidgetContentBox = () => {
                                             </ul>
                                         </td>
                                         <td>
-                                            <ul className="option-list">
+                                            <ul className="option-list">                                  
                                                 <li>
                                                     <button data-text="Send Message">
                                                     <a
@@ -546,13 +546,26 @@ const WidgetContentBox = () => {
                                                         >
                                                         <span className="flaticon-chat"></span>
                                                     </a>
-                                                </button>
+                                                    </button>
                                                 </li>
-                                                <span style={{ marginLeft:"10px" }}>
+                                                <li>
                                                 {applicant?.last_contacted_at
                                                     ? <strong>{new Date(applicant?.last_contacted_at).toLocaleString()}</strong>
                                                     : ""}
-                                                </span>
+                                                </li>
+                                                <li>
+                                                    {applicant?.new_message_received 
+                                                    ? 
+                                                    <>
+                                                        <div 
+                                                            className="badge" 
+                                                            style={{backgroundColor:"green"}}
+                                                        >New Message
+                                                        </div>
+                                                    </> 
+                                                    : 
+                                                    ""}
+                                                </li>
                                             </ul>
                                         </td>
                                         <td>

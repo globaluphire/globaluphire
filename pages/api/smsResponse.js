@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         .eq("receiver_phone", twilioResponse.From)
         .limit(1)
         .single();
-        // console.log(receiverData)
+      // console.log(receiverData)
       // create object
       const messageObj = {
         sender_name: receiverData.data.receiver_name,
@@ -30,14 +30,16 @@ export default async function handler(req, res) {
         from_state: twilioResponse.FromState,
         from_zip: twilioResponse.FromZip,
       };
-      console.log(messageObj)
       await supabase.from("sms_messages").insert(messageObj);
-      res.status(200).json({ message: "success" });
+      await supabase.from("application")
+        .update({ new_message_received: true })
+        .eq('application_id', receiverData.application_id);
+      return res.status(200).json({ message: "success" });
     } catch (error) {
       console.log(error);
-      res.status(400).json({ status: 400, message: "Some Error Occured!" });
+      return res.status(400).json({ status: 400, message: "Some Error Occured!" });
     }
   } else {
-    res.status(405).json({ status: 405, message: "Method not allowed" });
+    return res.status(405).json({ status: 405, message: "Method not allowed" });
   }
 }
