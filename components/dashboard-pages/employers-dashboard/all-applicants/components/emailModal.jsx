@@ -20,7 +20,7 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
   const [emailMessage, setEmailMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendEmail = async (recipient, subject, content) => {
+  const handleSendEmail = async (recipient, subject, content, applicantData) => {
     try {
       const response = await fetch("/api/mailer", {
         method: "POST",
@@ -35,6 +35,7 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
       });
       if (response.ok) {
         const messageObj = {
+          application_id: applicantData?.application_id,
           sender_name: user.name,
           sender_user_id: user.id,
           sender_email: user.email,
@@ -199,6 +200,7 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
                 ["fullScreen", "showBlocks", "codeView"],
               ],
             }}
+            height={60}
             setDefaultStyle="color:black;"
             placeholder="Write from here..."
             onChange={(e) => {
@@ -216,7 +218,7 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
           }}
           className="theme-btn btn-style-one btn-submit"
           onClick={() => {
-            handleSendEmail(receiversEmail, mailSubject, emailMessage);
+            handleSendEmail(receiversEmail, mailSubject, emailMessage, applicantData);
             setIsLoading(true);
           }}
           disabled={!receiversEmail && !emailMessage}

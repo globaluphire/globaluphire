@@ -22,6 +22,8 @@ function SmsModal({
 
   const inputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [characterCount, setCharacterCount] = useState(0);
+  const maxCharacterLength = 700;
 
   const sendSms = async (content, recipient) => {
     try {
@@ -70,11 +72,12 @@ function SmsModal({
     }
   };
 
-  const handleButtonClick = async () => {
+  const handleButtonClick = async (applicantData) => {
     setIsLoading(true);
     const message = inputRef.current.value;
     if (message != "") {
       const messageObj = {
+        application_id: applicantData.application_id,
         sender_name: user.name,
         sender_user_id: user.id,
         sender_email: user.email,
@@ -139,9 +142,11 @@ function SmsModal({
     <Button
       className="theme-btn btn-style-one btn-submit"
       onClick={() => {
-        handleButtonClick();
+        handleButtonClick(applicantData);
       }}
-      disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") ? false : true}
+      disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") && characterCount <= maxCharacterLength
+      ? false
+      : true}
       style={{
         backgroundColor: "var(--primary-hover-bg-color)",
         border: "none",
@@ -157,6 +162,10 @@ function SmsModal({
       )}
     </Button>
   );
+
+  const handleInputChange = (value) => {
+    setCharacterCount(value.length);
+  };
 
   useEffect(() => {
     handleSetModalData(applicantData);
@@ -210,10 +219,17 @@ function SmsModal({
               className="input rounded px-2 form-control"
               rightButtons={chatInputButton}
               referance={inputRef}
-              autoHeight={true}
-              height={100}
-              maxlength={10}
+              // autoHeight={true}
+              minHeight={200}
+              maxheight={200}
+              maxlength={maxCharacterLength}
+              onMaxLengthExceed={()=>{console.log("nono")}}
+              inputStyle={{overflowY: "scroll"}}
+              onChange={(e) => handleInputChange(e.target.value)}
             />
+          </div>
+          <div className="text-muted mt-2">
+              Characters left: {maxCharacterLength - characterCount}
           </div>
         </form>
       </div>

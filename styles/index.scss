@@ -5,11 +5,18 @@
 
 :root{
     --msg-primary: #e8f0fa;
-    --msg-secondary : 
+    --msg-secondary : #004f8d
 }
 
 .rce-mbox {
     background-color: var(--msg-primary) !important;
+}
+.rce-mbox-right{
+    background-color: var(--msg-secondary) !important;
+    color: var(--msg-primary);
+}
+.rce-mbox-right-notch{
+    fill: var(--msg-secondary) !important;
 }
 
 .rce-mbox .rce-mbox-body,
@@ -46,7 +53,7 @@
 
 
 .rce-mbox svg {
-    fill: var(--msg-primary) !important;
+    fill: var(--msg-primary);
 }
 
 .sun-editor{
