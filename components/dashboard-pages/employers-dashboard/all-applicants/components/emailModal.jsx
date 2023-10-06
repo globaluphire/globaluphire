@@ -46,6 +46,10 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
           direction: "outbound",
           type: "email",
         };
+        applicantData.last_contacted_at = new Date();
+        await supabase.from("applications")
+          .update({ last_contacted_at: new Date() })
+          .eq('application_id', applicantData?.application_id);
         await supabase.from("sms_messages").insert(messageObj);
         setAllMessages((prev) => [...prev, 
           <div 

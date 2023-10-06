@@ -104,6 +104,10 @@ function SmsModal({
         return;
       }
       await supabase.from("sms_messages").insert(messageObj);
+      applicantData.last_contacted_at = new Date();
+      await supabase.from("applications")
+        .update({ last_contacted_at: new Date() })
+        .eq('application_id', applicantData?.application_id);
       setAllMessages((previous) => [
         ...previous,
         <div
