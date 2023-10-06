@@ -52,37 +52,58 @@ const submitJobPost = async (
 ) => {
     if (jobTitle && jobDesc && jobType && completeAddress && facility) {
         try {
-        const { data, error } = await supabase
-            .from('jobs')
-            .insert([
-              { 
-                user_id: user.id,
-                job_title: jobTitle,
-                job_desc: jobDesc,
-                job_type: jobType,
-                experience: exp,
-                education: education,
-                salary: salary,
-                salary_rate: salaryRate,
-                job_comp_add: completeAddress,
-                facility_name: facility,
-              }
-        ])
-    
+          
+          let { data: facilityData, error: facilityError } = await supabase
+            .from('facility')
+            .select('facility_id')
+            .eq('facility_name', facility)
+            .single()
 
-        // open toast
-        toast.success('Job Posted successfully', {
-            position: "bottom-right",
-            autoClose: 8000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        });
-        setJobData(JSON.parse(JSON.stringify(addJobFields)))
-        
+          if (facilityData) {
+              const { data, error } = await supabase
+                .from('jobs')
+                .insert([
+                  { 
+                    user_id: user.id,
+                    job_title: jobTitle,
+                    job_desc: jobDesc,
+                    job_type: jobType,
+                    experience: exp,
+                    education: education,
+                    salary: salary,
+                    salary_rate: salaryRate,
+                    job_comp_add: completeAddress,
+                    facility_name: facility,
+                    facility_id: facilityData.facility_id
+                  }
+            ])
+
+            // open toast
+            toast.success('Job Posted successfully', {
+                position: "bottom-right",
+                autoClose: 8000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            setJobData(JSON.parse(JSON.stringify(addJobFields)))
+
+          } else {
+            // open toast
+            toast.error('Error while saving your job application, Please try again later or contact tech support', {
+                position: "bottom-right",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+          }
       } catch (err) {
         // open toast
         toast.error('Error while saving your job application, Please try again later or contact tech support', {
