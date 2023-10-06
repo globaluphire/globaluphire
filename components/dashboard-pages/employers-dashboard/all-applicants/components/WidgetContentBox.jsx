@@ -542,7 +542,10 @@ const WidgetContentBox = () => {
                                                         href="#"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#communication-modal"
-                                                        onClick={() => setSelectedApplicant(applicant)}
+                                                        onClick={() => {
+                                                            applicant.new_message_received = false;
+                                                            setSelectedApplicant(applicant); 
+                                                        }}
                                                         >
                                                         <span className="flaticon-chat"></span>
                                                     </a>

@@ -89,11 +89,9 @@ function CommunicationModal({ applicantData }) {
       .or(
         `receiver_name.eq.${applicantData?.name}, sender_name.eq.${applicantData?.name}`
       );
-    if(applicantData?.new_message_received === true){
-      await supabase.from("application")
-        .update({ new_message_received: false })
-        .eq('application_id', applicantData?.application_id);
-    }
+    await supabase.from("applications")
+      .update({ new_message_received: false })
+      .eq('application_id', applicantData?.application_id);
     setReceiversPhoneNumber(applicantData?.phn_nbr)
     // if (data[0]?.receiver_phone) {
     //   setReceiversPhoneNumber(data[0].receiver_phone);
