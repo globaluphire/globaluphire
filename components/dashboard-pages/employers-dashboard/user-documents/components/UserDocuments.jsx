@@ -12,7 +12,7 @@ const UserDocuments = ({ applicantData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [imgData, setImgData] = useState(null);
   const applicantForm = useRef(null);
-  const [sendDocumentsForSigningLoading, setSendDocumentsForSigningLoading] = useState(true);
+  const [sendDocumentsForSigningLoading, setSendDocumentsForSigningLoading] = useState(false);
   const [refreshDisabled, setRefreshDisabled ] = useState(false);
   const [selectAllDisabled, setSelectAllDisabled ] = useState(false);
 
