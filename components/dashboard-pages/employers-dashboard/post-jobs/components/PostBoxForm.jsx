@@ -158,6 +158,7 @@ const PostBoxForm = () => {
   const searchInput = useRef(null);
 
   const [singleSelections, setSingleSelections] = useState([]);
+  const [facilityNames, setFacilityNames] = useState([]);
   const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
 
   const addresses = [
@@ -181,27 +182,27 @@ const PostBoxForm = () => {
     "4021 Cadillac Street, New Orleans, LA 70122"
   ]
 
-  const facilityNames = [
-    "Keizer Nursing and Rehabilitation",
-    "French Prairie Nursing & Rehabilitation",
-    "Green Valley Rehabilitation Health",
-    "Hearthstone Nursing & Rehabilitation",
-    "Highland House Nursing & Rehabilitation",
-    "Rose Haven Nursing",
-    "Royale Gardens Health & Rehabilitation",
-    "South Hills Rehabilitation",
-    "Umpqua Valley Nursing & Rehabilitation",
-    "Corvallis Manor Nursing & Rehabilitation",
-    "Hillside Heights Rehabilitation",
-    "Hale Nani Rehab & Nursing",
-    "Eugene Home Office",
-    "Louisville Home Office",
-    "Chateau Napoleon Caring",
-    "Cypress at Lake Providence",
-    "Lakeshore Manor Nursing and Rehab",
-    "St. Bernard Nursing & Rehab"
-  ]
+  async function getFacilityNames() {
+    // call reference to get applicantStatus options
+    let { data: refData, error: e } = await supabase
+      .from('reference')
+      .select("*")
+      .eq('ref_nm',  'facilityName');
 
+    if (refData) {
+        // setFacilityNames(refData)
+        let facilities = []
+        for (let i = 0; i < refData.length; i++) {
+          facilities.push(refData[i].ref_dspl)
+        }
+        facilities.sort()
+        setFacilityNames(facilities)
+    }
+  }
+
+  useEffect(() => {
+    getFacilityNames();
+  }, []);
 
   useEffect(() => {
     jobData.facility = facilitySingleSelections[0]
