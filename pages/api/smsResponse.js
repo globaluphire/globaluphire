@@ -15,6 +15,8 @@ export default async function handler(req, res) {
       // console.log(receiverData)
       // create object
       const messageObj = {
+        application_id: receiverData.data.application_id,
+        type: "sms",
         sender_name: receiverData.data.receiver_name,
         sender_user_id: null,
         sender_email: receiverData.data.receiver_email,
@@ -31,7 +33,6 @@ export default async function handler(req, res) {
         from_state: twilioResponse.FromState,
         from_zip: twilioResponse.FromZip,
       };
-      await supabase.from("sms_messages").insert(messageObj);
       await supabase
         .from("applications")
         .update({
@@ -39,6 +40,7 @@ export default async function handler(req, res) {
           last_contacted_at: new Date(),
         })
         .eq("application_id", receiverData.data.application_id);
+      await supabase.from("sms_messages").insert(messageObj);
       return res.status(200).json({ message: "success" });
     } catch (error) {
       console.log(error);
