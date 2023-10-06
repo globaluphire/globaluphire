@@ -12,7 +12,7 @@ const UserDocuments = ({ applicantData }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [imgData, setImgData] = useState(null);
   const applicantForm = useRef(null);
-  const [sendDocumentsForSigningLoading, setSendDocumentsForSigningLoading] = useState(false);
+  const [sendDocumentsForSigningLoading, setSendDocumentsForSigningLoading] = useState(true);
   const [refreshDisabled, setRefreshDisabled ] = useState(false);
   const [selectAllDisabled, setSelectAllDisabled ] = useState(false);
 
@@ -468,9 +468,21 @@ const UserDocuments = ({ applicantData }) => {
                 disabled={sendDocumentsForSigningLoading}
                 style={{
                   backgroundColor: "var(--primary-hover-bg-color)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                {sendDocumentsForSigningLoading ? <Spinner /> : "Send"}
+                {sendDocumentsForSigningLoading 
+                ? 
+                <>
+                  <Spinner /> 
+                  <span 
+                    style={{marginLeft:"10px"}}
+                  >Please wait, the documents are being sent!
+                  </span>
+                </> 
+                : "Send"}
               </Button>
         </div>
         <div className="col-6">
