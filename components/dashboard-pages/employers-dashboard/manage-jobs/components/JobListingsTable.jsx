@@ -48,8 +48,10 @@ const JobListingsTable = () => {
   const facility = useSelector(state => state.employer.facility.payload)
 
   const dateFormat = (val) => {
-    const date = new Date(val)
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+    if (val) {
+      const date = new Date(val)
+      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+    }
   }
 
   function handleFileInputChange(event) {
@@ -366,49 +368,15 @@ const JobListingsTable = () => {
     }
   }
 
-  // Publish job action
-  const publishJob = async (jobId, status) => {
-    if (status !== 'Published') {
-      const { data, error } = await supabase
-          .from('jobs')
-          .update({ status: 'Published' })
-          .eq('job_id', jobId)
-
-      // open toast
-      toast.success('Job successfully published!', {
-        position: "bottom-right",
-        autoClose: 8000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-
-      // fetching all posts to refresh the data in Job Listing Table
-      fetchPost(searchFilters);
-    } else {
-      // open toast
-      toast.error('Job is already published!', {
-        position: "bottom-right",
-        autoClose: false,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-    }
-  }
-
   // Unpublish job action
   const unpublishJob = async (jobId, status) => {
     if (status !== 'Unpublished') {
       const { data, error } = await supabase
           .from('jobs')
-          .update({ status: 'Unpublished' })
+          .update({ 
+            status: 'Unpublished',
+            unpublished_date: new Date()
+          })
           .eq('job_id', jobId)
 
       // open toast
@@ -454,13 +422,14 @@ const JobListingsTable = () => {
         .eq('status', 'Published')
         .ilike('job_title', '%'+jobTitle+'%')
         .ilike('job_type', '%'+jobType+'%')
-        .order('created_at',  { ascending: false });
+        .order('published_date',  { ascending: false });
 
     if (facility) {
       data = data.filter(i => i.facility_name == facility)
     }
 
     data.forEach( job => job.created_at = dateFormat(job.created_at))
+    data.forEach( job => job.published_date = dateFormat(job.published_date))
     setjobs(data) 
 
   };
@@ -473,9 +442,10 @@ const JobListingsTable = () => {
       .eq('status', 'Published')
       .ilike('job_title', '%'+jobTitle+'%')
       .ilike('job_type', '%'+jobType+'%')
-      .order('created_at',  { ascending: false });
+      .order('published_date',  { ascending: false });
 
       data.forEach( job => job.created_at = dateFormat(job.created_at))
+      data.forEach( job => job.published_date = dateFormat(job.published_date))
 
       if (facility) {
         data = data.filter(i => i.facility_name == facility)
@@ -642,11 +612,12 @@ const JobListingsTable = () => {
                     }
                   </td>
                   <td>
-                  {item?.created_at}
+                  {item.published_date ? item.published_date : item.created_at}
                   </td>
-                  { item?.status == 'Published' ?
-                    <td className="status">{item.status}</td>
-                    : <td className="status" style={{ color: 'red' }}>{item.status}</td> }
+                  { item.unpublished_date ?
+                    <td className="status">Republished</td>
+                    : <td className="status">{item.status}</td>
+                  }
                   <td>
                     <div className="option-box">
                       <ul className="option-list">
@@ -679,11 +650,6 @@ const JobListingsTable = () => {
                         </li>
                       </ul>
                       <ul className="option-list" style={{marginTop: '5px'}}>
-                        <li onClick={()=>{ publishJob(item.job_id, item.status) }} >
-                          <button data-text="Publish Job">
-                            <span className="la la-eye"></span>
-                          </button>
-                        </li>
                         <li onClick={()=>{ unpublishJob(item.job_id, item.status) }}>
                           <button data-text="Unpublish Job">
                             <span className="la la-trash"></span>

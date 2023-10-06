@@ -52,37 +52,58 @@ const submitJobPost = async (
 ) => {
     if (jobTitle && jobDesc && jobType && completeAddress && facility) {
         try {
-        const { data, error } = await supabase
-            .from('jobs')
-            .insert([
-              { 
-                user_id: user.id,
-                job_title: jobTitle,
-                job_desc: jobDesc,
-                job_type: jobType,
-                experience: exp,
-                education: education,
-                salary: salary,
-                salary_rate: salaryRate,
-                job_comp_add: completeAddress,
-                facility_name: facility,
-              }
-        ])
-    
+          
+          let { data: facilityData, error: facilityError } = await supabase
+            .from('facility')
+            .select('facility_id')
+            .eq('facility_name', facility)
+            .single()
 
-        // open toast
-        toast.success('Job Posted successfully', {
-            position: "bottom-right",
-            autoClose: 8000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        });
-        setJobData(JSON.parse(JSON.stringify(addJobFields)))
-        
+          if (facilityData) {
+              const { data, error } = await supabase
+                .from('jobs')
+                .insert([
+                  { 
+                    user_id: user.id,
+                    job_title: jobTitle,
+                    job_desc: jobDesc,
+                    job_type: jobType,
+                    experience: exp,
+                    education: education,
+                    salary: salary,
+                    salary_rate: salaryRate,
+                    job_comp_add: completeAddress,
+                    facility_name: facility,
+                    facility_id: facilityData.facility_id
+                  }
+            ])
+
+            // open toast
+            toast.success('Job Posted successfully', {
+                position: "bottom-right",
+                autoClose: 8000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            setJobData(JSON.parse(JSON.stringify(addJobFields)))
+
+          } else {
+            // open toast
+            toast.error('Error while saving your job application, Please try again later or contact tech support', {
+                position: "bottom-right",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+          }
       } catch (err) {
         // open toast
         toast.error('Error while saving your job application, Please try again later or contact tech support', {
@@ -137,6 +158,7 @@ const PostBoxForm = () => {
   const searchInput = useRef(null);
 
   const [singleSelections, setSingleSelections] = useState([]);
+  const [facilityNames, setFacilityNames] = useState([]);
   const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
 
   const addresses = [
@@ -160,27 +182,27 @@ const PostBoxForm = () => {
     "4021 Cadillac Street, New Orleans, LA 70122"
   ]
 
-  const facilityNames = [
-    "Keizer Nursing and Rehabilitation",
-    "French Prairie Nursing & Rehabilitation",
-    "Green Valley Rehabilitation Health",
-    "Hearthstone Nursing & Rehabilitation",
-    "Highland House Nursing & Rehabilitation",
-    "Rose Haven Nursing",
-    "Royale Gardens Health & Rehabilitation",
-    "South Hills Rehabilitation",
-    "Umpqua Valley Nursing & Rehabilitation",
-    "Corvallis Manor Nursing & Rehabilitation",
-    "Hillside Heights Rehabilitation",
-    "Hale Nani Rehab & Nursing",
-    "Eugene Home Office",
-    "Louisville Home Office",
-    "Chateau Napoleon Caring",
-    "Cypress at Lake Providence",
-    "Lakeshore Manor Nursing and Rehab",
-    "St. Bernard Nursing & Rehab"
-  ]
+  async function getFacilityNames() {
+    // call reference to get applicantStatus options
+    let { data: refData, error: e } = await supabase
+      .from('reference')
+      .select("*")
+      .eq('ref_nm',  'facilityName');
 
+    if (refData) {
+        // setFacilityNames(refData)
+        let facilities = []
+        for (let i = 0; i < refData.length; i++) {
+          facilities.push(refData[i].ref_dspl)
+        }
+        facilities.sort()
+        setFacilityNames(facilities)
+    }
+  }
+
+  useEffect(() => {
+    getFacilityNames();
+  }, []);
 
   useEffect(() => {
     jobData.facility = facilitySingleSelections[0]
