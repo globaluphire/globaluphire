@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { setSearchFields } from "../../../features/search/searchSlice";
 import { addKeyword, addLocation, addFacility } from "../../../features/filter/filterSlice";
 import { Typeahead } from "react-bootstrap-typeahead";
+import { supabase } from "../../../config/supabaseClient";
 
 
 const apiKey = process.env.NEXT_PUBLIC_JOB_PORTAL_GMAP_API_KEY;
@@ -35,28 +36,30 @@ const SearchForm4 = () => {
   const searchTerm = useRef(null)
 
   const [searchFacility, setSearchFacility] = useState("");
+  const [facilityNames, setFacilityNames] = useState([]);
   const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
 
-  const facilityNames = [
-    "Keizer Nursing and Rehabilitation",
-    "French Prairie Nursing & Rehabilitation",
-    "Green Valley Rehabilitation Health",
-    "Hearthstone Nursing & Rehabilitation",
-    "Highland House Nursing & Rehabilitation",
-    "Rose Haven Nursing",
-    "Royale Gardens Health & Rehabilitation",
-    "South Hills Rehabilitation",
-    "Umpqua Valley Nursing & Rehabilitation",
-    "Corvallis Manor Nursing & Rehabilitation",
-    "Hillside Heights Rehabilitation",
-    "Hale Nani Rehab & Nursing",
-    "Eugene Home Office",
-    "Louisville Home Office",
-    "Chateau Napoleon Caring",
-    "Cypress at Lake Providence",
-    "Lakeshore Manor Nursing and Rehab",
-    "St. Bernard Nursing & Rehab"
-  ]
+  async function getFacilityNames() {
+    // call reference to get applicantStatus options
+    let { data: refData, error: e } = await supabase
+      .from('reference')
+      .select("*")
+      .eq('ref_nm',  'facilityName');
+
+    if (refData) {
+        // setFacilityNames(refData)
+        let facilities = []
+        for (let i = 0; i < refData.length; i++) {
+          facilities.push(refData[i].ref_dspl)
+        }
+        facilities.sort()
+        setFacilityNames(facilities)
+    }
+  }
+
+  useEffect(() => {
+    getFacilityNames();
+  }, []);
 
   useEffect(() => {
     setSearchFacility(facilitySingleSelections[0])

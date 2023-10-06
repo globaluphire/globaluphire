@@ -35,8 +35,10 @@ const UnpublishedJobListingsTable = () => {
   const facility = useSelector(state => state.employer.facility.payload)
 
   const dateFormat = (val) => {
-    const date = new Date(val)
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+    if(val) {
+      const date = new Date(val)
+      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
+    }
   }
 
   // Publish job action
@@ -44,7 +46,10 @@ const UnpublishedJobListingsTable = () => {
     if (status !== 'Published') {
       const { data, error } = await supabase
           .from('jobs')
-          .update({ status: 'Published' })
+          .update({ 
+            status: 'Published',
+            published_date: new Date()
+          })
           .eq('job_id', jobId)
 
       // open toast
@@ -76,43 +81,6 @@ const UnpublishedJobListingsTable = () => {
     }
   }
 
-  // Unpublish job action
-  const unpublishJob = async (jobId, status) => {
-    if (status !== 'Unpublished') {
-      const { data, error } = await supabase
-          .from('jobs')
-          .update({ status: 'Unpublished' })
-          .eq('job_id', jobId)
-
-      // open toast
-      toast.success('Job successfully unpublished!', {
-        position: "bottom-right",
-        autoClose: 8000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-
-      // fetching all posts to refresh the data in Job Listing Table
-      fetchPost(searchFilters);
-    } else {
-      // open toast
-      toast.error('Job is already unpublished!', {
-        position: "bottom-right",
-        autoClose: false,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-    }
-  }
-
   // clear all filters
   const clearAll = () => {
     setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
@@ -127,13 +95,14 @@ const UnpublishedJobListingsTable = () => {
         .eq('status', 'Unpublished')
         .ilike('job_title', '%'+jobTitle+'%')
         .ilike('job_type', '%'+jobType+'%')
-        .order('created_at',  { ascending: false });
+        .order('unpublished_date',  { ascending: false });
 
     if (facility) {
       data = data.filter(i => i.facility_name == facility)
     }
   
     data.forEach( job => job.created_at = dateFormat(job.created_at))
+    data.forEach( job => job.unpublished_date = dateFormat(job.unpublished_date))
     setjobs(data)
 
   };
@@ -146,13 +115,14 @@ const UnpublishedJobListingsTable = () => {
       .eq('status', 'Unpublished')
       .ilike('job_title', '%'+jobTitle+'%')
       .ilike('job_type', '%'+jobType+'%')
-      .order('created_at',  { ascending: false });
+      .order('unpublished_date',  { ascending: true });
 
       if (facility) {
         data = data.filter(i => i.facility_name == facility)
       }
 
       data.forEach( job => job.created_at = dateFormat(job.created_at))
+      data.forEach( job => job.unpublished_date = dateFormat(job.unpublished_date))
       setjobs(data)
   }
   
@@ -250,7 +220,7 @@ const UnpublishedJobListingsTable = () => {
               <th>Job Title</th>
               <th>Facility</th>
               <th>Applications</th>
-              <th>Published On</th>
+              <th>Unpublished On</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -315,7 +285,9 @@ const UnpublishedJobListingsTable = () => {
                     }
                   </td>
                   <td>
-                  {item?.created_at}
+                    {item.unpublished_date ?
+                          <span>{item.unpublished_date}</span>
+                      : <span>-</span> }
                   </td>
                   { item?.status == 'Published' ?
                     <td className="status">{item.status}</td>
@@ -340,11 +312,6 @@ const UnpublishedJobListingsTable = () => {
                         <li onClick={()=>{ publishJob(item.job_id, item.status) }} >
                           <button data-text="Publish Job">
                             <span className="la la-eye"></span>
-                          </button>
-                        </li>
-                        <li onClick={()=>{ unpublishJob(item.job_id, item.status) }}>
-                          <button data-text="Unpublish Job">
-                            <span className="la la-trash"></span>
                           </button>
                         </li>
                       </ul>
