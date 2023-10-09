@@ -67,7 +67,6 @@ const WidgetContentBox = () => {
             const seq_nbr = data[0].sys_seq_nbr + 1;
 
             const empID = selectedApplicant.facility_id + "" + month + "" + year.toString().substring(2) + "" + seq_nbr;
-            const orgId = await getOrgId()
             await supabase
                 .from('applications')
                 .update({
