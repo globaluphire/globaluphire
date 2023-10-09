@@ -6,7 +6,7 @@ const AppSection = () => {
         <figure className="image" data-aos="fade-right">
           <img src="images/resource/mobile-app.png" alt="mobile app" />
         </figure>
-      </div>
+      </div> 
       {/* <!-- Image Column --> */} 
 
       <div className="content-column col-lg-6 col-md-12 col-sm-12">

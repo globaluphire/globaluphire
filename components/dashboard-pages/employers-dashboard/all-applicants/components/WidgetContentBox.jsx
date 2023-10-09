@@ -40,15 +40,14 @@ const WidgetContentBox = () => {
     // selected applicant for sms/mail modal
     const [selectedApplicant, setSelectedApplicant] = useState()
 
-    // sms email toggle
-    const [showMailModal, setShowMailModal] = useState(false)
+    const [isCommunicationModalOpen, setIsCommunicationModalOpen] = useState(false);
     
-    async function getOrgId() {
-      const { data, error } = await supabase
-        .from("org")
-        .select("*")
-      return data[0].org_id
-    }
+    // async function getOrgId() {
+    //   const { data, error } = await supabase
+    //     .from("org")
+    //     .select("*")
+    //   return data[0].org_id
+    // }
 
     async function updateApplicationStatus (applicationStatus, selectedApplicant) {
         // save updated applicant status
@@ -67,14 +66,12 @@ const WidgetContentBox = () => {
             const seq_nbr = data[0].sys_seq_nbr + 1;
 
             const empID = selectedApplicant.facility_id + "" + month + "" + year.toString().substring(2) + "" + seq_nbr;
-            const orgId = await getOrgId()
             await supabase
                 .from('applications')
                 .update({
                     status: applicationStatus,
                     hired_date: new Date(),
                     emp_id: empID,
-                    org_id: orgId,
                 })
                 .eq('application_id', selectedApplicant.application_id)
 
@@ -351,6 +348,13 @@ const WidgetContentBox = () => {
         }
     }
 
+    useEffect(() => {
+        console.log(isCommunicationModalOpen)
+        if (!isCommunicationModalOpen) {
+            fetchedAllApplicantsView({name: "", jobTitle: "", status: ""})
+        }
+      }, [isCommunicationModalOpen]);
+
     return (
         <div className="tabs-box">
             <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
@@ -544,7 +548,8 @@ const WidgetContentBox = () => {
                                                         data-bs-target="#communication-modal"
                                                         onClick={() => {
                                                             applicant.new_message_received = false;
-                                                            setSelectedApplicant(applicant); 
+                                                            setSelectedApplicant(applicant);
+                                                            setIsCommunicationModalOpen(true)
                                                         }}
                                                         >
                                                         <span className="flaticon-chat"></span>
@@ -657,7 +662,7 @@ const WidgetContentBox = () => {
                             </div>
                         </div>
                         {/* Send SMS/Email Modal Popup */}
-                        <CommunicationModal applicantData={selectedApplicant} />
+                        <CommunicationModal applicantData={selectedApplicant} setIsCommunicationModalOpen={setIsCommunicationModalOpen} />
                     </div>
                 </div>
             {/* End table widget content */}
