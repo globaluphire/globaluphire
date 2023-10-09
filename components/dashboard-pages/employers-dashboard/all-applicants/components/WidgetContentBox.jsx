@@ -40,8 +40,7 @@ const WidgetContentBox = () => {
     // selected applicant for sms/mail modal
     const [selectedApplicant, setSelectedApplicant] = useState()
 
-    // sms email toggle
-    const [showMailModal, setShowMailModal] = useState(false)
+    const [isCommunicationModalOpen, setIsCommunicationModalOpen] = useState(false);
     
     // async function getOrgId() {
     //   const { data, error } = await supabase
@@ -349,6 +348,13 @@ const WidgetContentBox = () => {
         }
     }
 
+    useEffect(() => {
+        console.log(isCommunicationModalOpen)
+        if (!isCommunicationModalOpen) {
+            fetchedAllApplicantsView({name: "", jobTitle: "", status: ""})
+        }
+      }, [isCommunicationModalOpen]);
+
     return (
         <div className="tabs-box">
             <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
@@ -542,7 +548,8 @@ const WidgetContentBox = () => {
                                                         data-bs-target="#communication-modal"
                                                         onClick={() => {
                                                             applicant.new_message_received = false;
-                                                            setSelectedApplicant(applicant); 
+                                                            setSelectedApplicant(applicant);
+                                                            setIsCommunicationModalOpen(true)
                                                         }}
                                                         >
                                                         <span className="flaticon-chat"></span>
@@ -655,7 +662,7 @@ const WidgetContentBox = () => {
                             </div>
                         </div>
                         {/* Send SMS/Email Modal Popup */}
-                        <CommunicationModal applicantData={selectedApplicant} />
+                        <CommunicationModal applicantData={selectedApplicant} setIsCommunicationModalOpen={setIsCommunicationModalOpen} />
                     </div>
                 </div>
             {/* End table widget content */}

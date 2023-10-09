@@ -6,7 +6,7 @@ import { supabase } from "../../../../../config/supabaseClient";
 import { MessageBox } from "react-chat-elements";
 import ViewModal from "./ViewModal";
 
-function CommunicationModal({ applicantData }) {
+function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
   const [activeTab, setActiveTab] = useState(1); // State to track the active tab (1 for SMS, 2 for Email)
   const [allMessages, setAllMessages] = useState([]);
   const [receiversPhoneNumber, setReceiversPhoneNumber] = useState("+1");
@@ -119,6 +119,7 @@ function CommunicationModal({ applicantData }) {
             id="close-button-2"
             className="closed-modal"
             data-bs-dismiss="modal"
+            onClick={()=>{setIsCommunicationModalOpen(false)}}
           ></button>
           <h3 className="modal-title">Send SMS/Email</h3>
           <div className="modal-body">
