@@ -15,6 +15,7 @@ import MobileMenu from "../header/MobileMenu";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
 import DashboardHeader from "../header/DashboardHeader";
+import About from "../about/About";
 
 const index = () => {
   const user = useSelector((state) => state.candidate.user);
@@ -33,6 +34,21 @@ const index = () => {
       <Hero9 />
       {/* <!-- End Hero Section --> */}
 
+      <section className="about-section">
+                <div className="auto-container">
+                    <div className="row">
+                        <About />
+                    </div>
+
+                    {/* <!-- Fun Fact Section --> */}
+                    {/* <div className="fun-fact-section">
+                        <div className="row">
+                            <Funfact />
+                        </div>
+                    </div> */}
+                    {/* <!-- Fun Fact Section --> */}
+                </div>
+            </section>
       <section className="job-section">
         <div className="auto-container wow fadeInUp">
           <div className="sec-title text-center">
