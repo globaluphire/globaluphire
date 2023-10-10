@@ -32,7 +32,7 @@ async function createJWT() {
   const payload = {
     iss: process.env.NEXT_DOCUSIGN_INTEGRATION_KEY,
     sub: process.env.NEXT_DOCUSIGN_USER_ID,
-    aud: "account-d.docusign.com",
+    aud: "account.docusign.com",
     iat: Math.floor(Date.now() / 1000), // Current Unix Epoch Time
     // use short lived tokens
     exp: Math.floor(Date.now() / 1000) + 600, // Expires in 600 seconds (10 minutes)
@@ -41,14 +41,14 @@ async function createJWT() {
 
   try {
     // Load your private key without replacing '\n' characters.
-const privateKey = JSON.parse(process.env.NEXT_DOCUSIGN_RSA_KEY);
+    const privateKey = JSON.parse(process.env.NEXT_DOCUSIGN_RSA_KEY);
     const token = jwt.sign(payload, privateKey.privateKey, {
       algorithm: "RS256",
     });
     return token;
   } catch (error) {
     console.error("Error creating JWT:", error);
-    return null; // Return null or handle the error as needed.
+    throw new Error("Internal Server Error!");
   }
 }
 
@@ -56,7 +56,7 @@ const privateKey = JSON.parse(process.env.NEXT_DOCUSIGN_RSA_KEY);
 async function getDsAccessToken(generatedJWT) {
   try {
     const response = await axios.post(
-      "https://account-d.docusign.com/oauth/token",
+      process.env.NEXT_DOCUSIGN_ACCESS_TOKEN_URL,
       {
         grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
         assertion: generatedJWT,
@@ -66,5 +66,6 @@ async function getDsAccessToken(generatedJWT) {
   } catch (error) {
     // Handle errors
     console.error("Error:", error);
+    throw new Error("Internal Server Error!")
   }
 }
