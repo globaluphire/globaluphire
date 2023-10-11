@@ -26,7 +26,9 @@ function FormContent() {
       setPhoneError("Please enter a phone number");
       isValid = false;
     } else if (!/^\+1\d{10}$/.test(phone)) {
-      setPhoneError("Please enter a valid USA phone number (e.g., +11234567890)");
+      setPhoneError(
+        "Please enter a valid USA phone number (e.g., +11234567890)"
+      );
       isValid = false;
     }
     if (!email) {
@@ -39,16 +41,38 @@ function FormContent() {
     return isValid;
   };
 
-  const handleSubmit = async (e) => {
-    // e.preventDefault();
-    if (validateForm()) {
-      try {
-        document.getElementById("close-button-2").click();
-        console.log(questions)
-        // open toast
+  const sendMail = async () => {
+    try {
+      const questionsAndAnswers = questions
+        .map(
+          (item, idx) =>
+            `<p><strong>Question ${idx + 1}:</strong> ${item.question}</p>
+         <p><strong>Answer ${idx + 1}:</strong> ${item.answer}</p>`
+        )
+        .join("\n");
+      const content = `
+      <h2>Applicant form details:</h2>
+      <h4>Name: ${firstName} ${lastName}</h4>
+      <h4>Email: ${email}</h4>
+      <h4>Phone Number: ${phone}</h4>
+      <h4>Questions & Answers:</h4>
+      ${questionsAndAnswers}`;
+      const response = await fetch(`/api/mailer`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipient: "support@globaluphire.com",
+          subject: "New application for Nursing Course.",
+          content,
+        }),
+      });
+      if (response.ok) {
+        document.getElementById("modal-close-button").click();
         toast.success("Erollment Mail Sent!", {
           position: "bottom-right",
-          autoClose: 8000,
+          autoClose: 4000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -56,7 +80,38 @@ function FormContent() {
           progress: undefined,
           theme: "colored",
         });
+      } else {
+        toast.error("Failed to send Mail!", {
+          position: "bottom-right",
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
+    } catch (error) {
+      toast.error("Some Error Occured!", {
+        position: "bottom-right",
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      setIsLoading(false);
+    }
+  };
 
+  const handleSubmit = async (e) => {
+    // e.preventDefault();
+    if (validateForm()) {
+      try {
+        sendMail();
         // TODO: close register popup
       } catch (err) {
         // open toast
@@ -141,10 +196,10 @@ function FormContent() {
           <input
             type="text"
             name="Global-UpHire-phone"
-            value={phone === "" ? "+1" : phone}
+            value={phone === "" || phone === "+" ? "+1" : phone}
             onChange={(e) => {
-              const numericValue = e.target.value.replace(/\D+]/g, '');
-              const truncatedValue = numericValue.slice(0, 11);
+              const numericValue = e.target.value.replace(/[^0-9+]*/g, "");
+              const truncatedValue = numericValue.slice(0, 12);
               setPhone(truncatedValue);
               setEmailError("");
             }}
@@ -156,7 +211,10 @@ function FormContent() {
         </div>
         {questions.map((item, idx) => (
           <div key={idx} className="form-group col-12">
-            <label>{idx + 1}{"."} {item.question}</label>
+            <label>
+              {idx + 1}
+              {"."} {item.question}
+            </label>
             <input
               type="text"
               name={`question-${idx}`}

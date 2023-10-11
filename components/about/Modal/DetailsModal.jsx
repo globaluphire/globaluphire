@@ -13,10 +13,12 @@ function DetailsModal() {
         <div className="apply-modal-content modal-content">
           <button
             type="button"
-            id="close-button-2"
+            id="modal-close-button"
             className="closed-modal"
             data-bs-dismiss="modal"
-            onClick={()=>{setButtonState(false)}}
+            onClick={() => {
+              setButtonState(false);
+            }}
           ></button>
           <h2 className="modal-title">Program Information</h2>
 
@@ -128,9 +130,7 @@ function DetailsModal() {
                     setButtonState(true);
                   }}
                 >
-                  <span className="btn-title">
-                    Enroll today!
-                  </span>
+                  <span className="btn-title">Enroll today!</span>
                 </button>
               </span>
             )}
