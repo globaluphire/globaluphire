@@ -82,6 +82,6 @@ export default function handler(req, res) {
         return res.status(400).json({ status: "FAILURE", error });
       });
   } else {
-    res.status(405).json({ status: 405, message: "Method not allowed" });
+    return res.status(405).json({ status: 405, message: "Method not allowed" });
   }
 }
