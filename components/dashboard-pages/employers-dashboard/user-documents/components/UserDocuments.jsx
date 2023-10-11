@@ -271,17 +271,22 @@ const UserDocuments = ({ applicantData }) => {
     }
   }
 
-  const handleAllTemplatesSelect = () => {
-    if (allTemplates.every(template => {
-      const status = template?.envelope?.status;
-      return status === "sent" || status === "delivered" || status === "completed";
-    })) {
-      setSelectAllDisabled(true);
+  const handleAllTemplatesSelect = (checked) => {
+    if(checked){
+      if (allTemplates.every(template => {
+        const status = template?.envelope?.status;
+        return status === "sent" || status === "delivered" || status === "completed";
+      })) {
+        setSelectAllDisabled(true);
+        setSelectedTemplates([]);
+      } else {
+        const notSentTemplates = allTemplates.filter(template => !template?.envelope?.status);
+        setSelectedTemplates(notSentTemplates);
+        setSelectAllDisabled(false);
+      }
+    }
+    else {
       setSelectedTemplates([]);
-    } else {
-      const notSentTemplates = allTemplates.filter(template => !template?.envelope?.status);
-      setSelectedTemplates(notSentTemplates);
-      setSelectAllDisabled(false);
     }
   };
 
@@ -318,12 +323,12 @@ const UserDocuments = ({ applicantData }) => {
                 type="checkbox" 
                 id="selectAll" 
                 className="form-check-input" 
-                onChange={(e) => { handleAllTemplatesSelect(e.target.checked) }} 
+                onChange={(e) => { handleAllTemplatesSelect(e.target.checked); console.log(e.target.checked) }} 
                 style={{
                   marginTop: "0.3rem",
                   cursor: "pointer",
                 }}
-                disabled={selectAllDisabled}
+                disabled={selectAllDisabled || isLoading}
               />
             </span>
           </div>
