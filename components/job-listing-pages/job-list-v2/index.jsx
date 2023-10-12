@@ -1,15 +1,14 @@
-import FooterDefault from "../../footer/common-footer";
+import FooterDefault from "../../../components/footer/common-footer";
 import LoginPopup from "../../common/form/login/LoginPopup";
 import DefaulHeader2 from "../../header/DefaulHeader2";
 import MobileMenu from "../../header/MobileMenu";
-import Breadcrumb from "../../common/Breadcrumb";
-import FilterSidebar from "./FilterSidebar";
-import FilterJobBox from "./FilterJobBox";
-import CallToAction from "../../call-to-action/CallToAction";
+import FilterJobsBox from "./FilterJobsBox";
 import JobSearchForm from "./JobSearchForm";
+import FilterSidebar from "./FilterSidebar";
+import DashboardHeader from "../../header/DashboardHeader";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
-import DashboardHeader from "../../header/DashboardHeader";
+import Header from "../../home-9/Header";
 
 const index = () => {
   const user = useSelector((state) => state.candidate.user);
@@ -34,10 +33,11 @@ const index = () => {
           {/* <!-- Job Search Form --> */}
         </div>
       </section>
+      {/* <!--End Page Title--> */}
 
       <section className="ls-section">
         <div className="auto-container">
-          <div className="row mb-5">
+          <div className="row">
             <div
               className="offcanvas offcanvas-start"
               tabIndex="-1"
@@ -48,17 +48,22 @@ const index = () => {
                 <FilterSidebar />
               </div>
             </div>
+            {/* End filter column for tablet and mobile devices */}
+
+            <div className="filters-column hidden-1023 col-lg-4 col-md-12 col-sm-12">
+              <FilterSidebar />
+            </div>
             {/* <!-- End Filters Column --> */}
 
-            <div className="content-column col-lg-12">
-              <FilterJobBox />
+            <div className="content-column col-lg-8 col-md-12 col-sm-12">
+              <div className="ls-outer">
+                <FilterJobsBox />
+                {/* <!-- ls Switcher --> */}
+              </div>
             </div>
             {/* <!-- End Content Column --> */}
           </div>
           {/* End row */}
-
-          <CallToAction />
-          {/* End calltoAction */}
         </div>
         {/* End container */}
       </section>
