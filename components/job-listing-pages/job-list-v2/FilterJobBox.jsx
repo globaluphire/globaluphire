@@ -50,6 +50,26 @@ const FilterJobBox = () => {
   const dispatch = useDispatch();
 
   const searchJobs = async () => {
+    let searchDate = null;
+    let d = new Date();
+    switch (datePosted) {
+      case "last-24-hour":
+        d.setDate(d.getDate() - 1);
+        searchDate = d.toISOString();
+        break;
+      case "last-7-days":
+        d.setDate(d.getDate() - 7);
+        searchDate = d.toISOString();
+        break;
+      case "last-14-days":
+        d.setDate(d.getDate() - 14);
+        searchDate = d.toISOString();
+        break;
+      case "last-30-days":
+        d.setDate(d.getDate() - 30);
+        searchDate = d.toISOString();
+        break;
+    }
     let query = supabase.from("jobs").select("*", { count: "exact" });
     // if(searchAddress) query = query.ilike('job_address', '%'+searchAddress+'%')
     // if (searchFacility) query = query.eq("facility_name", searchFacility);
@@ -59,6 +79,7 @@ const FilterJobBox = () => {
     if (searchFacility) query = query.eq("facility_name", searchFacility);
     if (searchTerm) query = query.ilike("job_title", "%" + searchTerm + "%");
     if (jobTypeSelect) query = query.eq("job_type", jobTypeSelect);
+    if (searchDate) query = query.gte("created_at", searchDate);
     if (pageSize <= totalRecords) {
       query = query.range(
         (currentPage - 1) * pageSize,
@@ -91,7 +112,7 @@ const FilterJobBox = () => {
 
   useEffect(() => {
     searchJobs();
-  }, [jobTypeSelect, searchFacility, searchTerm, pageSize, currentPage]);
+  }, [jobTypeSelect, searchFacility, searchTerm, pageSize, currentPage, datePosted]);
   // keyword filter on title
   const keywordFilter = (item) =>
     keyword !== ""
@@ -270,47 +291,47 @@ const FilterJobBox = () => {
     dispatch(setSearchFields({ searchTerm: "", searchFacility: "" }));
   };
 
-  const fnCall = async () => {
-    let searchDate = null;
-    let d = new Date();
-    switch (datePosted) {
-      case "last-24-hour":
-        d.setDate(d.getDate() - 1);
-        searchDate = d.toISOString();
-        break;
-      case "last-7-days":
-        d.setDate(d.getDate() - 7);
-        searchDate = d.toISOString();
-        break;
-      case "last-14-days":
-        d.setDate(d.getDate() - 14);
-        searchDate = d.toISOString();
-        break;
-      case "last-30-days":
-        d.setDate(d.getDate() - 30);
-        searchDate = d.toISOString();
-        break;
-    }
-    let query = supabase.from("jobs").select().eq("status", "Published");
-    if (jobTypeSelect) query = query.eq("job_type", jobTypeSelect);
-    if (searchDate) query = query.gte("created_at", searchDate);
-    query = query.eq("status", "Published");
-    query = query.order("created_at", { ascending: sort == "des" });
-    if (pageSize <= totalRecords || totalRecords == 0)
-      query = query.range(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize - 1
-      );
+  // const fnCall = async () => {
+  //   let searchDate = null;
+  //   let d = new Date();
+  //   switch (datePosted) {
+  //     case "last-24-hour":
+  //       d.setDate(d.getDate() - 1);
+  //       searchDate = d.toISOString();
+  //       break;
+  //     case "last-7-days":
+  //       d.setDate(d.getDate() - 7);
+  //       searchDate = d.toISOString();
+  //       break;
+  //     case "last-14-days":
+  //       d.setDate(d.getDate() - 14);
+  //       searchDate = d.toISOString();
+  //       break;
+  //     case "last-30-days":
+  //       d.setDate(d.getDate() - 30);
+  //       searchDate = d.toISOString();
+  //       break;
+  //   }
+  //   let query = supabase.from("jobs").select().eq("status", "Published");
+  //   if (jobTypeSelect) query = query.eq("job_type", jobTypeSelect);
+  //   if (searchDate) query = query.gte("created_at", searchDate);
+  //   query = query.eq("status", "Published");
+  //   query = query.order("created_at", { ascending: sort == "des" });
+  //   if (pageSize <= totalRecords || totalRecords == 0)
+  //     query = query.range(
+  //       (currentPage - 1) * pageSize,
+  //       currentPage * pageSize - 1
+  //     );
 
-    const { data, error } = await query;
-    if (data) {
-      if (jobs.length + data.length > totalRecords) setJobs([...jobs, ...data]);
-      else setJobs(data);
-    }
-  };
-  useEffect(() => {
-    fnCall();
-  }, [jobTypeSelect, sort, datePosted]);
+  //   const { data, error } = await query;
+  //   if (data) {
+  //     if (jobs.length + data.length > totalRecords) setJobs([...jobs, ...data]);
+  //     else setJobs(data);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fnCall();
+  // }, [jobTypeSelect, sort, datePosted]);
 
   return (
     <div className="ls-outer">
