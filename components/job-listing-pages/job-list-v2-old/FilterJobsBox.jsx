@@ -29,6 +29,7 @@ import { supabase } from "../../../config/supabaseClient";
 import { setSearchFields } from "../../../features/search/searchSlice";
 
 const FilterJobsBox = () => {
+    // console.log(useSelector((state) => state.filter))
     const router = useRouter();
     const [jobs, setJobs] = useState([]);
     const searchTerm = useSelector((state) => state.search.searchTerm)
@@ -73,14 +74,21 @@ const FilterJobsBox = () => {
     const searchJobs = async () => {
 
         let query = supabase.from('jobs').select('*', {count: 'exact'})
+        console.log("query:",query)
         // if(searchAddress) query = query.ilike('job_address', '%'+searchAddress+'%')
         if(searchFacility) query = query.eq('facility_name', searchFacility)
         if(searchTerm) query = query.ilike('job_title', '%'+searchTerm+'%')
         query = query.eq('status', 'Published')
         query = query.order('created_at',  { ascending: sort == 'des' })
-        if(pageSize <= totalRecords) query = query.range((currentPage - 1) * pageSize, (currentPage * pageSize) - 1)
+        if(pageSize <= totalRecords) {
+            // 1
+            query = query.range((currentPage - 1) * pageSize, (currentPage * pageSize) - 1)
+        }
 
         query.then(res => {
+            console.log(currentPage)
+            console.log(res)
+            // setJobs(res.data)
             if(jobs.length + res?.data?.length > totalRecords) setJobs(res.data)
             else setJobs([...jobs, ...res?.data])
           setTotalRecords(res.count)
@@ -436,7 +444,7 @@ const FilterJobsBox = () => {
             {/* End top filter bar box */}
             {content}   
             {/* <!-- List Show More --> */}
-            <div className="ls-show-more">
+            {/* <div className="ls-show-more">
                 <p>Show {content?.length} of {totalRecords} Jobs</p>
                 <div className="bar">
                     <span className="bar-inner" style={{ width: `${content?.length * 100 / totalRecords}%` }}></span>
@@ -444,7 +452,7 @@ const FilterJobsBox = () => {
                 {
                     content?.length == totalRecords ? '' : <button className="show-more" onClick={showMoreJobs}>Show More</button>
                 }
-            </div>
+            </div> */}
         </>
     );
 };
