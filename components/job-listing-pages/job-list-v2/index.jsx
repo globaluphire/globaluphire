@@ -10,6 +10,7 @@ import JobSearchForm from "./JobSearchForm";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
 import DashboardHeader from "../../header/DashboardHeader";
+import Header from "../../home-9/Header";
 
 const index = () => {
   const user = useSelector((state) => state.candidate.user);
