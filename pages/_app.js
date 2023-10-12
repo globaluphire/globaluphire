@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { getDecryptedItem } from "../utils/encryptedStorage";
 import { setUserData } from "../features/candidate/candidateSlice";
 import 'react-tooltip/dist/react-tooltip.css'
+import ErrorBoundary from "../components/error-boundry/errorBoundry";
 
 if (typeof window !== "undefined") {
   require("bootstrap/dist/js/bootstrap");
@@ -36,7 +37,9 @@ function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <div className="page-wrapper">
-        <Component {...pageProps} />
+        <ErrorBoundary>
+          <Component {...pageProps} />
+        </ErrorBoundary>
 
         {/* Toastify */}
         <ToastContainer
