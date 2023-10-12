@@ -9,6 +9,7 @@ const LocationBox = () => {
     // const [getLocation, setLocation] = useState(jobList.location);
     const [getFacility, setFacility] = useState(jobList.facility);
     const dispath = useDispatch();
+    const searchFacility = useSelector((state) => state.search.searchFacility);
 
     // location handler
     // const locationHandler = (e) => {
@@ -39,6 +40,13 @@ const LocationBox = () => {
             setFacilityNames(facilities)
         }
     }
+
+    useEffect(() => {
+        if(searchFacility === ""){
+            setFacilitySingleSelections([])
+        }
+        getFacilityNames();
+    }, [searchFacility]);
 
     useEffect(() => {
         getFacilityNames();
