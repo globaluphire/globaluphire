@@ -49,7 +49,6 @@ const Pagination = ({ currentPage, totalRecords, pageSize, onPageChange }) => {
       <ul>
         <li className={currentPage === 1 ? "prev disabled" : "prev"}>
           <a
-            href="#"
             onClick={() => {
               if (currentPage > 1) {
                 onPageChange(currentPage - 1);
@@ -65,7 +64,6 @@ const Pagination = ({ currentPage, totalRecords, pageSize, onPageChange }) => {
               "..."
             ) : (
               <a
-                href="#"
                 className={currentPage === page ? "current-page" : ""}
                 onClick={() => onPageChange(page)}
               >
@@ -76,7 +74,6 @@ const Pagination = ({ currentPage, totalRecords, pageSize, onPageChange }) => {
         ))}
         <li className={currentPage === totalPages ? "next disabled" : "next"}>
           <a
-            href="#"
             onClick={() => {
               if (currentPage < totalPages) {
                 onPageChange(currentPage + 1);

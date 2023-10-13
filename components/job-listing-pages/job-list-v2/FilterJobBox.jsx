@@ -23,7 +23,7 @@ import {
 } from "../../../features/job/jobSlice";
 import { setSearchFields } from "../../../features/search/searchSlice";
 
-const FilterJobBox = () => {
+const FilterJobBox = ({searchButtonClick}) => {
   const { jobList, jobSort } = useSelector((state) => state.filter);
   const searchFacility = useSelector((state) => state.search.searchFacility);
   const searchTerm = useSelector((state) => state.search.searchTerm);
@@ -96,7 +96,6 @@ const FilterJobBox = () => {
     );
 
     query.then((res) => {
-      setCurrentPage(currentPage);
       setJobs(res.data);
       setTotalRecords(res.count);
     });
@@ -113,6 +112,10 @@ const FilterJobBox = () => {
   useEffect(() => {
     searchJobs();
   }, [jobTypeSelect, searchFacility, searchTerm, pageSize, currentPage, datePosted]);
+  
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchButtonClick]);
   // keyword filter on title
   const keywordFilter = (item) =>
     keyword !== ""
@@ -289,6 +292,7 @@ const FilterJobBox = () => {
     dispatch(addSort(""));
     dispatch(addPerPage({ start: 0, end: 10 }));
     dispatch(setSearchFields({ searchTerm: "", searchFacility: "" }));
+    setCurrentPage(1)
   };
 
   // const fnCall = async () => {

@@ -5,12 +5,13 @@ import SearchBox from "../components/SearchBox";
 import { setSearchFields } from "../../../features/search/searchSlice";
 
 
-const JobSearchForm = () => {
+const JobSearchForm = ({setSerachButtonClicked}) => {
   const dispatch = useDispatch()
   const filterTerm = useSelector((state) => state.filter.jobList.keyword)
   // const filterLocation = useSelector((state) => state.filter.jobList.location)
   const filterFacility = useSelector((state) => state.filter.jobList.facility)
   const findJobs = () => {
+    setSerachButtonClicked(previous=>!previous)
     dispatch(setSearchFields({ searchTerm: filterTerm, searchFacility: filterFacility })) // searchAddress: filterLocation
   }
   return (

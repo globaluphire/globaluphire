@@ -8,13 +8,14 @@ import FilterJobBox from "./FilterJobBox";
 import CallToAction from "../../call-to-action/CallToAction";
 import JobSearchForm from "./JobSearchForm";
 import { useSelector } from "react-redux";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import DashboardHeader from "../../header/DashboardHeader";
 import Header from "../../home-9/Header";
 
 const index = () => {
   const user = useSelector((state) => state.candidate.user);
   const showLoginButton = useMemo(() => !user?.id, [user]);
+  const [searchButtonClick, setSerachButtonClicked] = useState(false)
   return (
     <>
       {/* <!-- Header Span --> */}
@@ -31,7 +32,7 @@ const index = () => {
 
       <section className="page-title style-two">
         <div className="auto-container">
-          <JobSearchForm />
+          <JobSearchForm setSerachButtonClicked={setSerachButtonClicked} />
           {/* <!-- Job Search Form --> */}
         </div>
       </section>
@@ -52,13 +53,13 @@ const index = () => {
             {/* <!-- End Filters Column --> */}
 
             <div className="content-column col-lg-12">
-              <FilterJobBox />
+              <FilterJobBox searchButtonClick={searchButtonClick} />
             </div>
             {/* <!-- End Content Column --> */}
           </div>
           {/* End row */}
 
-          <CallToAction />
+          {/* <CallToAction /> */}
           {/* End calltoAction */}
         </div>
         {/* End container */}
