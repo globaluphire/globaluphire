@@ -114,7 +114,9 @@ const FilterJobBox = ({searchButtonClick}) => {
   }, [jobTypeSelect, searchFacility, searchTerm, pageSize, currentPage, datePosted]);
   
   useEffect(() => {
-    setCurrentPage(1);
+    if(searchButtonClick){
+      setCurrentPage(1);
+    }
   }, [searchButtonClick]);
   // keyword filter on title
   const keywordFilter = (item) =>
