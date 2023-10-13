@@ -211,7 +211,7 @@ const HiredApplicationsWidgetContentBox = () => {
     }
 
     const determineBadgeColor = (status) => {
-        switch (status.toLowerCase()) {
+        switch (status?.toLowerCase()) {
             case 'sent':
                 return {color: 'orange', tag: 'Sent'}
             case 'read':

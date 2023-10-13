@@ -64,7 +64,7 @@ function FormContent() {
         },
         body: JSON.stringify({
           recipient: "support@globaluphire.com",
-          subject: "New application for Nursing Course.",
+          subject: "New Enrollment for Nursing Course.",
           content,
         }),
       });
