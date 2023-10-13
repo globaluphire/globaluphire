@@ -35,11 +35,11 @@ const FilterSidebar = () => {
         </div> */}
         {/* <!-- Checkboxes Ouer --> */}
 
-        <div className="filter-block">
+        {/* <div className="filter-block">
           <h4>Salary</h4>
 
           <SalaryRangeSlider />
-        </div>
+        </div> */}
         {/* <!-- Filter Block --> */}
 
         {/* <div className="filter-block">
@@ -50,7 +50,7 @@ const FilterSidebar = () => {
       </div>
       {/* Filter Outer */}
 
-      <CallToActions />
+      {/* <CallToActions /> */}
       {/* <!-- End Call To Action --> */}
     </div>
   );
