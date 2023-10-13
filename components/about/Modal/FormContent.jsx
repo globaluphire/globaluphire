@@ -23,7 +23,7 @@ function FormContent() {
       isValid = false;
     }
     if (!phone) {
-      setPhoneError("Please enter a phone number");
+      setPhoneError("Please enter your phone number");
       isValid = false;
     } else if (!/^\+1\d{10}$/.test(phone)) {
       setPhoneError(
@@ -146,7 +146,7 @@ function FormContent() {
     <div className="default-form mt-4">
       <h3>Please fill the form!</h3>
       <div className="row mt-3">
-        <div className="form-group col-6">
+        <div className="form-group col-6 required">
           <label>First Name:</label>
           <input
             type="text"
@@ -161,7 +161,7 @@ function FormContent() {
           />
           {nameError && <div className="error">{nameError}</div>}
         </div>
-        <div className="form-group col-6">
+        <div className="form-group col-6 required">
           <label>Last Name:</label>
           <input
             type="text"
@@ -176,7 +176,7 @@ function FormContent() {
           />
           {nameError && <div className="error">{nameError}</div>}
         </div>
-        <div className="form-group col-6">
+        <div className="form-group col-6 required">
           <label>Email Address:</label>
           <input
             type="email"
@@ -191,7 +191,7 @@ function FormContent() {
           />
           {emailError && <div className="error">{emailError}</div>}
         </div>
-        <div className="form-group col-6">
+        <div className="form-group col-6 required">
           <label>Phone Number:</label>
           <input
             type="text"
