@@ -1,4 +1,4 @@
-import AboutBlock from "../block/AboutBlock";
+import AboutBlock from "../block/AboutBlock"; 
 
 const About10 = () => {
   return (
