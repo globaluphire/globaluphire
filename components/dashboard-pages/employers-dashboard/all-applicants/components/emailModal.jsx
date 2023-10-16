@@ -48,7 +48,7 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
         };
         applicantData.last_contacted_at = new Date();
         await supabase.from("applications")
-          .update({ last_contacted_at: new Date() })
+          .update({ last_contacted_at: new Date(), email: receiversEmail })
           .eq('application_id', applicantData?.application_id);
         await supabase.from("sms_messages").insert(messageObj);
         setAllMessages((prev) => [...prev, 
@@ -66,8 +66,8 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
                 position={"right"}
                 type={"text"}
                 text={<div dangerouslySetInnerHTML={{ __html: `
-                to: ${receiversEmail} <br/>
-                message:&#x2408;${emailMessage}
+                <strong>To: ${receiversEmail} </strong><br/>
+                Your Message:${emailMessage}
               ` }}/>}
               />
             </div>,
@@ -112,17 +112,17 @@ function EmailModal({ applicantData, setAllMessages, receiversEmail, setReceiver
   };
 
   const handleSetModalData = async () => {
-    if (receiversEmail) {
-      setReceiversEmailDisabled(true);
-    } else {
-      setReceiversEmailDisabled(false);
-    }
+    // if (receiversEmail) {
+    //   setReceiversEmailDisabled(true);
+    // } else {
+    //   setReceiversEmailDisabled(false);
+    // }
     setReceiversName(applicantData?.name);
-    if (setAllMessages[0]?.email) {
-      setReceiversEmail(applicantData?.email);
-    } else {
-      setReceiversEmail("");
-    }
+    // if (setAllMessages[0]?.email) {
+    //   setReceiversEmail(applicantData?.email);
+    // } else {
+    //   setReceiversEmail("");
+    // }
   };
 
   useEffect(() => {

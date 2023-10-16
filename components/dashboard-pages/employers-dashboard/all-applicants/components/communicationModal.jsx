@@ -69,7 +69,15 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
                 className="fw-normal"
                 position={"right"}
                 type={"text"}
-                text={<div dangerouslySetInnerHTML={{ __html: el.message }} />}
+                text={el.type === "email" 
+                ? 
+                <div 
+                dangerouslySetInnerHTML={{ __html: `
+                <strong>To: ${applicantData?.email} </strong><br/>
+                Your Message:${el.message}
+                ` }}/>
+                :
+                <div dangerouslySetInnerHTML={{ __html: el.message }} />}
               />
             </div>
           );
@@ -86,13 +94,14 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
       .from("sms_messages")
       .select("*")
       .match({ application_id: applicantData?.application_id });
-      // .or(
-      //   `receiver_name.eq.${applicantData?.name}, sender_name.eq.${applicantData?.name}`
-      // );
-    await supabase.from("applications")
+    // .or(
+    //   `receiver_name.eq.${applicantData?.name}, sender_name.eq.${applicantData?.name}`
+    // );
+    await supabase
+      .from("applications")
       .update({ new_message_received: false })
-      .eq('application_id', applicantData?.application_id);
-    setReceiversPhoneNumber(applicantData?.phn_nbr)
+      .eq("application_id", applicantData?.application_id);
+    setReceiversPhoneNumber(applicantData?.phn_nbr);
     setReceiversEmail(applicantData?.email);
     // if (data[0]?.receiver_phone) {
     //   setReceiversPhoneNumber(data[0].receiver_phone);
@@ -106,9 +115,16 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
     handleSetMessages(data);
   };
 
+  function onModalClose() {
+    setIsCommunicationModalOpen(false);
+    setActiveTab(1);
+    setReceiversPhoneNumber("");
+    setReceiversEmail("");
+  }
+
   useEffect(() => {
     handleSetModalData(applicantData);
-  }, [applicantData, receiversEmail, receiversPhoneNumber]);
+  }, [applicantData]);
 
   return (
     <div className="modal fade" id="communication-modal">
@@ -119,7 +135,7 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
             id="close-button-2"
             className="closed-modal"
             data-bs-dismiss="modal"
-            onClick={()=>{setIsCommunicationModalOpen(false)}}
+            onClick={() => onModalClose()}
           ></button>
           <h3 className="modal-title">Send SMS/Email</h3>
           <div className="modal-body">
@@ -169,7 +185,8 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
                 </ToggleButton>
               </ToggleButtonGroup>
 
-              {activeTab === 1 ? receiversPhoneNumber ? (
+              {activeTab === 1 ? (
+                // ? receiversPhoneNumber
                 <SmsModal
                   applicantData={applicantData}
                   setAllMessages={setAllMessages}
@@ -181,17 +198,21 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
                   }
                 />
               ) : (
-                <div
-                  style={{
-                    margin: "auto",
-                    textAlign: "center",
-                  }}
-                >
-                  No phone Number Provided!
-                </div>
-              ) : <></>}
+                // : (
+                //   <div
+                //     style={{
+                //       margin: "auto",
+                //       textAlign: "center",
+                //     }}
+                //   >
+                //     No phone Number Provided!
+                //   </div>
+                // )
+                <></>
+              )}
 
-              {activeTab === 2 ? receiversEmail ? (
+              {activeTab === 2 ? (
+                // ? receiversEmail
                 <EmailModal
                   applicantData={applicantData}
                   setAllMessages={setAllMessages}
@@ -199,16 +220,20 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
                   setReceiversEmail={setReceiversEmail}
                 />
               ) : (
-                <div style={{ margin: "auto", textAlign: "center" }}>
-                  No email Provided!
-                </div>
-              ) : <></>}
-              {(receiversPhoneNumber && activeTab === 1) ||
-              (receiversEmail && activeTab === 2) ? (
-                <ViewModal data={allMessages} />
-              ) : (
-                ""
+                // : (
+                //   <div style={{ margin: "auto", textAlign: "center" }}>
+                //     No email Provided!
+                //   </div>
+                // )
+                <></>
               )}
+              {/* {(
+                receiversPhoneNumber && activeTab === 1) ||
+              (receiversEmail && activeTab === 2) ? ( */}
+              <ViewModal data={allMessages} />
+              {/* ) : (
+                 ""
+               )} */}
             </div>
           </div>
         </div>
