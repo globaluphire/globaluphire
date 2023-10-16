@@ -64,12 +64,11 @@ function SmsModal({
   const handleSetModalData = async (applicantData) => {
     setSelectedUserData(applicantData);
     setReceiversName(applicantData?.name);
-
-    if (receiversPhoneNumber) {
-      setReceiversPhoneNumberDisabled(true);
-    } else {
-      setReceiversPhoneNumberDisabled(false);
-    }
+    // if (receiversPhoneNumber) {
+    //   setReceiversPhoneNumberDisabled(true);
+    // } else {
+    //   setReceiversPhoneNumberDisabled(false);
+    // }
   };
 
   const handleButtonClick = async (applicantData) => {
@@ -106,7 +105,7 @@ function SmsModal({
       await supabase.from("sms_messages").insert(messageObj);
       applicantData.last_contacted_at = new Date();
       await supabase.from("applications")
-        .update({ last_contacted_at: new Date() })
+        .update({ last_contacted_at: new Date(), phn_nbr: receiversPhoneNumber })
         .eq('application_id', applicantData?.application_id);
       setAllMessages((previous) => [
         ...previous,
@@ -142,13 +141,13 @@ function SmsModal({
     }
     setIsLoading(false);
   };
-  const chatInputButton = (
+  const ChatInputButton = (
     <Button
       className="theme-btn btn-style-one btn-submit"
       onClick={() => {
         handleButtonClick(applicantData);
       }}
-      disabled={receiversPhoneNumber.match("^\\+[0-9]{10,13}$") && characterCount <= maxCharacterLength
+      disabled={receiversPhoneNumber?.match("^\\+[0-9]{10,13}$") && characterCount <= maxCharacterLength
       ? false
       : true}
       style={{
@@ -174,6 +173,11 @@ function SmsModal({
   useEffect(() => {
     handleSetModalData(applicantData);
   }, [applicantData]);
+  useEffect(() => {
+    if(receiversPhoneNumber === "+1" || receiversPhoneNumber === ""){
+      setReceiversPhoneNumber("+1")
+    }
+  }, [receiversPhoneNumber]);
   return (
     <>
       <div className="col-md-6">
@@ -199,18 +203,16 @@ function SmsModal({
               className="form-control"
               maxLength={13}
               minLength={11}
-              value={receiversPhoneNumber}
-              placeholder="+1 123 456 7890"
+              value={receiversPhoneNumber === "" || receiversPhoneNumber === "+" ? "+1" : receiversPhoneNumber}
+              placeholder="+1 1234567890"
               onChange={(e) => {
                 if (e.target.value.trim() === "") {
                   setReceiversPhoneNumber("+1");
                   return;
                 }
-                const number = e.target.value.replace("+1", "");
-                if (isNaN(number)) return;
-                if (e.target.value.length <= 13) {
-                  setReceiversPhoneNumber(e.target.value.trim());
-                }
+                const numericValue = e.target.value.replace(/[^0-9+]*/g, "");
+                const truncatedValue = numericValue.slice(0, 12);
+                setReceiversPhoneNumber(truncatedValue)
               }}
               disabled={receiversPhoneNumberDisabled}
             />
@@ -221,7 +223,7 @@ function SmsModal({
               placeholder="Type Here..."
               multiline={true}
               className="input rounded px-2 form-control"
-              rightButtons={chatInputButton}
+              rightButtons={ChatInputButton}
               referance={inputRef}
               // autoHeight={true}
               minHeight={200}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import DetailsModal from "./Modal/DetailsModal"; 
+import DetailsModal from "./Modal/DetailsModal";
 
 const About = () => {
   return (

@@ -349,7 +349,6 @@ const WidgetContentBox = () => {
     }
 
     useEffect(() => {
-        console.log(isCommunicationModalOpen)
         if (!isCommunicationModalOpen) {
             fetchedAllApplicantsView({name: "", jobTitle: "", status: ""})
         }
