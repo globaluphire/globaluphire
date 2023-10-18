@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 import { supabase } from "../../../config/supabaseClient";
+import { envConfig } from "../../../config/env";
 
 export default async function handler(req, res) {
   if (req.method == "GET") {
@@ -30,8 +31,8 @@ export default async function handler(req, res) {
 // create jwt grant using your keys for docusign
 async function createJWT() {
   const payload = {
-    iss: process.env.NEXT_DOCUSIGN_INTEGRATION_KEY,
-    sub: process.env.NEXT_DOCUSIGN_USER_ID,
+    iss: envConfig.DOCUSIGN_INTEGRATION_KEY,
+    sub: envConfig.DOCUSIGN_USER_ID,
     aud: "account.docusign.com",
     iat: Math.floor(Date.now() / 1000), // Current Unix Epoch Time
     // use short lived tokens
@@ -41,7 +42,7 @@ async function createJWT() {
 
   try {
     // Load your private key without replacing '\n' characters.
-    const privateKey = JSON.parse(process.env.NEXT_DOCUSIGN_RSA_KEY);
+    const privateKey = JSON.parse(envConfig.DOCUSIGN_RSA_KEY);
     const token = jwt.sign(payload, privateKey.privateKey, {
       algorithm: "RS256",
     });
@@ -56,7 +57,7 @@ async function createJWT() {
 async function getDsAccessToken(generatedJWT) {
   try {
     const response = await axios.post(
-      process.env.NEXT_DOCUSIGN_ACCESS_TOKEN_URL,
+      envConfig.DOCUSIGN_ACCESS_TOKEN_URL,
       {
         grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
         assertion: generatedJWT,

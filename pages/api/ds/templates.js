@@ -1,5 +1,6 @@
 const docusign = require("docusign-esign");
 import { supabase } from "../../../config/supabaseClient";
+import { envConfig } from "../../../config/env"
 
 async function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -10,11 +11,11 @@ export default async function handler(req, res) {
     try {
       const { token, user, applicant } = req.body;
       let dsApiClient = new docusign.ApiClient();
-      dsApiClient.setBasePath(process.env.NEXT_DOCUSIGN_API_URL);
+      dsApiClient.setBasePath(envConfig.DOCUSIGN_API_URL);
       dsApiClient.addDefaultHeader("Authorization", "Bearer " + token);
       let templatesApi = new docusign.TemplatesApi(dsApiClient);
       const templates = await templatesApi.listTemplates(
-        process.env.NEXT_DOCUSIGN_ACCOUNT_ID
+        envConfig.DOCUSIGN_ACCOUNT_ID
       );
       if (!templates) {
         return res
@@ -40,7 +41,7 @@ export default async function handler(req, res) {
           // adding all and location specific documents into array
           if (descriptionData.location === "ALL" || applicant.job_comp_add?.includes(descriptionData.location)) {
             const tabs = await templatesApi.getDocumentTabs(
-              process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
+              envConfig.DOCUSIGN_ACCOUNT_ID,
               template.templateId,
               1
             );
@@ -56,7 +57,7 @@ export default async function handler(req, res) {
             if (matchingUserTemplate) {
               // get envelope data using envelope_id
               const response = await envelopesApi.getEnvelope(
-                process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
+                envConfig.DOCUSIGN_ACCOUNT_ID,
                 matchingUserTemplate.envelope_id
               );
               // update documen_signing table

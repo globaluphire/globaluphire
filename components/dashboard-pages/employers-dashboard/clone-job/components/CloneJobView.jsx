@@ -9,12 +9,13 @@ import Router, { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 import { Typeahead } from "react-bootstrap-typeahead";
+import { envConfig } from "../../../../../config/env";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
 });
 
-const apiKey = process.env.NEXT_PUBLIC_JOB_PORTAL_GMAP_API_KEY;
+const apiKey = envConfig.PUBLIC_JOB_PORTAL_GMAP_API_KEY;
 const mapApiJs = 'https://maps.googleapis.com/maps/api/js';
 
 // load google map api js

@@ -1,5 +1,6 @@
 const docusign = require("docusign-esign");
 import { supabase } from "../../../config/supabaseClient";
+import { envConfig } from "../../../config/env";
 
 // config for vercel
 export const config = {
@@ -18,7 +19,7 @@ export default async function handler(req, res) {
       }
 
       let dsApiClient = new docusign.ApiClient();
-      dsApiClient.setBasePath(process.env.NEXT_DOCUSIGN_API_URL);
+      dsApiClient.setBasePath(envConfig.DOCUSIGN_API_URL);
       dsApiClient.addDefaultHeader("Authorization", "Bearer " + token);
 
       let envelopesApi = new docusign.EnvelopesApi(dsApiClient);
@@ -56,7 +57,7 @@ async function createEnvelopes(
       let envelope = makeEnvelope(doc, recipient, user, applicant);
       // send the envelope
       let results = await envelopesApi.createEnvelope(
-        process.env.NEXT_DOCUSIGN_ACCOUNT_ID,
+        envConfig.DOCUSIGN_ACCOUNT_ID,
         {
           envelopeDefinition: envelope,
         }

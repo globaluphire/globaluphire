@@ -1,16 +1,17 @@
 import { Twilio } from "twilio";
+import { config } from "../../config/env"
 
 export default async function handler(req, res) {
   const twilioClient = new Twilio(
-    process.env.NEXT_TWILIO_ACCOUNT_SID,
-    process.env.NEXT_TWILIO_AUTH_TOKEN
+    config.TWILIO_ACCOUNT_SID,
+    config.TWILIO_AUTH_TOKEN
   );
   if (req.method == "POST") {
     try {
       const response = await twilioClient.messages.create({
         body: req.body.content,
         // Check number from Twilio if changed
-        from: process.env.NEXT_TWILIO_NUMBER,
+        from: config.TWILIO_NUMBER,
         to: req.body.recipient,
       });
       return res.status(200).json({ status: "success", data: response });
