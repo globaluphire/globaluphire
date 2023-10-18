@@ -6,22 +6,29 @@ import Router from "next/router";
 import { useEffect } from "react";
 
 const index = () => {
+  const user = useSelector((state) => state.candidate.user);
+  const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
-    const user = useSelector(state => state.candidate.user)
-    const isEmployer = ['SUPER_ADMIN', 'ADMIN', 'MEMBER'].includes(user.role)
+  useEffect(() => {
+    if (!isEmployer) {
+      Router.push("/");
+    }
+  }, []);
 
-    useEffect(() => {
-      if (!isEmployer) {
-        Router.push("/")
-      }
-    }, []);
-
-    return (
-      <> 
-        <Seo pageTitle="All Applicants" />
-        <AllApplicants />
-      </>
-    );
+  return (
+    <>
+      {" "}
+      {isEmployer ? (
+        <>
+          {" "}
+          <Seo pageTitle="All Applicants" />
+          <AllApplicants />
+        </>
+      ) : (
+        ""
+      )}
+    </>
+  );
 };
 
 export default dynamic(() => Promise.resolve(index), { ssr: false });

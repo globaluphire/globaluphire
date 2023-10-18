@@ -6,22 +6,29 @@ import { useEffect } from "react";
 import WithdrawalApplications from "../../../components/dashboard-pages/employers-dashboard/withdrawal-applications";
 
 const index = () => {
+  const user = useSelector((state) => state.candidate.user);
+  const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
-    const user = useSelector(state => state.candidate.user)
-    const isEmployer = ['SUPER_ADMIN', 'ADMIN', 'MEMBER'].includes(user.role)
+  useEffect(() => {
+    if (!isEmployer) {
+      Router.push("/");
+    }
+  }, []);
 
-    useEffect(() => {
-      if (!isEmployer) {
-        Router.push("/")
-      }
-    }, []);
-
-    return (
-      <> 
-        <Seo pageTitle="Withdrawal Applicants" />
-        <WithdrawalApplications />
-      </>
-    );
+  return (
+    <>
+      {" "}
+      {isEmployer ? (
+        <>
+          {" "}
+          <Seo pageTitle="Withdrawal Applicants" />
+          <WithdrawalApplications />
+        </>
+      ) : (
+        ""
+      )}
+    </>
+  );
 };
 
 export default dynamic(() => Promise.resolve(index), { ssr: false });

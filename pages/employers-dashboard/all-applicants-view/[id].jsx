@@ -3,8 +3,8 @@ import Select from "react-select";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import LoginPopup from "../../../components/common/form/login/LoginPopup";
 import DashboardHeader from "../../../components/header/DashboardHeader";
 import MobileMenu from "../../../components/header/MobileMenu";
@@ -19,20 +19,18 @@ import WidgetTopFilterBox from "../../../components/dashboard-pages/employers-da
 import WidgetContentBox from "../../../components/dashboard-pages/employers-dashboard/all-applicants/components/WidgetContentBox";
 import ApplicantWidgetContentBox from "../../../components/dashboard-pages/employers-dashboard/all-applicants-view/components/ApplicantWidgetContentBox";
 
-
 const AllApplicantsViewPerJob = () => {
-
-  const user = useSelector(state => state.candidate.user)
-  const showLoginButton = useMemo(() => !user?.id, [user])
-  const isEmployer = ['SUPER_ADMIN', 'ADMIN', 'MEMBER'].includes(user.role)
+  const user = useSelector((state) => state.candidate.user);
+  const showLoginButton = useMemo(() => !user?.id, [user]);
+  const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
   useEffect(() => {
     if (!isEmployer) {
-      Router.push("/")
+      Router.push("/");
     }
   }, []);
 
-  return (
+  return isEmployer ? (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
       {/* <!-- Header Span for hight --> */}
@@ -85,6 +83,8 @@ const AllApplicantsViewPerJob = () => {
       {/* <!-- End Copyright --> */}
     </div>
     // End page-wrapper
+  ) : (
+    ""
   );
 };
 

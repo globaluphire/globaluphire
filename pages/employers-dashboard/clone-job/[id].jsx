@@ -1,7 +1,7 @@
 // import Map from "../../../../Map";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import LoginPopup from "../../../components/common/form/login/LoginPopup";
 import DashboardHeader from "../../../components/header/DashboardHeader";
 import MobileMenu from "../../../components/header/MobileMenu";
@@ -13,20 +13,18 @@ import Router, { useRouter } from "next/router";
 import DefaulHeader2 from "../../../components/header/DefaulHeader2";
 import CloneJobView from "../../../components/dashboard-pages/employers-dashboard/clone-job/components/CloneJobView";
 
-
 const CloneJob = () => {
-
-  const user = useSelector(state => state.candidate.user)
-  const showLoginButton = useMemo(() => !user?.id, [user])
-  const isEmployer = ['SUPER_ADMIN', 'ADMIN', 'MEMBER'].includes(user.role)
+  const user = useSelector((state) => state.candidate.user);
+  const showLoginButton = useMemo(() => !user?.id, [user]);
+  const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
   useEffect(() => {
     if (!isEmployer) {
-      Router.push("/")
+      Router.push("/");
     }
   }, []);
 
-  return (
+  return isEmployer ? (
     <div className="page-wrapper dashboard">
       <span className="header-span"></span>
       {/* <!-- Header Span for hight --> */}
@@ -34,7 +32,7 @@ const CloneJob = () => {
       <LoginPopup />
       {/* End Login Popup Modal */}
 
-      { showLoginButton ?  <DefaulHeader2 /> : <DashboardHeader/>}
+      {showLoginButton ? <DefaulHeader2 /> : <DashboardHeader />}
       {/* <!--End Main Header --> */}
 
       <MobileMenu />
@@ -78,6 +76,8 @@ const CloneJob = () => {
       {/* <!-- End Copyright --> */}
     </div>
     // End page-wrapper
+  ) : (
+    ""
   );
 };
 

@@ -6,20 +6,27 @@ import Seo from "../../../components/common/Seo";
 import UnpublishedJobs from "../../../components/dashboard-pages/employers-dashboard/unpublished-jobs";
 
 const index = () => {
-
-  const user = useSelector(state => state.candidate.user)
-  const isEmployer = ['SUPER_ADMIN', 'ADMIN', 'MEMBER'].includes(user.role)
+  const user = useSelector((state) => state.candidate.user);
+  const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
   useEffect(() => {
     if (!isEmployer) {
-      Router.push("/")
+      Router.push("/");
     }
   }, []);
 
   return (
     <>
-      <Seo pageTitle="Unpublished Jobs" />
-      <UnpublishedJobs />
+      {" "}
+      {isEmployer ? (
+        <>
+          {" "}
+          <Seo pageTitle="Unpublished Jobs" />
+          <UnpublishedJobs />
+        </>
+      ) : (
+        ""
+      )}
     </>
   );
 };

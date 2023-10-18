@@ -3,10 +3,26 @@ import Seo from "../../../components/common/Seo";
 import ChangePassword from "../../../components/dashboard-pages/employers-dashboard/change-password";
 
 const index = () => {
+  const user = useSelector((state) => state.candidate.user);
+  const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
+
+  useEffect(() => {
+    if (!isEmployer) {
+      Router.push("/");
+    }
+  }, []);
   return (
     <>
-      <Seo pageTitle="Change Password" />
-      <ChangePassword />
+      {" "}
+      {isEmployer ? (
+        <>
+          {" "}
+          <Seo pageTitle="Change Password" />
+          <ChangePassword />
+        </>
+      ) : (
+        ""
+      )}
     </>
   );
 };
