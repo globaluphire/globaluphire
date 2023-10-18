@@ -5,10 +5,10 @@ import { setSearchFields } from "../../../features/search/searchSlice";
 import { addKeyword, addLocation, addFacility } from "../../../features/filter/filterSlice";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { supabase } from "../../../config/supabaseClient";
-import { config } from "../../../config/env"
+import { envConfig } from "../../../config/env"
 
 
-const apiKey = config.PUBLIC_JOB_PORTAL_GMAP_API_KEY;
+const apiKey = envConfig.JOB_PORTAL_GMAP_API_KEY;
 const mapApiJs = 'https://maps.googleapis.com/maps/api/js';
 
 // load google map api js

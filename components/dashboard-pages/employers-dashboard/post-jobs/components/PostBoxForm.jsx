@@ -15,7 +15,7 @@ const SunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
 });
 
-const apiKey = envConfig.PUBLIC_JOB_PORTAL_GMAP_API_KEY;
+const apiKey = envConfig.JOB_PORTAL_GMAP_API_KEY;
 const mapApiJs = 'https://maps.googleapis.com/maps/api/js';
 
 
