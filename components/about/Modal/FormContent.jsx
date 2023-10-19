@@ -63,7 +63,7 @@ function FormContent() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          recipient: "mounishsoni116@gmail.com",
+          recipient: "erin.hunnicutt@volarehcm.com",
           subject: "New Enrollment for Nursing Course",
           content,
         }),
