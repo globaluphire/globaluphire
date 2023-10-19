@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import ListingShowing from "../components/ListingShowing";
 import candidatesData from "../../../data/candidates";
@@ -71,33 +72,33 @@ const FilterTopBox = () => {
     const datePostedFilter = (item) =>
         datePost !== "all" && datePost !== ""
             ? item?.created_at
-                  ?.toLocaleLowerCase()
-                  .split(" ")
-                  .join("-")
-                  .includes(datePost)
+                ?.toLocaleLowerCase()
+                .split(" ")
+                .join("-")
+                .includes(datePost)
             : item;
 
     // experience filter
     const experienceFilter = (item) =>
         experiences?.length !== 0
             ? experiences?.includes(
-                  item?.experience?.split(" ").join("-").toLocaleLowerCase()
-              )
+                item?.experience?.split(" ").join("-").toLocaleLowerCase()
+            )
             : item;
 
     // qualification filter
     const qualificationFilter = (item) =>
         qualifications?.length !== 0
             ? qualifications?.includes(
-                  item?.qualification?.split(" ").join("-").toLocaleLowerCase()
-              )
+                item?.qualification?.split(" ").join("-").toLocaleLowerCase()
+            )
             : item;
 
     // sort filter
     const sortFilter = (a, b) =>
         sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
-    let content = candidatesData
+    const content = candidatesData
         ?.slice(perPage.start, perPage.end === 0 ? 10 : perPage.end)
         ?.filter(keywordFilter)
         ?.filter(locationFilter)
@@ -221,14 +222,14 @@ const FilterTopBox = () => {
                     sort !== "" ||
                     perPage?.start !== 0 ||
                     perPage?.end !== 0 ? (
-                        <button
-                            className="btn btn-danger text-nowrap me-2"
-                            style={{ minHeight: "45px", marginBottom: "15px" }}
-                            onClick={clearHandler}
-                        >
+                            <button
+                                className="btn btn-danger text-nowrap me-2"
+                                style={{ minHeight: "45px", marginBottom: "15px" }}
+                                onClick={clearHandler}
+                            >
                             Clear All
-                        </button>
-                    ) : undefined}
+                            </button>
+                        ) : undefined}
 
                     <select
                         onChange={sortHandler}

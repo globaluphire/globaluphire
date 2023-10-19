@@ -250,7 +250,8 @@ module.exports = [
         email: "info@neflix.com",
         isFeatured: "Featured",
         jobNumber: "5",
-        jobDetails: `Netflix is the world's leading streaming entertainment service with over 195 million paid memberships in over 190 countries enjoying TV series, documentaries and feature films across a wide variety...`,
+        jobDetails:
+            "Netflix is the world's leading streaming entertainment service with over 195 million paid memberships in over 190 countries enjoying TV series, documentaries and feature films across a wide variety...",
         destination: {
             min: 20,
             max: 30,
@@ -271,7 +272,7 @@ module.exports = [
         email: "info@opendoor.com",
         isFeatured: "",
         jobNumber: "12",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 30,
             max: 40,
@@ -292,7 +293,7 @@ module.exports = [
         email: "info@checkr.com",
         isFeatured: "",
         jobNumber: "11",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 40,
             max: 50,
@@ -313,7 +314,7 @@ module.exports = [
         email: "info@mural.com",
         isFeatured: "",
         jobNumber: "3",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 50,
             max: 60,
@@ -334,7 +335,7 @@ module.exports = [
         email: "info@astronomer.com",
         isFeatured: "",
         jobNumber: "8",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 70,
             max: 80,
@@ -355,7 +356,7 @@ module.exports = [
         email: "info@figma.com",
         isFeatured: "",
         jobNumber: "3",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 80,
             max: 90,
@@ -376,7 +377,7 @@ module.exports = [
         email: "info@mural.com",
         isFeatured: "",
         jobNumber: "9",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 90,
             max: 100,
@@ -397,7 +398,7 @@ module.exports = [
         email: "info@invision.com",
         isFeatured: "",
         jobNumber: "4",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 0,
             max: 10,
@@ -418,7 +419,7 @@ module.exports = [
         email: "info@upwork.com",
         isFeatured: "",
         jobNumber: "7",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 10,
             max: 20,
@@ -439,7 +440,7 @@ module.exports = [
         email: "info@segment.com",
         isFeatured: "",
         jobNumber: "6",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 20,
             max: 30,
@@ -460,7 +461,7 @@ module.exports = [
         email: "info@medium.com",
         isFeatured: "",
         jobNumber: "12",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 30,
             max: 40,
@@ -481,7 +482,7 @@ module.exports = [
         email: "info@udemy.com",
         isFeatured: "",
         jobNumber: "2",
-        jobDetails: ``,
+        jobDetails: "",
         destination: {
             min: 40,
             max: 50,

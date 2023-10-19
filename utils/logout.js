@@ -1,12 +1,11 @@
-import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { setUserData } from "../features/candidate/candidateSlice";
 const logout = (dispatch) => {
-    dispatch(setUserData({ name: "", id: "", email: "", role: "" }))
-    localStorage.clear()
+    dispatch(setUserData({ name: "", id: "", email: "", role: "" }));
+    localStorage.clear();
 
     // open toast
-    toast.success('Successfully Logout!', {
+    toast.success("Successfully Logout!", {
         position: "bottom-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -18,6 +17,6 @@ const logout = (dispatch) => {
     });
 
     // useRouter().push("/")
-}
+};
 
 export { logout };

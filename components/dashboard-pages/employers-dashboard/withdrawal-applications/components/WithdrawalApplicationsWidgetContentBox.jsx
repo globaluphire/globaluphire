@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
@@ -6,210 +7,244 @@ import { useEffect, useState, useMemo } from "react";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import { Typeahead } from "react-bootstrap-typeahead";
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import { Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 const addSearchFilters = {
     name: "",
-    jobTitle: ""
-  }
+    jobTitle: "",
+};
 
 const WithdrawalApplicationsWidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
-    const [applicationStatus, setApplicationStatus] = useState('');
-    const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
-    const [noteText, setNoteText] = useState('');
-    const [applicationId, setApplicationId] = useState('');
+    const [applicationStatus, setApplicationStatus] = useState("");
+    const [
+        applicationStatusReferenceOptions,
+        setApplicationStatusReferenceOptions,
+    ] = useState(null);
+    const [noteText, setNoteText] = useState("");
+    const [applicationId, setApplicationId] = useState("");
 
     // for search filters
-    const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
-    const { name, jobTitle, status } = useMemo(() => searchFilters, [searchFilters])
- 
+    const [searchFilters, setSearchFilters] = useState(
+        JSON.parse(JSON.stringify(addSearchFilters))
+    );
+    const { name, jobTitle, status } = useMemo(
+        () => searchFilters,
+        [searchFilters]
+    );
+
     // global states
-    const facility = useSelector(state => state.employer.facility.payload)
+    const facility = useSelector((state) => state.employer.facility.payload);
 
     const dateFormat = (val) => {
-      const date = new Date(val)
-      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
-    }
-  
+        const date = new Date(val);
+        return (
+            date.toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+            }) +
+            ", " +
+            date.getFullYear()
+        );
+    };
+
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        fetchedAllApplicantsView({name: "", jobTitle: ""})
+        fetchedAllApplicantsView({ name: "", jobTitle: "" });
     };
 
-    async function findApplicant () {
+    async function findApplicant() {
         // call reference to get applicantStatus options
-        let { data: refData, error: e } = await supabase
-            .from('reference')
+        const { data: refData, error: e } = await supabase
+            .from("reference")
             .select("*")
-            .eq('ref_nm',  'applicantStatus');
+            .eq("ref_nm", "applicantStatus");
 
         if (refData) {
-            setApplicationStatusReferenceOptions(refData)
+            setApplicationStatusReferenceOptions(refData);
         }
 
         let { data, error } = await supabase
-            .from('applicants_view')
+            .from("applicants_view")
             .select("*")
-            .eq('status', 'Withdraw')
-            .ilike('name', '%'+name+'%')
-            .ilike('job_title', '%'+jobTitle+'%')
-            .order('created_at',  { ascending: false });
+            .eq("status", "Withdraw")
+            .ilike("name", "%" + name + "%")
+            .ilike("job_title", "%" + jobTitle + "%")
+            .order("created_at", { ascending: false });
 
         if (facility) {
-            data = data.filter(i => i.facility_name == facility)
+            data = data.filter((i) => i.facility_name === facility);
         }
 
         if (data) {
-            data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-            setFetchedAllApplicantsData(data)
+            data.forEach(
+                (applicant) =>
+                    (applicant.created_at = dateFormat(applicant.created_at))
+            );
+            setFetchedAllApplicantsData(data);
         }
-    };
+    }
 
     const fetchedAllApplicantsView = async () => {
-      try{
-        // call reference to get applicantStatus options
-        let { data, error: e } = await supabase
-            .from('reference')
-            .select("*")
-            .eq('ref_nm',  'applicantStatus');
+        try {
+            // call reference to get applicantStatus options
+            const { data, error: e } = await supabase
+                .from("reference")
+                .select("*")
+                .eq("ref_nm", "applicantStatus");
 
-        if (data) {
-            setApplicationStatusReferenceOptions(data)
-        }
+            if (data) {
+                setApplicationStatusReferenceOptions(data);
+            }
 
-        let { data: allApplicantsView, error } = await supabase
-            .from('applicants_view')
-            .select("*")
-            .eq('status', 'Withdraw')
-            .order('created_at',  { ascending: false });
+            let { data: allApplicantsView, error } = await supabase
+                .from("applicants_view")
+                .select("*")
+                .eq("status", "Withdraw")
+                .order("created_at", { ascending: false });
 
-        if (facility) {
-            allApplicantsView = allApplicantsView.filter(i => i.facility_name == facility)
+            if (facility) {
+                allApplicantsView = allApplicantsView.filter(
+                    (i) => i.facility_name === facility
+                );
+            }
+
+            if (allApplicantsView) {
+                allApplicantsView.forEach(
+                    (i) => (i.created_at = dateFormat(i.created_at))
+                );
+                setFetchedAllApplicantsData(allApplicantsView);
+            }
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            console.warn(e);
         }
-        
-        if (allApplicantsView) {
-            allApplicantsView.forEach( i => i.created_at = dateFormat(i.created_at))
-            setFetchedAllApplicantsData(allApplicantsView)
-        }
-      } catch(e) {
-        toast.error('System is unavailable.  Please try again later or contact tech support!', {
-          position: "bottom-right",
-          autoClose: false,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
-        console.warn(e)
-      }
     };
-  
-    useEffect(() => {
-      fetchedAllApplicantsView({name, jobTitle});
-      if (facility) {
-        localStorage.setItem("facility", facility);
-      } else {
-        localStorage.setItem("facility", '');
-      }
-    }, [facility]);
 
+    useEffect(() => {
+        fetchedAllApplicantsView({ name, jobTitle });
+        if (facility) {
+            localStorage.setItem("facility", facility);
+        } else {
+            localStorage.setItem("facility", "");
+        }
+    }, [facility]);
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
-        setNoteText('');
-        setApplicationId('');
+        setNoteText("");
+        setApplicationId("");
 
         const { data, error } = await supabase
-              .from('applicants_view')
-              .select('*')
-              .eq('application_id', applicationId);
+            .from("applicants_view")
+            .select("*")
+            .eq("application_id", applicationId);
 
         if (data) {
-            setNoteText (data[0].notes);
-            setApplicationId(data[0].application_id)
+            setNoteText(data[0].notes);
+            setApplicationId(data[0].application_id);
         }
-    }
+    };
 
     const ViewCV = async (applicationId) => {
         const { data, error } = await supabase
-              .from('applicants_view')
-              .select('*')
-              .eq('application_id', applicationId);
+            .from("applicants_view")
+            .select("*")
+            .eq("application_id", applicationId);
 
         if (data) {
-            window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
+            window.open(
+                data[0].doc_dwnld_url.slice(14, -2),
+                "_blank",
+                "noreferrer"
+            );
         }
         if (error) {
-            toast.error('Error while retrieving CV.  Please try again later or contact tech support!', {
-                position: "bottom-right",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error(
+                "Error while retrieving CV.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
         }
-    }
+    };
 
     const DownloadHandler = async (applicant) => {
         const { data, error } = await supabase
-            .from('applicants_view')
-            .select('*')
-            .eq('application_id', applicant.application_id);
+            .from("applicants_view")
+            .select("*")
+            .eq("application_id", applicant.application_id);
 
         if (data) {
-            let fileName = data[0].doc_dwnld_url.slice(14, -2);
+            const fileName = data[0].doc_dwnld_url.slice(14, -2);
             fetch(fileName, {
-                method: 'GET',
+                method: "GET",
                 headers: {
-                  'Content-Type': 'application/pdf',
+                    "Content-Type": "application/pdf",
                 },
-              })
-                .then(response => response.blob())
-                .then(blob => {
-                  const url = window.URL.createObjectURL(new Blob([blob]));
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = fileName;
-                  document.body.appendChild(link);
-                  link.click();
-                  link.parentNode.removeChild(link);
+            })
+                .then((response) => response.blob())
+                .then((blob) => {
+                    const url = window.URL.createObjectURL(new Blob([blob]));
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.parentNode.removeChild(link);
                 });
-            //window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
+            // window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
         }
         if (error) {
-            toast.error('Error while retrieving CV.  Please try again later or contact tech support!', {
-                position: "bottom-right",
-                autoClose: true,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error(
+                "Error while retrieving CV.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: true,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
         }
-    }
+    };
 
     const addNotes = async () => {
         const { data, error } = await supabase
-            .from('applications')
-            .update({ 'notes': noteText})
-            .eq('application_id', applicationId)
+            .from("applications")
+            .update({ notes: noteText })
+            .eq("application_id", applicationId);
 
         // open toast
-        toast.success('Applicant notes has been saved!', {
+        toast.success("Applicant notes has been saved!", {
             position: "bottom-right",
             autoClose: 4000,
             hideProgressBar: false,
@@ -224,90 +259,126 @@ const WithdrawalApplicationsWidgetContentBox = () => {
         // fetchedAllApplicantsView();
 
         // close popup
-        document.getElementById('notesCloseButton').click();
+        document.getElementById("notesCloseButton").click();
 
         // reset NoteText
-        setNoteText('');
-        setApplicationId('');
-        
-    }
+        setNoteText("");
+        setApplicationId("");
+    };
 
     return (
         <div className="tabs-box">
-            <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
+            <div
+                className="widget-title"
+                style={{ fontSize: "1.5rem", fontWeight: "500" }}
+            >
                 <b>Withdrawal Applicants!</b>
             </div>
-            { applicationStatusReferenceOptions != null ?
+            {applicationStatusReferenceOptions != null ? (
                 <Form>
-                    <Form.Label className="optional" style={{ marginLeft: '32px', letterSpacing: '2px', fontSize: '12px' }}>SEARCH BY</Form.Label>
+                    <Form.Label
+                        className="optional"
+                        style={{
+                            marginLeft: "32px",
+                            letterSpacing: "2px",
+                            fontSize: "12px",
+                        }}
+                    >
+                        SEARCH BY
+                    </Form.Label>
                     <Row className="mx-1" md={4}>
                         <Col>
                             <Form.Group className="mb-3 mx-3">
-                                <Form.Label className="chosen-single form-input chosen-container">Applicant Name</Form.Label>
+                                <Form.Label className="chosen-single form-input chosen-container">
+                                    Applicant Name
+                                </Form.Label>
                                 <Form.Control
                                     className="chosen-single form-input chosen-container"
                                     type="text"
                                     value={name}
                                     onChange={(e) => {
-                                        setSearchFilters((previousState) => ({ 
+                                        setSearchFilters((previousState) => ({
                                             ...previousState,
-                                            name: e.target.value
-                                        }))
+                                            name: e.target.value,
+                                        }));
                                     }}
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter") {
-                                            findApplicant(searchFilters)
+                                            findApplicant(searchFilters);
                                         }
                                     }}
-                                    style={{ maxWidth: '300px' }}/>
+                                    style={{ maxWidth: "300px" }}
+                                />
                             </Form.Group>
                         </Col>
                         <Col>
                             <Form.Group className="mb-3 mx-3">
-                                <Form.Label className="chosen-single form-input chosen-container">Job Title</Form.Label>
+                                <Form.Label className="chosen-single form-input chosen-container">
+                                    Job Title
+                                </Form.Label>
                                 <Form.Control
                                     className="chosen-single form-input chosen-container"
                                     type="text"
                                     value={jobTitle}
                                     onChange={(e) => {
-                                        setSearchFilters((previousState) => ({ 
+                                        setSearchFilters((previousState) => ({
                                             ...previousState,
-                                            jobTitle: e.target.value
-                                        }))
+                                            jobTitle: e.target.value,
+                                        }));
                                     }}
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter") {
-                                            findApplicant(searchFilters)
+                                            findApplicant(searchFilters);
                                         }
                                     }}
-                                    style={{ maxWidth: '300px' }}/>
+                                    style={{ maxWidth: "300px" }}
+                                />
                             </Form.Group>
                         </Col>
                     </Row>
                     <Row className="mx-3">
                         <Col>
                             <Form.Group className="chosen-single form-input chosen-container mb-3">
-                                <Button variant="primary"
+                                <Button
+                                    variant="primary"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         findApplicant(searchFilters);
                                     }}
-                                    className="btn btn-submit btn-sm text-nowrap m-1">
+                                    className="btn btn-submit btn-sm text-nowrap m-1"
+                                >
                                     Filter
                                 </Button>
-                                <Button variant="primary" onClick={clearAll}
+                                <Button
+                                    variant="primary"
+                                    onClick={clearAll}
                                     className="btn btn-secondary btn-sm text-nowrap mx-2"
-                                    style= {{ minHeight: '40px', padding: '0 20px' }}>
+                                    style={{
+                                        minHeight: "40px",
+                                        padding: "0 20px",
+                                    }}
+                                >
                                     Clear
                                 </Button>
                             </Form.Group>
                         </Col>
                     </Row>
-                </Form> : ''
-            }
+                </Form>
+            ) : (
+                ""
+            )}
             {/* End filter top bar */}
 
-            <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({fetchedAllApplicants.length}) Withdraw Applicants!</div>
+            <div
+                className="optional"
+                style={{
+                    textAlign: "right",
+                    marginRight: "50px",
+                    marginBottom: "10px",
+                }}
+            >
+                Showing ({fetchedAllApplicants.length}) Withdraw Applicants!
+            </div>
 
             {/* Start table widget content */}
             <div className="widget-content">
@@ -315,98 +386,143 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                     <Table className="default-table manage-job-table">
                         <thead>
                             <tr>
-                            <th>Name</th>
-                            <th>Applied On</th>
-                            <th>Job Title</th>
-                            <th>Facility</th>
-                            <th>Status</th>
-                            <th>Notes</th>
-                            <th>Actions</th>
+                                <th>Name</th>
+                                <th>Applied On</th>
+                                <th>Job Title</th>
+                                <th>Facility</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
-                        {fetchedAllApplicants.length == 0 ? <tbody style={{ fontSize: '1.5rem', fontWeight: '500' }}><tr><td><b>No results found!</b></td></tr></tbody>: 
+                        {fetchedAllApplicants.length === 0 ? (
+                            <tbody
+                                style={{
+                                    fontSize: "1.5rem",
+                                    fontWeight: "500",
+                                }}
+                            >
+                                <tr>
+                                    <td>
+                                        <b>No results found!</b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        ) : (
                             <tbody>
-                                {Array.from(fetchedAllApplicants).map((applicant) => (
-                                    <tr key={applicant.application_id}>
-                                        <td>
-                                        {/* <!-- Job Block --> */}
-                                        <div className="job-block">
-                                            <div>
-                                                {/* <span className="company-logo">
+                                {Array.from(fetchedAllApplicants).map(
+                                    (applicant) => (
+                                        <tr key={applicant.application_id}>
+                                            <td>
+                                                {/* <!-- Job Block --> */}
+                                                <div className="job-block">
+                                                    <div>
+                                                        {/* <span className="company-logo">
                                                 <img src={item.logo} alt="logo" />
                                                 </span> */}
-                                                <h4>
-                                                {/* <Link href={`/employers-dashboard/edit-job/${applicant.user_id}`}>
+                                                        <h4>
+                                                            {/* <Link href={`/employers-dashboard/edit-job/${applicant.user_id}`}>
                                                     {applicant.name}
                                                 </Link> */}
-                                                {applicant.name}
-                                                </h4>
-                                            </div>
-                                        </div>
-                                        </td>
-                                        <td>
-                                        {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
-                                            <span>{applicant.created_at}</span>
-                                        </td>
-                                        <td>
-                                            {applicant.job_title}
-                                        </td>
-                                        <td>
-                                            {applicant.facility_name}
-                                        </td>
-                                        <td>
-                                            <select className="chosen-single form-select" 
-                                                value={applicant.status}
-                                                disabled>
-                                                {applicationStatusReferenceOptions.map((option) => (
-                                                    <option value={option.ref_dspl}>{option.ref_dspl}</option>
-                                                ))}
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <ul className="option-list">
-                                            {applicant.notes ?
-                                                <li>
-                                                    <button data-text="Add, View, Edit, Delete Notes">
-                                                    <a
-                                                        href="#"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#addNoteModal"
-                                                        onClick = { () => {setNoteData(applicant.application_id) }}
-                                                    >
-                                                        <span className="la la-comment-dots"></span>
-                                                    </a>
-                                                    </button>
-                                                </li> : 
-                                                <li>
-                                                    <button data-text="Add, View, Edit, Delete Notes">
-                                                    <a
-                                                        href="#"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#addNoteModal"
-                                                        onClick = { () => {setNoteData(applicant.application_id) }}
-                                                    >
-                                                        <span className="la la-comment-alt"></span>
-                                                    </a>
-                                                    </button>
-                                                </li>
-                                            }
-                                            </ul>
-                                        </td>
-                                        <td>
-                                            <div className="option-box">
+                                                            {applicant.name}
+                                                        </h4>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
+                                                <span>
+                                                    {applicant.created_at}
+                                                </span>
+                                            </td>
+                                            <td>{applicant.job_title}</td>
+                                            <td>{applicant.facility_name}</td>
+                                            <td>
+                                                <select
+                                                    className="chosen-single form-select"
+                                                    value={applicant.status}
+                                                    disabled
+                                                >
+                                                    {applicationStatusReferenceOptions.map(
+                                                        (option) => (
+                                                            <option
+                                                                value={
+                                                                    option.ref_dspl
+                                                                }
+                                                            >
+                                                                {
+                                                                    option.ref_dspl
+                                                                }
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </td>
+                                            <td>
                                                 <ul className="option-list">
-                                                <li onClick = { () => { ViewCV(applicant.application_id) }}>
-                                                    <button data-text="View CV">
-                                                        <span className="la la-file-download"></span>
-                                                    </button>
-                                                </li>
-                                                <li onClick={() => DownloadHandler(applicant)}>
-                                                    <button data-text="Download CV">
-                                                        <span className="la la-download"></span>
-                                                    </button>
-                                                </li>
-                                                {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
+                                                    {applicant.notes ? (
+                                                        <li>
+                                                            <button data-text="Add, View, Edit, Delete Notes">
+                                                                <a
+                                                                    href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#addNoteModal"
+                                                                    onClick={() => {
+                                                                        setNoteData(
+                                                                            applicant.application_id
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <span className="la la-comment-dots"></span>
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    ) : (
+                                                        <li>
+                                                            <button data-text="Add, View, Edit, Delete Notes">
+                                                                <a
+                                                                    href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#addNoteModal"
+                                                                    onClick={() => {
+                                                                        setNoteData(
+                                                                            applicant.application_id
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <span className="la la-comment-alt"></span>
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    )}
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                <div className="option-box">
+                                                    <ul className="option-list">
+                                                        <li
+                                                            onClick={() => {
+                                                                ViewCV(
+                                                                    applicant.application_id
+                                                                );
+                                                            }}
+                                                        >
+                                                            <button data-text="View CV">
+                                                                <span className="la la-file-download"></span>
+                                                            </button>
+                                                        </li>
+                                                        <li
+                                                            onClick={() =>
+                                                                DownloadHandler(
+                                                                    applicant
+                                                                )
+                                                            }
+                                                        >
+                                                            <button data-text="Download CV">
+                                                                <span className="la la-download"></span>
+                                                            </button>
+                                                        </li>
+                                                        {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
                                                     <button data-text="Qualified">
                                                     <span className="la la-check"></span>
                                                     </button>
@@ -421,13 +537,14 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                                     <span className="la la-undo-alt"></span>
                                                     </button>
                                                 </li> */}
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                )}
                             </tbody>
-                        }
+                        )}
                     </Table>
 
                     {/* Add Notes Modal Popup */}
@@ -438,44 +555,50 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                         aria-hidden="true"
                     >
                         <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                        <div className="apply-modal-content modal-content">
-                            <div className="text-center">
-                            <h3 className="title">Add Notes</h3>
-                            <button
-                                type="button"
-                                id="notesCloseButton"
-                                className="closed-modal"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                            ></button>
-                            </div>
-                            {/* End modal-header */}
-                            <form>
-                                <textarea 
-                                    value={noteText}
-                                    id="notes"
-                                    cols="45"
-                                    rows="10"
-                                    onChange={(e) => {
-                                        setNoteText(e.target.value)
-                                    }}
-                                    style={{resize: 'vertical', overflowY: 'scroll', border: '1px solid #ccc', padding: '10px'}}></textarea>
-                                <br/>
-                                <div className="form-group text-center">
+                            <div className="apply-modal-content modal-content">
+                                <div className="text-center">
+                                    <h3 className="title">Add Notes</h3>
                                     <button
-                                        className="theme-btn btn-style-one"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            addNotes();
-                                        }}
-                                    >
-                                        Save
-                                    </button>
+                                        type="button"
+                                        id="notesCloseButton"
+                                        className="closed-modal"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
                                 </div>
-                            </form>
-                            {/* End PrivateMessageBox */}
-                        </div>
-                        {/* End .send-private-message-wrapper */}
+                                {/* End modal-header */}
+                                <form>
+                                    <textarea
+                                        value={noteText}
+                                        id="notes"
+                                        cols="45"
+                                        rows="10"
+                                        onChange={(e) => {
+                                            setNoteText(e.target.value);
+                                        }}
+                                        style={{
+                                            resize: "vertical",
+                                            overflowY: "scroll",
+                                            border: "1px solid #ccc",
+                                            padding: "10px",
+                                        }}
+                                    ></textarea>
+                                    <br />
+                                    <div className="form-group text-center">
+                                        <button
+                                            className="theme-btn btn-style-one"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                addNotes();
+                                            }}
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
+                                </form>
+                                {/* End PrivateMessageBox */}
+                            </div>
+                            {/* End .send-private-message-wrapper */}
                         </div>
                     </div>
                 </div>

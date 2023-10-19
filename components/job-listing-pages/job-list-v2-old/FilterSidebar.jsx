@@ -1,16 +1,7 @@
-import CallToActions from "../components/CallToActions";
+/* eslint-disable no-unused-vars */
 import DatePosted from "../components/DatePosted";
-import ExperienceLevel from "../components/ExperienceLevel";
 import JobType from "../components/JobType";
-import SalaryRangeSlider from "../components/SalaryRangeSlider";
-import Tag from "../components/Tag";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    addDatePosted,
-    addExperienceSelect,
-    addJobTypeSelect,
-    addSalary,
-} from "../../../features/filter/filterSlice";
 
 const FilterSidebar = () => {
     const { jobList } = useSelector((state) => state.filter);

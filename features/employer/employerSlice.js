@@ -24,7 +24,7 @@ const initialState = {
         },
     ],
     companySize: [],
-    facility: '',
+    facility: "",
 };
 
 export const employerSlice = createSlice({
@@ -32,10 +32,10 @@ export const employerSlice = createSlice({
     initialState,
     reducers: {
         setFacility: (state, payload) => {
-            state.facility = payload
+            state.facility = payload;
         },
     },
 });
 
-export const {setFacility} = employerSlice.actions;
+export const { setFacility } = employerSlice.actions;
 export default employerSlice.reducer;

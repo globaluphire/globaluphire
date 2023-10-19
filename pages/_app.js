@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Aos from "aos";
 import "aos/dist/aos.css";
 import "../styles/index.scss";
@@ -9,56 +10,56 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { getDecryptedItem } from "../utils/encryptedStorage";
 import { setUserData } from "../features/candidate/candidateSlice";
-import 'react-tooltip/dist/react-tooltip.css'
+import "react-tooltip/dist/react-tooltip.css";
 import ErrorBoundary from "../components/error-boundry/errorBoundry";
 
 if (typeof window !== "undefined") {
-  require("bootstrap/dist/js/bootstrap");
+    require("bootstrap/dist/js/bootstrap");
 }
 
 function MyApp({ Component, pageProps }) {
-  // aos animation activation
+    // aos animation activation
 
-  useEffect(() => {
-    Aos.init({
-      duration: 1400,
-      once: true,
-    });
-    try {
-      const user = JSON.parse(getDecryptedItem('user'))
-      if(user.id){
-        store.dispatch(setUserData(user))
-      }
-    } catch(e) {
-      console.warn(e)
-    }
-  }, []);
+    useEffect(() => {
+        Aos.init({
+            duration: 1400,
+            once: true,
+        });
+        try {
+            const user = JSON.parse(getDecryptedItem("user"));
+            if (user.id) {
+                store.dispatch(setUserData(user));
+            }
+        } catch (e) {
+            console.warn(e);
+        }
+    }, []);
 
-  return (
-    <Provider store={store}>
-      <div className="page-wrapper">
-        <ErrorBoundary>
-          <Component {...pageProps} />
-        </ErrorBoundary>
+    return (
+        <Provider store={store}>
+            <div className="page-wrapper">
+                <ErrorBoundary>
+                    <Component {...pageProps} />
+                </ErrorBoundary>
 
-        {/* Toastify */}
-        <ToastContainer
-          position="bottom-right"
-          autoClose={500}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
-        {/* <!-- Scroll To Top --> */}
-        <ScrollToTop />
-      </div>
-    </Provider>
-  );
+                {/* Toastify */}
+                <ToastContainer
+                    position="bottom-right"
+                    autoClose={500}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="colored"
+                />
+                {/* <!-- Scroll To Top --> */}
+                <ScrollToTop />
+            </div>
+        </Provider>
+    );
 }
 
 export default MyApp;

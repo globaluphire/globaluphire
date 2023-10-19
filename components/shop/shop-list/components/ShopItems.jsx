@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import Link from "next/link";
 import shopItems from "../../../../data/shopItems";
 import { useDispatch } from "react-redux";

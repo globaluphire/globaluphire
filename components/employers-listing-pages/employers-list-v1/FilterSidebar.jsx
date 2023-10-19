@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import CallToActions from "../components/CallToActions";
 import Categories from "../components/Categories";
 import DestinationRangeSlider from "../components/DestinationRangeSlider";

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Categories from "../components/Categories";
 import DestinationRangeSlider from "../components/DestinationRangeSlider";
 import CandidatesGender from "../components/CandidatesGender";

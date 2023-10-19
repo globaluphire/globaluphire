@@ -1,16 +1,17 @@
+/* eslint-disable no-unused-vars */
 import FormInfoBox from "./FormInfoBox";
 import LogoUpload from "./LogoUpload";
 
 const index = () => {
-  return (
-    <div className="widget-content">
-      <LogoUpload />
-      {/* End logo and cover photo components */}
+    return (
+        <div className="widget-content">
+            <LogoUpload />
+            {/* End logo and cover photo components */}
 
-      <FormInfoBox />
-      {/* compnay info box */}
-    </div>
-  );
+            <FormInfoBox />
+            {/* compnay info box */}
+        </div>
+    );
 };
 
 export default index;

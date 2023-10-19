@@ -51,7 +51,7 @@ export const filterSlice = createSlice({
             state.jobList.category = payload;
         },
         addJobType: (state, { payload }) => {
-            state.jobList.jobTypeSelect = payload
+            state.jobList.jobTypeSelect = payload;
         },
         clearJobType: (state) => {
             state.jobList.jobTypeSelect = "";

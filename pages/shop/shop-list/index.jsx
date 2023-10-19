@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import dynamic from "next/dynamic";
 import Seo from "../../..//components/common/Seo";
 import ShopList from "../../../components/shop/shop-list";

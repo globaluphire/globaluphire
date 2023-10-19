@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-unused-vars */
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
@@ -7,41 +9,50 @@ import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import Applicants from "./Applicants";
 import { Typeahead } from "react-bootstrap-typeahead";
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import { Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import "react-chat-elements/dist/main.css"
+import "react-chat-elements/dist/main.css";
 import CommunicationModal from "./communicationModal";
 
 const addSearchFilters = {
     name: "",
     jobTitle: "",
-    status: ""
-  }
+    status: "",
+};
 
 const WidgetContentBox = () => {
     const [fetchedAllApplicants, setFetchedAllApplicantsData] = useState({});
-   // const [searchField, setSearchField] = useState('');
-    const [applicationStatus, setApplicationStatus] = useState('');
-    const [applicationStatusReferenceOptions, setApplicationStatusReferenceOptions] = useState(null);
-    const [noteText, setNoteText] = useState('');
-    const [applicationId, setApplicationId] = useState('');
+    // const [searchField, setSearchField] = useState('');
+    const [applicationStatus, setApplicationStatus] = useState("");
+    const [
+        applicationStatusReferenceOptions,
+        setApplicationStatusReferenceOptions,
+    ] = useState(null);
+    const [noteText, setNoteText] = useState("");
+    const [applicationId, setApplicationId] = useState("");
 
     // for search filters
-    const [searchFilters, setSearchFilters] = useState(JSON.parse(JSON.stringify(addSearchFilters)));
-    const { name, jobTitle, status } = useMemo(() => searchFilters, [searchFilters])
+    const [searchFilters, setSearchFilters] = useState(
+        JSON.parse(JSON.stringify(addSearchFilters))
+    );
+    const { name, jobTitle, status } = useMemo(
+        () => searchFilters,
+        [searchFilters]
+    );
 
     // global states
-    const facility = useSelector(state => state.employer.facility.payload)
+    const facility = useSelector((state) => state.employer.facility.payload);
 
     // selected applicant for sms/mail modal
-    const [selectedApplicant, setSelectedApplicant] = useState()
+    const [selectedApplicant, setSelectedApplicant] = useState();
 
-    const [isCommunicationModalOpen, setIsCommunicationModalOpen] = useState(false);
-    
+    const [isCommunicationModalOpen, setIsCommunicationModalOpen] =
+        useState(false);
+
     // async function getOrgId() {
     //   const { data, error } = await supabase
     //     .from("org")
@@ -49,259 +60,302 @@ const WidgetContentBox = () => {
     //   return data[0].org_id
     // }
 
-    async function updateApplicationStatus (applicationStatus, selectedApplicant) {
+    async function updateApplicationStatus(
+        applicationStatus,
+        selectedApplicant
+    ) {
         // save updated applicant status
-        if (applicationStatus == "Hired") {
+        if (applicationStatus === "Hired") {
             // generate emp id
 
             const today = new Date();
-            const month = today.getMonth()+1;
+            const month = today.getMonth() + 1;
             const year = today.getFullYear();
 
-            let { data, error } = await supabase
-                .from('sys_key')
+            const { data, error } = await supabase
+                .from("sys_key")
                 .select("sys_seq_nbr")
-                .eq('tbl_nm', 'applications')
+                .eq("tbl_nm", "applications");
 
             const seq_nbr = data[0].sys_seq_nbr + 1;
 
-            const empID = selectedApplicant.facility_id + "" + month + "" + year.toString().substring(2) + "" + seq_nbr;
+            const empID =
+                selectedApplicant.facility_id +
+                "" +
+                month +
+                "" +
+                year.toString().substring(2) +
+                "" +
+                seq_nbr;
             await supabase
-                .from('applications')
+                .from("applications")
                 .update({
                     status: applicationStatus,
                     hired_date: new Date(),
                     emp_id: empID,
                 })
-                .eq('application_id', selectedApplicant.application_id)
+                .eq("application_id", selectedApplicant.application_id);
 
-            await supabase
-                .rpc('increment_sys_key', { x: 1, tablename: 'applications' })
-
+            await supabase.rpc("increment_sys_key", {
+                x: 1,
+                tablename: "applications",
+            });
         } else {
             await supabase
-                .from('applications')
+                .from("applications")
                 .update({ status: applicationStatus })
-                .eq('application_id', selectedApplicant.application_id)
+                .eq("application_id", selectedApplicant.application_id);
         }
-        await supabase
-            .rpc('increment', { x: 1, row_id: selectedApplicant.application_id })
+        await supabase.rpc("increment", {
+            x: 1,
+            row_id: selectedApplicant.application_id,
+        });
 
         // this will prevent the page to keep filtered if have any search filters set
         let { data, error } = await supabase
-            .from('applicants_view')
+            .from("applicants_view")
             .select("*")
-            .neq('status', 'Rejection')
-            .neq('status', 'Hired')
-            .neq('status', 'Withdraw')
-            .ilike('name', '%'+name+'%')
-            .ilike('job_title', '%'+jobTitle+'%')
-            .ilike('status', '%'+status+'%')
-            .order('created_at',  { ascending: false });
+            .neq("status", "Rejection")
+            .neq("status", "Hired")
+            .neq("status", "Withdraw")
+            .ilike("name", "%" + name + "%")
+            .ilike("job_title", "%" + jobTitle + "%")
+            .ilike("status", "%" + status + "%")
+            .order("created_at", { ascending: false });
 
         if (facility) {
-            data = data.filter(i => i.facility_name == facility)
+            data = data.filter((i) => i.facility_name === facility);
         }
 
-        if(data) {
-            data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-            setFetchedAllApplicantsData(data)
+        if (data) {
+            data.forEach(
+                (applicant) =>
+                    (applicant.created_at = dateFormat(applicant.created_at))
+            );
+            setFetchedAllApplicantsData(data);
         }
     }
 
     const dateFormat = (val) => {
-      const date = new Date(val)
-      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric'}) + ', ' + date.getFullYear()
-    }
+        const date = new Date(val);
+        return (
+            date.toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+            }) +
+            ", " +
+            date.getFullYear()
+        );
+    };
 
     // clear all filters
     const clearAll = () => {
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        fetchedAllApplicantsView({name: "", jobTitle: "", status: ""})
+        fetchedAllApplicantsView({ name: "", jobTitle: "", status: "" });
     };
 
-    async function findApplicant ({ name, jobTitle, status }) {
+    async function findApplicant({ name, jobTitle, status }) {
         let { data, error } = await supabase
-            .from('applicants_view')
+            .from("applicants_view")
             .select("*")
-            .neq('status', 'Rejection')
-            .neq('status', 'Hired')
-            .neq('status', 'Withdraw')
-            .ilike('name', '%'+name+'%')
-            .ilike('job_title', '%'+jobTitle+'%')
-            .ilike('status', '%'+status+'%')
-            .order('created_at',  { ascending: false });
-
-        if(data) {
-            data.forEach( applicant => applicant.created_at = dateFormat(applicant.created_at))
-
-            if (facility) {
-                data = data.filter(i => i.facility_name == facility)
-            }
-
-            setFetchedAllApplicantsData(data)
-        }
-    };
-
-    async function fetchedAllApplicantsView ({ name, jobTitle, status }) {
-      try{
-        const localSearchFilters = localStorage.getItem("status")
-
-        // call reference to get applicantStatus options
-        let { data, error: e } = await supabase
-            .from('reference')
-            .select("*")
-            .eq('ref_nm',  'applicantStatus');
+            .neq("status", "Rejection")
+            .neq("status", "Hired")
+            .neq("status", "Withdraw")
+            .ilike("name", "%" + name + "%")
+            .ilike("job_title", "%" + jobTitle + "%")
+            .ilike("status", "%" + status + "%")
+            .order("created_at", { ascending: false });
 
         if (data) {
-            setApplicationStatusReferenceOptions(data)
-        }
+            data.forEach(
+                (applicant) =>
+                    (applicant.created_at = dateFormat(applicant.created_at))
+            );
 
-        let { data: allApplicantsView, error } = await supabase
-            .from('applicants_view')
-            .select("*")
-            .neq('status', 'Rejection')
-            .neq('status', 'Hired')
-            .neq('status', 'Withdraw')
-            .ilike('name', '%'+name+'%')
-            .ilike('job_title', '%'+jobTitle+'%')
-            .ilike('status', '%'+status+'%')
-            .order('created_at',  { ascending: false });
-    
-        if (localSearchFilters) {
-            setSearchFilters((previousState) => ({ 
-                ...previousState,
-                status: localSearchFilters
-            }))
-            allApplicantsView = allApplicantsView.filter(i => i.status == localSearchFilters)
-            localStorage.removeItem("status")
-        }
+            if (facility) {
+                data = data.filter((i) => i.facility_name === facility);
+            }
 
-        if (facility) {
-            allApplicantsView = allApplicantsView.filter(i => i.facility_name == facility)
+            setFetchedAllApplicantsData(data);
         }
+    }
 
-        if (allApplicantsView) {
-            allApplicantsView.forEach( i => i.created_at = dateFormat(i.created_at))
-            setFetchedAllApplicantsData(allApplicantsView)
+    async function fetchedAllApplicantsView({ name, jobTitle, status }) {
+        try {
+            const localSearchFilters = localStorage.getItem("status");
+
+            // call reference to get applicantStatus options
+            const { data, error: e } = await supabase
+                .from("reference")
+                .select("*")
+                .eq("ref_nm", "applicantStatus");
+
+            if (data) {
+                setApplicationStatusReferenceOptions(data);
+            }
+
+            let { data: allApplicantsView, error } = await supabase
+                .from("applicants_view")
+                .select("*")
+                .neq("status", "Rejection")
+                .neq("status", "Hired")
+                .neq("status", "Withdraw")
+                .ilike("name", "%" + name + "%")
+                .ilike("job_title", "%" + jobTitle + "%")
+                .ilike("status", "%" + status + "%")
+                .order("created_at", { ascending: false });
+
+            if (localSearchFilters) {
+                setSearchFilters((previousState) => ({
+                    ...previousState,
+                    status: localSearchFilters,
+                }));
+                allApplicantsView = allApplicantsView.filter(
+                    (i) => i.status === localSearchFilters
+                );
+                localStorage.removeItem("status");
+            }
+
+            if (facility) {
+                allApplicantsView = allApplicantsView.filter(
+                    (i) => i.facility_name === facility
+                );
+            }
+
+            if (allApplicantsView) {
+                allApplicantsView.forEach(
+                    (i) => (i.created_at = dateFormat(i.created_at))
+                );
+                setFetchedAllApplicantsData(allApplicantsView);
+            }
+        } catch (e) {
+            toast.error(
+                "System is unavailable.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            console.warn(e);
         }
-      } catch(e) {
-        toast.error('System is unavailable.  Please try again later or contact tech support!', {
-          position: "bottom-right",
-          autoClose: false,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-        });
-        console.warn(e)
-      }
-    };
-  
+    }
+
     useEffect(() => {
-      fetchedAllApplicantsView(searchFilters)
-      if (facility) {
-        localStorage.setItem("facility", facility);
-      } else {
-        localStorage.setItem("facility", '');
-      }
+        fetchedAllApplicantsView(searchFilters);
+        if (facility) {
+            localStorage.setItem("facility", facility);
+        } else {
+            localStorage.setItem("facility", "");
+        }
     }, [facility]);
-
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
-        setNoteText('');
-        setApplicationId('');
+        setNoteText("");
+        setApplicationId("");
 
         const { data, error } = await supabase
-              .from('applicants_view')
-              .select('*')
-              .eq('application_id', applicationId);
+            .from("applicants_view")
+            .select("*")
+            .eq("application_id", applicationId);
 
         if (data) {
-            setNoteText (data[0].notes);
-            setApplicationId(data[0].application_id)
+            setNoteText(data[0].notes);
+            setApplicationId(data[0].application_id);
         }
-    }
+    };
 
     const ViewCV = async (applicationId) => {
         const { data, error } = await supabase
-              .from('applicants_view')
-              .select('*')
-              .eq('application_id', applicationId);
+            .from("applicants_view")
+            .select("*")
+            .eq("application_id", applicationId);
 
         if (data) {
-            window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
+            window.open(
+                data[0].doc_dwnld_url.slice(14, -2),
+                "_blank",
+                "noreferrer"
+            );
         }
         if (error) {
-            toast.error('Error while retrieving CV.  Please try again later or contact tech support!', {
-                position: "bottom-right",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error(
+                "Error while retrieving CV.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
         }
-    }
+    };
 
     const DownloadHandler = async (applicant) => {
         const { data, error } = await supabase
-            .from('applicants_view')
-            .select('*')
-            .eq('application_id', applicant.application_id);
+            .from("applicants_view")
+            .select("*")
+            .eq("application_id", applicant.application_id);
 
         if (data) {
-            let fileName = data[0].doc_dwnld_url.slice(14, -2);
+            const fileName = data[0].doc_dwnld_url.slice(14, -2);
             fetch(fileName, {
-                method: 'GET',
+                method: "GET",
                 headers: {
-                  'Content-Type': 'application/pdf',
+                    "Content-Type": "application/pdf",
                 },
-              })
-                .then(response => response.blob())
-                .then(blob => {
-                  const url = window.URL.createObjectURL(new Blob([blob]));
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = fileName;
-                  document.body.appendChild(link);
-                  link.click();
-                  link.parentNode.removeChild(link);
+            })
+                .then((response) => response.blob())
+                .then((blob) => {
+                    const url = window.URL.createObjectURL(new Blob([blob]));
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.parentNode.removeChild(link);
                 });
-            //window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
+            // window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
         }
         if (error) {
-            toast.error('Error while retrieving CV.  Please try again later or contact tech support!', {
-                position: "bottom-right",
-                autoClose: true,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
+            toast.error(
+                "Error while retrieving CV.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: true,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
         }
-    }
+    };
 
     const addNotes = async () => {
         await supabase
-            .from('applications')
+            .from("applications")
             .update({
-                'notes': noteText
+                notes: noteText,
             })
-            .eq('application_id', applicationId)
+            .eq("application_id", applicationId);
 
-        await supabase
-            .rpc('increment', { x: 1, row_id: applicationId })
+        await supabase.rpc("increment", { x: 1, row_id: applicationId });
 
         // open toast
-        toast.success('Applicant notes has been saved!', {
+        toast.success("Applicant notes has been saved!", {
             position: "bottom-right",
             autoClose: 4000,
             hideProgressBar: false,
@@ -316,112 +370,136 @@ const WidgetContentBox = () => {
         // fetchedAllApplicantsView();
 
         // close popup
-        document.getElementById('notesCloseButton').click();
+        document.getElementById("notesCloseButton").click();
 
         // reset NoteText
-        setNoteText('');
-        setApplicationId('');
-        
-    }
+        setNoteText("");
+        setApplicationId("");
+    };
 
     const sendSms = async (content, recipient) => {
         try {
             const response = await fetch("/api/sms", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                content,
-                recipient,
-              }),
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    content,
+                    recipient,
+                }),
             });
-      
+
             if (response.ok) {
-              const data = await response.json();
-              return data;
+                const data = await response.json();
+                return data;
             } else {
-              throw new Error("Failed to send SMS");
+                throw new Error("Failed to send SMS");
             }
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     useEffect(() => {
         if (!isCommunicationModalOpen) {
-            fetchedAllApplicantsView({name: "", jobTitle: "", status: ""})
+            fetchedAllApplicantsView({ name: "", jobTitle: "", status: "" });
         }
-      }, [isCommunicationModalOpen]);
+    }, [isCommunicationModalOpen]);
 
     return (
         <div className="tabs-box">
-            <div className="widget-title" style={{ fontSize: '1.5rem', fontWeight: '500' }}>
+            <div
+                className="widget-title"
+                style={{ fontSize: "1.5rem", fontWeight: "500" }}
+            >
                 <b>All Applicants!</b>
             </div>
-            { applicationStatusReferenceOptions != null ?
+            {applicationStatusReferenceOptions != null ? (
                 <Form>
-                    <Form.Label className="optional" style={{ marginLeft: '32px', letterSpacing: '2px', fontSize: '12px' }}>SEARCH BY</Form.Label>
+                    <Form.Label
+                        className="optional"
+                        style={{
+                            marginLeft: "32px",
+                            letterSpacing: "2px",
+                            fontSize: "12px",
+                        }}
+                    >
+                        SEARCH BY
+                    </Form.Label>
                     <Row className="mx-1" md={4}>
                         <Col>
                             <Form.Group className="mb-3 mx-3">
-                                <Form.Label className="chosen-single form-input chosen-container">Applicant Name</Form.Label>
+                                <Form.Label className="chosen-single form-input chosen-container">
+                                    Applicant Name
+                                </Form.Label>
                                 <Form.Control
                                     className="chosen-single form-input chosen-container"
                                     type="text"
                                     value={name}
                                     onChange={(e) => {
-                                        setSearchFilters((previousState) => ({ 
+                                        setSearchFilters((previousState) => ({
                                             ...previousState,
-                                            name: e.target.value
-                                        }))
+                                            name: e.target.value,
+                                        }));
                                     }}
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter") {
-                                            findApplicant(searchFilters)
+                                            findApplicant(searchFilters);
                                         }
                                     }}
-                                    style={{ maxWidth: '300px' }}/>
+                                    style={{ maxWidth: "300px" }}
+                                />
                             </Form.Group>
                         </Col>
                         <Col>
                             <Form.Group className="mb-3 mx-3">
-                                <Form.Label className="chosen-single form-input chosen-container">Job Title</Form.Label>
+                                <Form.Label className="chosen-single form-input chosen-container">
+                                    Job Title
+                                </Form.Label>
                                 <Form.Control
                                     className="chosen-single form-input chosen-container"
                                     type="text"
                                     value={jobTitle}
                                     onChange={(e) => {
-                                        setSearchFilters((previousState) => ({ 
+                                        setSearchFilters((previousState) => ({
                                             ...previousState,
-                                            jobTitle: e.target.value
-                                        }))
+                                            jobTitle: e.target.value,
+                                        }));
                                     }}
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter") {
-                                            findApplicant(searchFilters)
+                                            findApplicant(searchFilters);
                                         }
                                     }}
-                                    style={{ maxWidth: '300px' }}/>
+                                    style={{ maxWidth: "300px" }}
+                                />
                             </Form.Group>
                         </Col>
                         <Col>
                             <Form.Group className="mb-3 mx-3">
-                                <Form.Label className="chosen-single form-input chosen-container">Applicant Status</Form.Label>
-                                <Form.Select className="chosen-single form-select"
+                                <Form.Label className="chosen-single form-input chosen-container">
+                                    Applicant Status
+                                </Form.Label>
+                                <Form.Select
+                                    className="chosen-single form-select"
                                     onChange={(e) => {
-                                        setSearchFilters((previousState) => ({ 
+                                        setSearchFilters((previousState) => ({
                                             ...previousState,
-                                            status: e.target.value
-                                        }))
+                                            status: e.target.value,
+                                        }));
                                     }}
                                     value={status}
-                                    style={{ maxWidth: '300px' }}
+                                    style={{ maxWidth: "300px" }}
                                 >
-                                    <option value=''></option>
-                                    {applicationStatusReferenceOptions.map((option) => (
-                                        <option value={option.ref_dspl}>{option.ref_dspl}</option>
-                                    ))}
+                                    <option value=""></option>
+                                    {applicationStatusReferenceOptions.map(
+                                        (option) => (
+                                            <option value={option.ref_dspl}>
+                                                {option.ref_dspl}
+                                            </option>
+                                        )
+                                    )}
                                 </Form.Select>
                             </Form.Group>
                         </Col>
@@ -435,160 +513,240 @@ const WidgetContentBox = () => {
                                         findApplicant(searchFilters);
                                     }}
                                     className="btn btn-sm text-nowrap m-1 btn-submit"
-                                    >
+                                >
                                     Filter
                                 </Button>
-                                <Button variant="primary" onClick={clearAll}
+                                <Button
+                                    variant="primary"
+                                    onClick={clearAll}
                                     className="btn btn-secondary btn-sm text-nowrap mx-2"
-                                    style= {{ minHeight: '40px', padding: '0 20px' }}>
+                                    style={{
+                                        minHeight: "40px",
+                                        padding: "0 20px",
+                                    }}
+                                >
                                     Clear
                                 </Button>
                             </Form.Group>
                         </Col>
                     </Row>
-                </Form> : ''
-            }
+                </Form>
+            ) : (
+                ""
+            )}
             {/* End filter top bar */}
 
             {/* Start table widget content */}
-            <div className="optional" style={{ textAlign: 'right', marginRight: '50px', marginBottom: '10px' }}>Showing ({fetchedAllApplicants.length}) Applicants Applied</div>
+            <div
+                className="optional"
+                style={{
+                    textAlign: "right",
+                    marginRight: "50px",
+                    marginBottom: "10px",
+                }}
+            >
+                Showing ({fetchedAllApplicants.length}) Applicants Applied
+            </div>
             <div className="widget-content">
                 <div className="table-outer">
                     <Table className="default-table manage-job-table">
                         <thead>
                             <tr>
-                            <th>Name</th>
-                            <th>Applied On</th>
-                            <th>Job Title</th>
-                            <th>Facility</th>
-                            <th>Status</th>
-                            <th>Notes</th>
-                            <th>Last Contacted</th>
-                            <th>Actions</th>
+                                <th>Name</th>
+                                <th>Applied On</th>
+                                <th>Job Title</th>
+                                <th>Facility</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th>Last Contacted</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
-                        {fetchedAllApplicants.length == 0 ? <tbody style={{ fontSize: '1.5rem', fontWeight: '500' }}><tr><td><b>No results found!</b></td></tr></tbody>: 
+                        {fetchedAllApplicants.length === 0 ? (
+                            <tbody
+                                style={{
+                                    fontSize: "1.5rem",
+                                    fontWeight: "500",
+                                }}
+                            >
+                                <tr>
+                                    <td>
+                                        <b>No results found!</b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        ) : (
                             <tbody>
-                                {Array.from(fetchedAllApplicants).map((applicant) => (
-                                    <tr key={applicant.application_id}>
-                                        <td>
-                                        {/* <!-- Job Block --> */}
-                                        <div className="job-block">
-                                            <div>
-                                                {/* <span className="company-logo">
+                                {Array.from(fetchedAllApplicants).map(
+                                    (applicant) => (
+                                        <tr key={applicant.application_id}>
+                                            <td>
+                                                {/* <!-- Job Block --> */}
+                                                <div className="job-block">
+                                                    <div>
+                                                        {/* <span className="company-logo">
                                                 <img src={item.logo} alt="logo" />
                                                 </span> */}
-                                                <h4>
-                                                {/* <Link href={`/employers-dashboard/edit-job/${applicant.user_id}`}>
+                                                        <h4>
+                                                            {/* <Link href={`/employers-dashboard/edit-job/${applicant.user_id}`}>
                                                     {applicant.name}
                                                 </Link> */}
-                                                {applicant.name}
-                                                </h4>
-                                            </div>
-                                        </div>
-                                        </td>
-                                        <td>
-                                        {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
-                                            <span>{applicant.created_at}</span>
-                                        </td>
-                                        <td>
-                                            {applicant.job_title}
-                                        </td>
-                                        <td>
-                                            {applicant.facility_name}
-                                        </td>
-                                        <td>
-                                            <select className="chosen-single form-select" 
-                                                value={applicant.status}
-                                                onChange={(e) => {
-                                                    updateApplicationStatus(e.target.value, applicant)
-                                                }}>
-                                                {applicationStatusReferenceOptions.map((option) => (
-                                                    <option value={option.ref_dspl}>{option.ref_dspl}</option>
-                                                ))}
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <ul className="option-list">
-                                                {applicant.notes ?
-                                                    <li>
-                                                        <button data-text="Add, View, Edit, Delete Notes">
-                                                        <a
-                                                            href="#"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#addNoteModal"
-                                                            onClick = { () => {setNoteData(applicant.application_id) }}
-                                                        >
-                                                            <span className="la la-comment-dots"></span>
-                                                        </a>
-                                                        </button>
-                                                    </li> : 
-                                                    <li>
-                                                        <button data-text="Add, View, Edit, Delete Notes">
-                                                        <a
-                                                            href="#"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#addNoteModal"
-                                                            onClick = { () => {setNoteData(applicant.application_id) }}
-                                                        >
-                                                            <span className="la la-comment-alt"></span>
-                                                        </a>
-                                                        </button>
-                                                    </li>}
-                                            </ul>
-                                        </td>
-                                        <td>
-                                            <ul className="option-list">                                  
-                                                <li>
-                                                    <button data-text="Send Message">
-                                                    <a
-                                                        href="#"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#communication-modal"
-                                                        onClick={() => {
-                                                            applicant.new_message_received = false;
-                                                            setSelectedApplicant(applicant);
-                                                            setIsCommunicationModalOpen(true)
-                                                        }}
-                                                        >
-                                                        <span className="flaticon-chat"></span>
-                                                    </a>
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                {applicant?.last_contacted_at
-                                                    ? <strong>{new Date(applicant?.last_contacted_at).toLocaleString()}</strong>
-                                                    : ""}
-                                                </li>
-                                                <li>
-                                                    {applicant?.new_message_received 
-                                                    ? 
-                                                    <>
-                                                        <div 
-                                                            className="badge" 
-                                                            style={{backgroundColor:"green"}}
-                                                        >New Message
-                                                        </div>
-                                                    </> 
-                                                    : 
-                                                    ""}
-                                                </li>
-                                            </ul>
-                                        </td>
-                                        <td>
-                                            <div className="option-box">
+                                                            {applicant.name}
+                                                        </h4>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {/* <Link href="/employers-dashboard/all-applicants/${item.job_id}">3+ Applied</Link> */}
+                                                <span>
+                                                    {applicant.created_at}
+                                                </span>
+                                            </td>
+                                            <td>{applicant.job_title}</td>
+                                            <td>{applicant.facility_name}</td>
+                                            <td>
+                                                <select
+                                                    className="chosen-single form-select"
+                                                    value={applicant.status}
+                                                    onChange={(e) => {
+                                                        updateApplicationStatus(
+                                                            e.target.value,
+                                                            applicant
+                                                        );
+                                                    }}
+                                                >
+                                                    {applicationStatusReferenceOptions.map(
+                                                        (option) => (
+                                                            <option
+                                                                value={
+                                                                    option.ref_dspl
+                                                                }
+                                                            >
+                                                                {
+                                                                    option.ref_dspl
+                                                                }
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </td>
+                                            <td>
                                                 <ul className="option-list">
-                                                <li onClick = { () => { ViewCV(applicant.application_id) }}>
-                                                    <button data-text="View CV">
-                                                        <span className="la la-file-download"></span>
-                                                    </button>
-                                                </li>
-                                                <li onClick={() => DownloadHandler(applicant)}>
-                                                    <button data-text="Download CV">
-                                                        <span className="la la-download"></span>
-                                                    </button>
-                                                </li>
-                                                {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
+                                                    {applicant.notes ? (
+                                                        <li>
+                                                            <button data-text="Add, View, Edit, Delete Notes">
+                                                                <a
+                                                                    href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#addNoteModal"
+                                                                    onClick={() => {
+                                                                        setNoteData(
+                                                                            applicant.application_id
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <span className="la la-comment-dots"></span>
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    ) : (
+                                                        <li>
+                                                            <button data-text="Add, View, Edit, Delete Notes">
+                                                                <a
+                                                                    href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#addNoteModal"
+                                                                    onClick={() => {
+                                                                        setNoteData(
+                                                                            applicant.application_id
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <span className="la la-comment-alt"></span>
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    )}
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                <ul className="option-list">
+                                                    <li>
+                                                        <button data-text="Send Message">
+                                                            <a
+                                                                href="#"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#communication-modal"
+                                                                onClick={() => {
+                                                                    applicant.new_message_received = false;
+                                                                    setSelectedApplicant(
+                                                                        applicant
+                                                                    );
+                                                                    setIsCommunicationModalOpen(
+                                                                        true
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <span className="flaticon-chat"></span>
+                                                            </a>
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        {applicant?.last_contacted_at ? (
+                                                            <strong>
+                                                                {new Date(
+                                                                    applicant?.last_contacted_at
+                                                                ).toLocaleString()}
+                                                            </strong>
+                                                        ) : (
+                                                            ""
+                                                        )}
+                                                    </li>
+                                                    <li>
+                                                        {applicant?.new_message_received ? (
+                                                            <>
+                                                                <div
+                                                                    className="badge"
+                                                                    style={{
+                                                                        backgroundColor:
+                                                                            "green",
+                                                                    }}
+                                                                >
+                                                                    New Message
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            ""
+                                                        )}
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td>
+                                                <div className="option-box">
+                                                    <ul className="option-list">
+                                                        <li
+                                                            onClick={() => {
+                                                                ViewCV(
+                                                                    applicant.application_id
+                                                                );
+                                                            }}
+                                                        >
+                                                            <button data-text="View CV">
+                                                                <span className="la la-file-download"></span>
+                                                            </button>
+                                                        </li>
+                                                        <li
+                                                            onClick={() =>
+                                                                DownloadHandler(
+                                                                    applicant
+                                                                )
+                                                            }
+                                                        >
+                                                            <button data-text="Download CV">
+                                                                <span className="la la-download"></span>
+                                                            </button>
+                                                        </li>
+                                                        {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
                                                     <button data-text="Qualified">
                                                     <span className="la la-check"></span>
                                                     </button>
@@ -603,46 +761,53 @@ const WidgetContentBox = () => {
                                                     <span className="la la-undo-alt"></span>
                                                     </button>
                                                 </li> */}
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                )}
                             </tbody>
-                        }
+                        )}
                     </Table>
 
-                        {/* Add Notes Modal Popup */}
-                        <div
-                            className="modal fade"
-                            id="addNoteModal"
-                            tabIndex="-1"
-                            aria-hidden="true"
-                        >
-                            <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                    {/* Add Notes Modal Popup */}
+                    <div
+                        className="modal fade"
+                        id="addNoteModal"
+                        tabIndex="-1"
+                        aria-hidden="true"
+                    >
+                        <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                             <div className="apply-modal-content modal-content">
                                 <div className="text-center">
-                                <h3 className="title">Add Notes</h3>
-                                <button
-                                    type="button"
-                                    id="notesCloseButton"
-                                    className="closed-modal"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Close"
-                                ></button>
+                                    <h3 className="title">Add Notes</h3>
+                                    <button
+                                        type="button"
+                                        id="notesCloseButton"
+                                        className="closed-modal"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    ></button>
                                 </div>
                                 {/* End modal-header */}
                                 <form>
-                                    <textarea 
+                                    <textarea
                                         value={noteText}
                                         id="notes"
                                         cols="45"
                                         rows="10"
                                         onChange={(e) => {
-                                            setNoteText(e.target.value)
+                                            setNoteText(e.target.value);
                                         }}
-                                        style={{resize: 'vertical', overflowY: 'scroll', border: '1px solid #ccc', padding: '10px'}}></textarea>
-                                    <br/>
+                                        style={{
+                                            resize: "vertical",
+                                            overflowY: "scroll",
+                                            border: "1px solid #ccc",
+                                            padding: "10px",
+                                        }}
+                                    ></textarea>
+                                    <br />
                                     <div className="form-group text-center">
                                         <button
                                             className="theme-btn btn-style-one"
@@ -658,12 +823,17 @@ const WidgetContentBox = () => {
                                 {/* End PrivateMessageBox */}
                             </div>
                             {/* End .send-private-message-wrapper */}
-                            </div>
                         </div>
-                        {/* Send SMS/Email Modal Popup */}
-                        <CommunicationModal applicantData={selectedApplicant} setIsCommunicationModalOpen={setIsCommunicationModalOpen} />
                     </div>
+                    {/* Send SMS/Email Modal Popup */}
+                    <CommunicationModal
+                        applicantData={selectedApplicant}
+                        setIsCommunicationModalOpen={
+                            setIsCommunicationModalOpen
+                        }
+                    />
                 </div>
+            </div>
             {/* End table widget content */}
         </div>
     );

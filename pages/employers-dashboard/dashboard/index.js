@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import dynamic from "next/dynamic";
 import Seo from "../../../components/common/Seo";
 import DashboadHome from "../../../components/dashboard-pages/employers-dashboard/dashboard";
@@ -6,26 +7,26 @@ import { useSelector } from "react-redux";
 import Router from "next/router";
 
 const index = () => {
-  const user = useSelector((state) => state.candidate.user);
-  const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
+    const user = useSelector((state) => state.candidate.user);
+    const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
 
-  useEffect(() => {
-    if (!isEmployer) {
-      Router.push("/");
-    }
-  }, []);
-  return (
-    <>
-      {isEmployer ? (
+    useEffect(() => {
+        if (!isEmployer) {
+            Router.push("/");
+        }
+    }, []);
+    return (
         <>
-          <Seo pageTitle="Employeers Dashboard" />
-          <DashboadHome />
+            {isEmployer ? (
+                <>
+                    <Seo pageTitle="Employeers Dashboard" />
+                    <DashboadHome />
+                </>
+            ) : (
+                ""
+            )}
         </>
-      ) : (
-        ""
-      )}
-    </>
-  );
+    );
 };
 
 export default dynamic(() => Promise.resolve(index), { ssr: false });

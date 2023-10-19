@@ -1,10 +1,10 @@
 export default function handler(req, res) {
-    if(req.method == "POST") {
-        const mail = require('@sendgrid/mail');
-        mail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY)
+    if (req.method === "POST") {
+        const mail = require("@sendgrid/mail");
+        mail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY);
         const msg = {
             to: `${req.body.notifyMeEmail}`,
-            from: 'support@globaluphire.com', // Change to your verified sender,
+            from: "support@globaluphire.com", // Change to your verified sender,
             subject: `[Volare Health] New application for ${req.body.jobTitle}: ${req.body.name} ${req.body.time}`,
             attachments: req.body.attachments,
             html: `
@@ -92,14 +92,15 @@ export default function handler(req, res) {
               </div>
                 </body>
             </html>`,
-        }
-        mail.send(msg).then(() => {
-            res.status(200).json({ status: 'SUCCESS' })
-        })
-        .catch((error) => {
-            res.status(200).json({ status: 'FAILURE', error })
-        })
+        };
+        mail.send(msg)
+            .then(() => {
+                res.status(200).json({ status: "SUCCESS" });
+            })
+            .catch((error) => {
+                res.status(200).json({ status: "FAILURE", error });
+            });
     } else {
-        res.status(405).json({ status: 405, message:"Method not allowed"})
+        res.status(405).json({ status: 405, message: "Method not allowed" });
     }
 }

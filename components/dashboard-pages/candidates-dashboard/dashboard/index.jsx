@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import MobileMenu from "../../../header/MobileMenu";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
@@ -8,101 +9,104 @@ import Notification from "./components/Notification";
 import CopyrightFooter from "../../CopyrightFooter";
 import { useSelector } from "react-redux";
 import JobApplied from "./components/JobApplied";
-import DashboardCandidatesHeader from "../../../header/DashboardCandidatesHeader";
 import MenuToggler from "../../MenuToggler";
 import Link from "next/link";
 import DashboardHeader from "../../../header/DashboardHeader";
 
 const Index = () => {
-  const user = useSelector(state => state.candidate.user);
-  //let userName = "Welcome, "+user.name+" !";
-  let userName = "Dashboard!";
-  return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
+    const user = useSelector((state) => state.candidate.user);
+    // let userName = "Welcome, "+user.name+" !";
+    const userName = "Dashboard!";
+    return (
+        <div className="page-wrapper dashboard">
+            <span className="header-span"></span>
+            {/* <!-- Header Span for hight --> */}
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+            <LoginPopup />
+            {/* End Login Popup Modal */}
 
-      <DashboardHeader />
-      {/* <DashboardCandidatesHeader /> */}
-      {/* End Header */}
+            <DashboardHeader />
+            {/* <DashboardCandidatesHeader /> */}
+            {/* End Header */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
+            <MobileMenu />
+            {/* End MobileMenu */}
 
-      <DashboardCandidatesSidebar />
-      {/* <!-- End Candidates Sidebar Menu --> */}
+            <DashboardCandidatesSidebar />
+            {/* <!-- End Candidates Sidebar Menu --> */}
 
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-        <div className="dashboard-outer">
-          <BreadCrumb title={userName} />
-          {/* breadCrumb */}
+            {/* <!-- Dashboard --> */}
+            <section className="user-dashboard">
+                <div className="dashboard-outer">
+                    <BreadCrumb title={userName} />
+                    {/* breadCrumb */}
 
-          <MenuToggler />
-          {/* Collapsible sidebar button */}
+                    <MenuToggler />
+                    {/* Collapsible sidebar button */}
 
-          <div className="row">
-            <TopCardBlock />
-          </div>
-          {/* End .row top card block */}
+                    <div className="row">
+                        <TopCardBlock />
+                    </div>
+                    {/* End .row top card block */}
 
-          <div className="row">
-            <div className="col-xl-7 col-lg-12">
-              {/* <!-- Graph widget --> */}
-              <div className="graph-widget ls-widget">
-                <ProfileChart />
-              </div>
-              {/* End profile chart */}
-            </div>
-            {/* End .col */}
+                    <div className="row">
+                        <div className="col-xl-7 col-lg-12">
+                            {/* <!-- Graph widget --> */}
+                            <div className="graph-widget ls-widget">
+                                <ProfileChart />
+                            </div>
+                            {/* End profile chart */}
+                        </div>
+                        {/* End .col */}
 
-            <div className="col-xl-5 col-lg-12">
-              {/* <!-- Notification Widget --> */}
-              <div className="notification-widget ls-widget">
-                <div className="widget-title">
-                  <h4>Notifications</h4>
-                  <Link href={`/candidates-dashboard/job-alerts`}>
-                  View All
-                  </Link>
+                        <div className="col-xl-5 col-lg-12">
+                            {/* <!-- Notification Widget --> */}
+                            <div className="notification-widget ls-widget">
+                                <div className="widget-title">
+                                    <h4>Notifications</h4>
+                                    <Link
+                                        href={
+                                            "/candidates-dashboard/job-alerts"
+                                        }
+                                    >
+                                        View All
+                                    </Link>
+                                </div>
+                                <div className="widget-content">
+                                    <Notification />
+                                </div>
+                            </div>
+                        </div>
+                        {/* End .col */}
+
+                        <div className="col-lg-12">
+                            {/* <!-- applicants Widget --> */}
+                            <div className="applicants-widget ls-widget">
+                                <div className="widget-title">
+                                    <h4>Jobs Applied Recently</h4>
+                                </div>
+                                <div className="widget-content">
+                                    <div className="row">
+                                        {/* <!-- Candidate block three --> */}
+
+                                        <JobApplied />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/* End .col */}
+                    </div>
+                    {/* End .row profile and notificatins */}
                 </div>
-                <div className="widget-content">
-                  <Notification />
-                </div>
-              </div>
-            </div>
-            {/* End .col */}
+                {/* End dashboard-outer */}
+            </section>
+            {/* <!-- End Dashboard --> */}
 
-            <div className="col-lg-12">
-              {/* <!-- applicants Widget --> */}
-              <div className="applicants-widget ls-widget">
-                <div className="widget-title">
-                  <h4>Jobs Applied Recently</h4>
-                </div>
-                <div className="widget-content">
-                  <div className="row">
-                    {/* <!-- Candidate block three --> */}
-
-                    <JobApplied />
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* End .col */}
-          </div>
-          {/* End .row profile and notificatins */}
+            <CopyrightFooter />
+            {/* <!-- End Copyright --> */}
         </div>
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
-
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
-  );
+        // End page-wrapper
+    );
 };
 
 export default Index;

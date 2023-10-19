@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 // import jobs from "../../../data/job-featured";
 import JobSelect from "../components/JobSelect";
@@ -32,15 +33,15 @@ const FilterJobsBox = () => {
     // console.log(useSelector((state) => state.filter))
     const router = useRouter();
     const [jobs, setJobs] = useState([]);
-    const searchTerm = useSelector((state) => state.search.searchTerm)
+    const searchTerm = useSelector((state) => state.search.searchTerm);
     // const searchAddress = useSelector((state) => state.search.searchAddress)
-    const searchFacility = useSelector((state) => state.search.searchFacility)
-    const pageSize = useSelector((state) => state.filter.jobSort.perPage.end)
-    const [totalRecords, setTotalRecords] = useState(0)
-    const [currentPage, setCurrentPage] = useState(1)
+    const searchFacility = useSelector((state) => state.search.searchFacility);
+    const pageSize = useSelector((state) => state.filter.jobSort.perPage.end);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const handlePageChange = (currentPage) => {
-      setCurrentPage(currentPage)
-    }
+        setCurrentPage(currentPage);
+    };
 
     // const searchJobsWithTermAndAddress = async () => {
     //     await supabase.from('jobs').select('*', { count: 'exact', head: true })
@@ -51,7 +52,7 @@ const FilterJobsBox = () => {
     //       setJobs(res.data)
     //     })
     //   };
-    
+
     //   const searchJobsWithTerm = async () => {
     //     await supabase.from('jobs').select('*', { count: 'exact', head: true })
     //     .eq('status', 'Published')
@@ -60,7 +61,7 @@ const FilterJobsBox = () => {
     //       setJobs(res.data)
     //     })
     //   };
-    
+
     //   const searchJobsWithAddress = async () => {
     //     await supabase.from('jobs').select('*', { count: 'exact', head: true })
     //     .eq('status', 'Published')
@@ -69,31 +70,34 @@ const FilterJobsBox = () => {
     //       setJobs(res.data)
     //     })
     //   };
-    
 
     const searchJobs = async () => {
-
-        let query = supabase.from('jobs').select('*', {count: 'exact'})
-        console.log("query:",query)
+        let query = supabase.from("jobs").select("*", { count: "exact" });
+        console.log("query:", query);
         // if(searchAddress) query = query.ilike('job_address', '%'+searchAddress+'%')
-        if(searchFacility) query = query.eq('facility_name', searchFacility)
-        if(searchTerm) query = query.ilike('job_title', '%'+searchTerm+'%')
-        query = query.eq('status', 'Published')
-        query = query.order('created_at',  { ascending: sort == 'des' })
-        if(pageSize <= totalRecords) {
+        if (searchFacility) query = query.eq("facility_name", searchFacility);
+        if (searchTerm)
+            query = query.ilike("job_title", "%" + searchTerm + "%");
+        query = query.eq("status", "Published");
+        query = query.order("created_at", { ascending: sort === "des" });
+        if (pageSize <= totalRecords) {
             // 1
-            query = query.range((currentPage - 1) * pageSize, (currentPage * pageSize) - 1)
+            query = query.range(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize - 1
+            );
         }
 
-        query.then(res => {
-            console.log(currentPage)
-            console.log(res)
+        query.then((res) => {
+            console.log(currentPage);
+            console.log(res);
             // setJobs(res.data)
-            if(jobs.length + res?.data?.length > totalRecords) setJobs(res.data)
-            else setJobs([...jobs, ...res?.data])
-          setTotalRecords(res.count)
-        })
-    }
+            if (jobs.length + res?.data?.length > totalRecords)
+                setJobs(res.data);
+            else setJobs([...jobs, ...res?.data]);
+            setTotalRecords(res.count);
+        });
+    };
 
     //   const searchJobs = async () => {
     //     await supabase.from('jobs').select('*', { count: 'exact', head: true })
@@ -103,17 +107,17 @@ const FilterJobsBox = () => {
     //       setTotalRecords(res.count)
     //     })
     //   };
-    
-      useEffect(() => {
-        // if(searchAddress == "" && searchTerm == '') 
-          searchJobs()
-        // else if(searchAddress == "") 
+
+    useEffect(() => {
+        // if(searchAddress == "" && searchTerm == '')
+        searchJobs();
+        // else if(searchAddress == "")
         //   searchJobsWithTerm()
-        // else if(searchTerm == "") 
+        // else if(searchTerm == "")
         //   searchJobsWithAddress()
-        // else 
+        // else
         //   searchJobsWithTermAndAddress()
-      }, [searchFacility, searchTerm, pageSize, currentPage]); // searchAddress
+    }, [searchFacility, searchTerm, pageSize, currentPage]); // searchAddress
 
     const { jobList, jobSort } = useSelector((state) => state.filter);
     const {
@@ -128,7 +132,7 @@ const FilterJobsBox = () => {
         salary,
         tag,
         jobTypeSelect,
-        experienceSelect
+        experienceSelect,
     } = jobList || {};
 
     const { sort, perPage } = jobSort;
@@ -204,7 +208,7 @@ const FilterJobsBox = () => {
     const sortFilter = (a, b) =>
         sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
-    let content = jobs
+    const content = jobs
         // ?.filter(keywordFilter)
         // ?.filter(locationFilter)
         // ?.filter(destinationFilter)
@@ -228,36 +232,44 @@ const FilterJobsBox = () => {
                                 {item.job_title}
                             </Link>
                         </h4>
-                        
-                        
+
                         <ul className="job-info">
                             {/* <li>
                                 <span className="icon flaticon-briefcase"></span>
                                 {item.company}
                             </li> */}
 
-                            { item?.job_comp_add ?                        
-                                <li className="mb-2"><i className="flaticon-map-locator"></i>{" "}{item?.job_comp_add}</li>
-                            : '' }
-                            {/* compnay info */}
-                            { item?.job_type ?
-                                <li className="time">
-                                <span className="flaticon-clock-3"></span>{" "}
-                                {item?.job_type}
+                            {item?.job_comp_add ? (
+                                <li className="mb-2">
+                                    <i className="flaticon-map-locator"></i>{" "}
+                                    {item?.job_comp_add}
                                 </li>
-                            : '' }
+                            ) : (
+                                ""
+                            )}
+                            {/* compnay info */}
+                            {item?.job_type ? (
+                                <li className="time">
+                                    <span className="flaticon-clock-3"></span>{" "}
+                                    {item?.job_type}
+                                </li>
+                            ) : (
+                                ""
+                            )}
                             {/* location info */}
                             {/* <li>
                                 <span className="icon flaticon-clock-3"></span>{" "}
                                 {item.time}
                             </li> */}
                             {/* time info */}
-                            { item?.salary ?
+                            {item?.salary ? (
                                 <li className="privacy">
-                                <i className="flaticon-money"></i>{" "}
-                                ${item?.salary} {item?.salary_rate}
+                                    <i className="flaticon-money"></i> $
+                                    {item?.salary} {item?.salary_rate}
                                 </li>
-                            : '' }
+                            ) : (
+                                ""
+                            )}
                             {/* salary info */}
                         </ul>
                         {/* End .job-info */}
@@ -304,51 +316,56 @@ const FilterJobsBox = () => {
         dispatch(addTag(""));
         dispatch(addSort(""));
         dispatch(addPerPage({ start: 0, end: 10 }));
-        dispatch(setSearchFields({ searchTerm: "", searchFacility: "" })) //searchAddress: ""
+        dispatch(setSearchFields({ searchTerm: "", searchFacility: "" })); // searchAddress: ""
     };
 
     const fnCall = async () => {
-        let searchDate = null
-        let d = new Date()
-        switch(datePosted){
-          case 'last-24-hour': 
-            d.setDate(d.getDate() - 1)
-            searchDate = d.toISOString()
-            break
-          case 'last-7-days': 
-            d.setDate(d.getDate() - 7)
-            searchDate = d.toISOString()
-            break 
-          case 'last-14-days': 
-            d.setDate(d.getDate() - 14)
-            searchDate = d.toISOString()
-            break
-          case 'last-30-days': 
-            d.setDate(d.getDate() - 30)
-            searchDate = d.toISOString()
-            break
+        let searchDate = null;
+        const d = new Date();
+        switch (datePosted) {
+            case "last-24-hour":
+                d.setDate(d.getDate() - 1);
+                searchDate = d.toISOString();
+                break;
+            case "last-7-days":
+                d.setDate(d.getDate() - 7);
+                searchDate = d.toISOString();
+                break;
+            case "last-14-days":
+                d.setDate(d.getDate() - 14);
+                searchDate = d.toISOString();
+                break;
+            case "last-30-days":
+                d.setDate(d.getDate() - 30);
+                searchDate = d.toISOString();
+                break;
         }
-        let query = supabase.from('jobs').select().eq('status', 'Published')
-        if(jobTypeSelect) query = query.eq("job_type", jobTypeSelect)
-        if(searchDate) query = query.gte("created_at", searchDate)
-        query = query.eq('status', 'Published')
-        query = query.order('created_at',  { ascending: sort == 'des' })
-        if(pageSize <= totalRecords || totalRecords == 0) query = query.range((currentPage - 1) * pageSize, (currentPage * pageSize) - 1)
+        let query = supabase.from("jobs").select().eq("status", "Published");
+        if (jobTypeSelect) query = query.eq("job_type", jobTypeSelect);
+        if (searchDate) query = query.gte("created_at", searchDate);
+        query = query.eq("status", "Published");
+        query = query.order("created_at", { ascending: sort === "des" });
+        if (pageSize <= totalRecords || totalRecords === 0)
+            query = query.range(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize - 1
+            );
 
-        const {data, error} = await query
-        if(data) {
-            if(jobs.length + data.length > totalRecords) setJobs([...jobs, ...data])
-            else setJobs(data)
+        const { data, error } = await query;
+        if (data) {
+            if (jobs.length + data.length > totalRecords)
+                setJobs([...jobs, ...data]);
+            else setJobs(data);
         }
-    }
+    };
     useEffect(() => {
-      fnCall()
-    }, [jobTypeSelect, sort, datePosted])
-  
-    // 
+        fnCall();
+    }, [jobTypeSelect, sort, datePosted]);
+
+    //
     const showMoreJobs = () => {
-        handlePageChange(currentPage + 1)
-    }
+        handlePageChange(currentPage + 1);
+    };
 
     return (
         <>
@@ -367,7 +384,8 @@ const FilterJobsBox = () => {
                     {/* Collapsible sidebar button */}
 
                     <div className="text">
-                        Showing <strong>{content?.length}</strong> jobs of <strong>{totalRecords}</strong>
+                        Showing <strong>{content?.length}</strong> jobs of{" "}
+                        <strong>{totalRecords}</strong>
                     </div>
                 </div>
                 {/* End show-result */}
@@ -442,7 +460,7 @@ const FilterJobsBox = () => {
                 </div>
             </div>
             {/* End top filter bar box */}
-            {content}   
+            {content}
             {/* <!-- List Show More --> */}
             {/* <div className="ls-show-more">
                 <p>Show {content?.length} of {totalRecords} Jobs</p>

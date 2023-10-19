@@ -19,7 +19,7 @@ export const store = configureStore({
         candidate: candidateSlice,
         candidateFilter: candidateFilterSlice,
         shop: shopSlice,
-        search: searchSlice
+        search: searchSlice,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
 });

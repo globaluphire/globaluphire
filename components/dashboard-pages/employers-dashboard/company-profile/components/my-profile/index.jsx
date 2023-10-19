@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import FormInfoBox from "./FormInfoBox";
 import LogoCoverUploader from "./LogoCoverUploader";
 

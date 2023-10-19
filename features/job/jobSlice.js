@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     latestJob: [],
-    category: [{
+    category: [
+        {
             id: 1,
             name: "Residential",
             value: "residential",
@@ -23,7 +24,8 @@ const initialState = {
             value: "apartments",
         },
     ],
-    jobTypeList: [{
+    jobTypeList: [
+        {
             id: 1,
             name: "Full Time",
             value: "Full Time",
@@ -48,11 +50,12 @@ const initialState = {
             isChecked: false,
         },
     ],
-    datePost: [{
+    datePost: [
+        {
             id: 1,
             name: "All",
             value: "all",
-            isChecked: false
+            isChecked: false,
         },
         {
             id: 2,
@@ -64,7 +67,7 @@ const initialState = {
             id: 3,
             name: "Last 7 Days",
             value: "last-7-days",
-            isChecked: false
+            isChecked: false,
         },
         {
             id: 4,
@@ -91,7 +94,8 @@ const initialState = {
         { id: 9, name: "9 Years", value: "9 years", isChecked: false },
         { id: 10, name: "10+ Years", value: "10+ years", isChecked: false },
     ],
-    tags: [{
+    tags: [
+        {
             id: 1,
             name: "App",
             value: "app",
@@ -122,7 +126,7 @@ const initialState = {
             value: "react",
         },
     ],
-    recentJobs: []
+    recentJobs: [],
 };
 
 export const jobSlice = createSlice({
@@ -200,8 +204,8 @@ export const jobSlice = createSlice({
             });
         },
         setRecentJobs: (state, { payload }) => {
-            state.recentJobs = payload.jobs
-        }
+            state.recentJobs = payload.jobs;
+        },
     },
 });
 
@@ -213,6 +217,6 @@ export const {
     clearDatePostToggle,
     experienceLavelCheck,
     clearExperienceToggle,
-    setRecentJobs
+    setRecentJobs,
 } = jobSlice.actions;
 export default jobSlice.reducer;

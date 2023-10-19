@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,29 +22,31 @@ const LocationBox = () => {
     // }, [setLocation, jobList]);
 
     const [facilityNames, setFacilityNames] = useState([]);
-    const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
+    const [facilitySingleSelections, setFacilitySingleSelections] = useState(
+        []
+    );
 
     async function getFacilityNames() {
         // call reference to get applicantStatus options
-        let { data: refData, error: e } = await supabase
-        .from('reference')
-        .select("*")
-        .eq('ref_nm',  'facilityName');
+        const { data: refData, error: e } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "facilityName");
 
         if (refData) {
             // setFacilityNames(refData)
-            let facilities = []
+            const facilities = [];
             for (let i = 0; i < refData.length; i++) {
-            facilities.push(refData[i].ref_dspl)
+                facilities.push(refData[i].ref_dspl);
             }
-            facilities.sort()
-            setFacilityNames(facilities)
+            facilities.sort();
+            setFacilityNames(facilities);
         }
     }
 
     useEffect(() => {
-        if(searchFacility === ""){
-            setFacilitySingleSelections([])
+        if (searchFacility === "") {
+            setFacilitySingleSelections([]);
         }
         getFacilityNames();
     }, [searchFacility]);
@@ -53,8 +56,8 @@ const LocationBox = () => {
     }, []);
 
     useEffect(() => {
-        dispath(addFacility(facilitySingleSelections[0]))
-    }, [facilitySingleSelections])
+        dispath(addFacility(facilitySingleSelections[0]));
+    }, [facilitySingleSelections]);
 
     useEffect(() => {
         setFacility(jobList.facility);

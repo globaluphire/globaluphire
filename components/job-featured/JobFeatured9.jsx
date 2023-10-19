@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import Link from "next/link";
 import jobFeatured from "../../data/job-featured";
 import { useState } from "react";

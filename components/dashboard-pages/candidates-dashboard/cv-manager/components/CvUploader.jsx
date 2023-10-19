@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "../../../../../config/supabaseClient";
 import { useSelector } from "react-redux";
-import moment from 'moment';
-import { BallTriangle } from 'react-loader-spinner'
+import moment from "moment";
+// eslint-disable-next-line no-unused-vars
+import { BallTriangle } from "react-loader-spinner";
 
 // validation chaching
 function checkFileTypes(files) {
@@ -27,8 +28,11 @@ const CvUploader = () => {
     const [getError, setError] = useState("");
     const [userCV, setUserCV] = useState([]);
     const [totalCV, setTotalCV] = useState(0);
-    const user = useSelector(state => state.candidate.user);
-    const [cloudPath, setCloudPath] = useState("https://gytbjlatclocthcyugmq.supabase.co/storage/v1/object/public/applications/cv/");
+    const user = useSelector((state) => state.candidate.user);
+    // eslint-disable-next-line no-unused-vars
+    const [cloudPath, setCloudPath] = useState(
+        "https://gytbjlatclocthcyugmq.supabase.co/storage/v1/object/public/applications/cv/"
+    );
 
     const cvManagerHandler = (event) => {
         const data = Array.from(event.target.files);
@@ -50,22 +54,22 @@ const CvUploader = () => {
 
     const getUserCV = async () => {
         setIsLoading(true);
-        let { data, error } = await supabase
-            .from('candidate_resumes')
+        const { data } = await supabase
+            .from("candidate_resumes")
             .select("*")
-            .eq('type', 'CV Uploaded')
-            .eq('deleted', 'no')
-            .eq('user_id', user.id)
-            .order('id', { ascending: false });
+            .eq("type", "CV Uploaded")
+            .eq("deleted", "no")
+            .eq("user_id", user.id)
+            .order("id", { ascending: false });
         if (data) {
             setTotalCV(data.length);
             setUserCV(data);
             setIsLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
-        ///handleSetDefaultCV();
+        /// handleSetDefaultCV();
         setTimeout(() => {
             getUserCV();
         }, 2000);
@@ -73,31 +77,30 @@ const CvUploader = () => {
 
     const handleSetDefaultCV = async () => {
         const fetchCV = await supabase
-            .from('candidate_resumes')
+            .from("candidate_resumes")
             .select()
-            .eq('user_id', user.id)
-            .eq('type', 'CV Uploaded')
-            .eq('deleted', 'no')
-            .order('id', { ascending: false });
+            .eq("user_id", user.id)
+            .eq("type", "CV Uploaded")
+            .eq("deleted", "no")
+            .order("id", { ascending: false });
         if (fetchCV.data[0] && fetchCV.data[0] !== undefined) {
-            let updateDefaultCVToNull = await supabase
-                .from('candidate_resumes')
+            const updateDefaultCVToNull = await supabase
+                .from("candidate_resumes")
                 .update({ sub_title: "" })
-                .eq('user_id', user.id);
+                .eq("user_id", user.id);
             if (updateDefaultCVToNull) {
                 await supabase
-                    .from('candidate_resumes')
-                    .update({ sub_title: 'defaultcv' })
-                    .eq('id', fetchCV.data[0].id);
+                    .from("candidate_resumes")
+                    .update({ sub_title: "defaultcv" })
+                    .eq("id", fetchCV.data[0].id);
             }
         }
-    }
+    };
 
     const handleFileLogoChange = async (event) => {
-        let selectedFile = event.target.files[0];
+        const selectedFile = event.target.files[0];
         if (selectedFile) {
-
-            toast.success('Please wait while CV is uploading.......', {
+            toast.success("Please wait while CV is uploading.......", {
                 position: "bottom-right",
                 autoClose: 1000,
                 hideProgressBar: false,
@@ -109,72 +112,83 @@ const CvUploader = () => {
             });
 
             let file;
-            let fileTimestamp = Date.now()
+            const fileTimestamp = Date.now();
 
             // upload document to applications/cv folder
-            const { data: fileUploadSuccess, error: fileUploadError } = await supabase
-                .storage
-                .from('applications')
-                .upload('cv/' + fileTimestamp + '-' + selectedFile.name, selectedFile, file);
+            const { error: fileUploadError } = await supabase.storage
+                .from("applications")
+                .upload(
+                    "cv/" + fileTimestamp + "-" + selectedFile.name,
+                    selectedFile,
+                    file
+                );
             if (fileUploadError) {
-                if (fileUploadError.error == "Payload too large") {
-                    toast.error('Failed to upload attachment.  Attachment size exceeded maximum allowed size!', {
-                        position: "bottom-right",
-                        autoClose: false,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                if (fileUploadError.error === "Payload too large") {
+                    toast.error(
+                        "Failed to upload attachment.  Attachment size exceeded maximum allowed size!",
+                        {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        }
+                    );
                 } else {
-                    toast.error('System is unavailable.  Please try again later or contact tech support!', {
-                        position: "bottom-right",
-                        autoClose: false,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
+                    toast.error(
+                        "System is unavailable.  Please try again later or contact tech support!",
+                        {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        }
+                    );
                 }
             } else {
                 // get document downloadable url
-                const { data: docURL, error: docURLError } = supabase
-                    .storage
-                    .from('applications')
-                    .getPublicUrl('cv/' + fileTimestamp + '-' + selectedFile.name)
+                const { error: docURLError } = supabase.storage
+                    .from("applications")
+                    .getPublicUrl(
+                        "cv/" + fileTimestamp + "-" + selectedFile.name
+                    );
                 if (docURLError) {
-                    console.warn('Failed to get download URL for file')
+                    console.warn("Failed to get download URL for file");
                 }
 
                 // save applied application
 
-
-
-                let insertNotification = await supabase
-                    .from('candidate_resumes')
+                const insertNotification = await supabase
+                    .from("candidate_resumes")
                     .insert([
                         {
-                            type: `CV Uploaded`,
+                            type: "CV Uploaded",
                             user_id: user.id,
-                            title: "CV " + moment(new Date()).format("MM/DD/YYYY HH:mm:ss"),
-                            attachment: fileTimestamp + '-' + selectedFile.name,
+                            title:
+                                "CV " +
+                                moment(new Date()).format(
+                                    "MM/DD/YYYY HH:mm:ss"
+                                ),
+                            attachment: fileTimestamp + "-" + selectedFile.name,
                             created_at: new Date(),
                             modified_at: new Date(),
-                            deleted: 'no',
-                        }
+                            deleted: "no",
+                        },
                     ]);
-                // console.log(insertNotification);      
+                // console.log(insertNotification);
                 if (insertNotification) {
-
                     setTimeout(() => {
-                        //location.reload();
+                        // location.reload();
                         getUserCV();
                     }, 2000);
-                    toast.success('CV Successfully Uploaded!', {
+                    toast.success("CV Successfully Uploaded!", {
                         position: "bottom-right",
                         autoClose: 3000,
                         hideProgressBar: false,
@@ -185,11 +199,10 @@ const CvUploader = () => {
                         theme: "colored",
                     });
                 }
-            } 
+            }
             handleSetDefaultCV();
-        }
-        else {
-            toast.error('Please upload your CV before Apply.', {
+        } else {
+            toast.error("Please upload your CV before Apply.", {
                 position: "bottom-right",
                 autoClose: false,
                 hideProgressBar: false,
@@ -200,16 +213,19 @@ const CvUploader = () => {
                 theme: "colored",
             });
         }
-    }
+    };
 
     // delete image
     const deleteHandler = async (id) => {
         if (confirm("Are you sure want to delete this CV?")) {
             setIsLoading(true);
-            //const deleted = getManager?.filter((file) => file.name !== name);
-            //setManager(deleted);
-            await supabase.from('candidate_resumes').update({ deleted: 'yes' }).eq('id', id);
-            toast.success('CV Successfully Deleted!', {
+            // const deleted = getManager?.filter((file) => file.name !== name);
+            // setManager(deleted);
+            await supabase
+                .from("candidate_resumes")
+                .update({ deleted: "yes" })
+                .eq("id", id);
+            toast.success("CV Successfully Deleted!", {
                 position: "bottom-right",
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -226,12 +242,11 @@ const CvUploader = () => {
         } else {
             return false;
         }
-
     };
 
     const viewHandler = async (filename) => {
-        window.open(cloudPath + filename, '_blank', 'noreferrer');
-    }
+        window.open(cloudPath + filename, "_blank", "noreferrer");
+    };
 
     return (
         <>
@@ -267,9 +282,8 @@ const CvUploader = () => {
 
             {/* Start resume Preview  */}
             <div className="files-outer">
-                {
-                    isLoading &&
-                    <div style={{ width: '20%', margin: "auto" }}>
+                {isLoading && (
+                    <div style={{ width: "20%", margin: "auto" }}>
                         <BallTriangle
                             height={100}
                             width={100}
@@ -281,23 +295,27 @@ const CvUploader = () => {
                             visible={true}
                         />
                     </div>
-                }
-                {isLoading == false && userCV?.map((file, i) => (
-                    <div key={i} className="file-edit-box">
-                        <span className="title">{file.title}</span>
-                        <div className="edit-btns">
-                            <button onClick={() => viewHandler(file.attachment)}>
-                                <span className="la la-eye"></span>
-                            </button>
-                            {
-                                totalCV > 0 && <button onClick={() => deleteHandler(file.id)}>
-                                    <span className="la la-trash"></span>
+                )}
+                {isLoading === false &&
+                    userCV?.map((file, i) => (
+                        <div key={i} className="file-edit-box">
+                            <span className="title">{file.title}</span>
+                            <div className="edit-btns">
+                                <button
+                                    onClick={() => viewHandler(file.attachment)}
+                                >
+                                    <span className="la la-eye"></span>
                                 </button>
-                            }
-
+                                {totalCV > 0 && (
+                                    <button
+                                        onClick={() => deleteHandler(file.id)}
+                                    >
+                                        <span className="la la-trash"></span>
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
 
                 {/* {getManager?.map((file, i) => (
                     <div key={i} className="file-edit-box">
@@ -335,7 +353,7 @@ const CvUploader = () => {
                             <span className="la la-trash"></span>
                         </button>
                     </div>
-                </div>*/}
+                </div> */}
             </div>
             {/* End resume Preview  */}
         </>

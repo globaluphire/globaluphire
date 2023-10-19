@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import InputRange from "react-input-range";
 import { useDispatch, useSelector } from "react-redux";
 import { addFoundationDate } from "../../../features/filter/employerFilterSlice";
@@ -24,7 +25,7 @@ const FoundationDate = () => {
     return (
         <div className="range-slider-one salary-range">
             <InputRange
-                formatLabel={(value) => ``}
+                formatLabel={(value) => ""}
                 minValue={1900}
                 maxValue={2028}
                 value={foundationDate}

@@ -4,6 +4,7 @@ import { addCategory } from "../../../features/filter/filterSlice";
 
 const Categories = () => {
     const { jobList } = useSelector((state) => state.filter) || {};
+    // eslint-disable-next-line no-unused-vars
     const [getCategory, setCategory] = useState(jobList.category);
 
     const dispatch = useDispatch();

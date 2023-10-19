@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import InputRange from "react-input-range";
 import { useDispatch, useSelector } from "react-redux";
 import { addDestination } from "../../../features/filter/filterSlice";
@@ -28,7 +29,7 @@ const DestinationRangeSlider = () => {
     return (
         <div className="range-slider-one">
             <InputRange
-                formatLabel={(value) => ``}
+                formatLabel={(value) => ""}
                 minValue={0}
                 maxValue={100}
                 value={{ min: destination.min, max: destination.max }}

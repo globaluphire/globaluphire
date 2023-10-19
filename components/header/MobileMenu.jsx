@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
+
 import { useSelector } from "react-redux";
 import MobileSidebar from "./mobile-sidebar";
 import { supabase } from "../../config/supabaseClient";
@@ -33,7 +34,7 @@ const MobileMenu = () => {
                     {/* End .nav-outer */}
 
                     <div className="outer-box">
-                        {showLoginButton ?
+                        {showLoginButton ? (
                             <div className="login-box">
                                 <a
                                     href="#"
@@ -44,9 +45,7 @@ const MobileMenu = () => {
                                     <span className="icon icon-user"></span>
                                 </a>
                             </div>
-
-                            :
-
+                        ) : (
                             // <a
                             //     href="#"
                             //     className="mobile-nav-toggler"
@@ -56,26 +55,25 @@ const MobileMenu = () => {
                             //     <span className="flaticon-menu-1"></span>
                             // </a>
                             <div
-                                style={{display:'inline-flex'}}
+                                style={{ display: "inline-flex" }}
                                 data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvasMenu">
-                                
-
+                                data-bs-target="#offcanvasMenu"
+                            >
                                 <Image
                                     alt="avatar"
                                     className="thumb"
                                     src="/images/icons/user.svg"
                                     width={15}
                                     height={15}
-                                    style={{ marginTop: '-5px' }}
+                                    style={{ marginTop: "-5px" }}
                                 />
                                 <span
-                                    style={{ marginLeft: '10px' }}
-                                    className="name dropdown-toggle1">
-                                </span>
+                                    style={{ marginLeft: "10px" }}
+                                    className="name dropdown-toggle1"
+                                ></span>
                                 <span>{user.name}</span>
                             </div>
-                        }
+                        )}
                     </div>
                 </div>
             </div>

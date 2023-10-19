@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import FooterDefault from "../../../components/footer/common-footer";
 import LoginPopup from "../../common/form/login/LoginPopup";
 import DefaulHeader2 from "../../header/DefaulHeader2";

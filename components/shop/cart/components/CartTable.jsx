@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import CartItems from "./CartItems";
 
 const CartTable = () => {

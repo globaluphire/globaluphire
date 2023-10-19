@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -41,11 +42,14 @@ const DashboardCandidatesSidebar = () => {
                             key={item.id}
                             onClick={menuToggleHandler}
                         >
-                            <Link href={item.routePath} onClick={(e) => {
-                                if(item.name == 'Logout'){
-                                    logout(dispatch)
-                                }
-                            }}>
+                            <Link
+                                href={item.routePath}
+                                onClick={(e) => {
+                                    if (item.name === "Logout") {
+                                        logout(dispatch);
+                                    }
+                                }}
+                            >
                                 <i className={`la ${item.icon}`}></i>{" "}
                                 {item.name}
                             </Link>
@@ -74,7 +78,7 @@ const DashboardCandidatesSidebar = () => {
                             text={`${percentage}%`}
                         />
                     </div>{" "} */}
-                    {/* <!-- Pie Graph --> */}
+                {/* <!-- Pie Graph --> */}
                 {/* </div> */}
             </div>
         </div>

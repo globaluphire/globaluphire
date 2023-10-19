@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import MobileMenu from "../../../header/MobileMenu";
 import LoginPopup from "../../../common/form/login/LoginPopup";
 import DashboardCandidatesSidebar from "../../../header/DashboardCandidatesSidebar";
@@ -9,52 +10,52 @@ import MenuToggler from "../../MenuToggler";
 import DashboardHeader from "../../../header/DashboardHeader";
 
 const index = () => {
-  return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
+    return (
+        <div className="page-wrapper dashboard">
+            <span className="header-span"></span>
+            {/* <!-- Header Span for hight --> */}
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+            <LoginPopup />
+            {/* End Login Popup Modal */}
 
-      <DashboardHeader />
-      {/* <DashboardCandidatesHeader /> */}
-      {/* End Header */}
+            <DashboardHeader />
+            {/* <DashboardCandidatesHeader /> */}
+            {/* End Header */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
+            <MobileMenu />
+            {/* End MobileMenu */}
 
-      <DashboardCandidatesSidebar />
-      {/* <!-- End Candidates Sidebar Menu --> */}
+            <DashboardCandidatesSidebar />
+            {/* <!-- End Candidates Sidebar Menu --> */}
 
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-        <div className="">
-          {/* <BreadCrumb title="Shortlisted jobs!" /> */}
-          {/* breadCrumb */}
+            {/* <!-- Dashboard --> */}
+            <section className="user-dashboard">
+                <div className="">
+                    {/* <BreadCrumb title="Shortlisted jobs!" /> */}
+                    {/* breadCrumb */}
 
-          <MenuToggler />
-          {/* Collapsible sidebar button */}
+                    <MenuToggler />
+                    {/* Collapsible sidebar button */}
 
-          <div className="row">
-            <div className="col-lg-12">
-              {/* <!-- Ls widget --> */}
-              <div className="ls-widget">
-                <JobFavouriteTable />
-              </div>
-            </div>
-          </div>
-          {/* End .row */}
+                    <div className="row">
+                        <div className="col-lg-12">
+                            {/* <!-- Ls widget --> */}
+                            <div className="ls-widget">
+                                <JobFavouriteTable />
+                            </div>
+                        </div>
+                    </div>
+                    {/* End .row */}
+                </div>
+                {/* End dashboard-outer */}
+            </section>
+            {/* <!-- End Dashboard --> */}
+
+            <CopyrightFooter />
+            {/* <!-- End Copyright --> */}
         </div>
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
-
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
-  );
+        // End page-wrapper
+    );
 };
 
 export default index;

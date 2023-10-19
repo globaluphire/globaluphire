@@ -1,13 +1,13 @@
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+/* eslint-disable no-unused-vars */
 import LoginWithSocial from "./LoginWithSocial";
 import Form from "./FormContent";
 
 const Register = () => {
-  return (
-    <div className="form-inner">
-      <h3>Join us for Free</h3>
+    return (
+        <div className="form-inner">
+            <h3>Join us for Free</h3>
 
-      {/* <Tabs>
+            {/* <Tabs>
 
         <div className="form-group register-dual">
           <TabList className="btn-box row">
@@ -25,29 +25,29 @@ const Register = () => {
           </TabList>
         </div> */}
 
-        {/* End .form-group */}
+            {/* End .form-group */}
 
-        {/* <TabPanel>
+            {/* <TabPanel>
           <Form />
         </TabPanel> */}
-        {/* End cadidates Form */}
+            {/* End cadidates Form */}
 
-        {/* <TabPanel> */}
-          <Form />
-        {/* </TabPanel> */}
-        {/* End Employer Form */}
-      {/* </Tabs> */}
-      {/* End form-group */}
+            {/* <TabPanel> */}
+            <Form />
+            {/* </TabPanel> */}
+            {/* End Employer Form */}
+            {/* </Tabs> */}
+            {/* End form-group */}
 
-      <div className="bottom-box">
-        <div className="divider">
-          <span>or</span>
+            <div className="bottom-box">
+                <div className="divider">
+                    <span>or</span>
+                </div>
+                <LoginWithSocial />
+            </div>
+            {/* End bottom-box LoginWithSocial */}
         </div>
-        <LoginWithSocial />
-      </div>
-      {/* End bottom-box LoginWithSocial */}
-    </div>
-  );
+    );
 };
 
 export default Register;

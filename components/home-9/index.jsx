@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Header from "./Header";
 import Hero9 from "../hero/hero-9";
 import CallToAction7 from "../call-to-action/CallToAction7";
@@ -18,23 +19,23 @@ import DashboardHeader from "../header/DashboardHeader";
 import About from "../about/About";
 
 const index = () => {
-  const user = useSelector((state) => state.candidate.user);
-  const showLoginButton = useMemo(() => !user?.id, [user]);
-  return (
-    <>
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+    const user = useSelector((state) => state.candidate.user);
+    const showLoginButton = useMemo(() => !user?.id, [user]);
+    return (
+        <>
+            <LoginPopup />
+            {/* End Login Popup Modal */}
 
-      {showLoginButton ? <Header /> : <DashboardHeader />}
-      {/* <!--End Main Header --> */}
+            {showLoginButton ? <Header /> : <DashboardHeader />}
+            {/* <!--End Main Header --> */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
+            <MobileMenu />
+            {/* End MobileMenu */}
 
-      <Hero9 />
-      {/* <!-- End Hero Section --> */}
+            <Hero9 />
+            {/* <!-- End Hero Section --> */}
 
-      <section className="about-section">
+            <section className="about-section">
                 <div className="auto-container">
                     <div className="row">
                         <About />
@@ -49,28 +50,28 @@ const index = () => {
                     {/* <!-- Fun Fact Section --> */}
                 </div>
             </section>
-      <section className="job-section">
-        <div className="auto-container wow fadeInUp">
-          <div className="sec-title text-center">
-            <h2>Featured Jobs</h2>
-            {/* <div className="text">
+            <section className="job-section">
+                <div className="auto-container wow fadeInUp">
+                    <div className="sec-title text-center">
+                        <h2>Featured Jobs</h2>
+                        {/* <div className="text">
               Know your worth and find the job that qualify your life
             </div> */}
-          </div>
-          <div className="job-carousel gap-x25" data-aos="fade-up">
-            <JobFeatured12 />
-          </div>
-        </div>
-      </section>
-      {/* <!-- End Job Section --> */}
+                    </div>
+                    <div className="job-carousel gap-x25" data-aos="fade-up">
+                        <JobFeatured12 />
+                    </div>
+                </div>
+            </section>
+            {/* <!-- End Job Section --> */}
 
-      {/* <Block5 /> */}
-      {/* <!-- End Steps Section --> */}
+            {/* <Block5 /> */}
+            {/* <!-- End Steps Section --> */}
 
-      {/* <CallToAction7 /> */}
-      {/* <!-- End Call To Action --> */}
+            {/* <CallToAction7 /> */}
+            {/* <!-- End Call To Action --> */}
 
-      {/* <section className="job-categories">
+            {/* <section className="job-categories">
         <div className="auto-container">
           <div className="sec-title text-center">
             <h2>Popular Job Categories</h2>
@@ -87,9 +88,9 @@ const index = () => {
           </div>
         </div>
       </section> */}
-      {/* End Job Categorie Section */}
+            {/* End Job Categorie Section */}
 
-      {/* <section className="candidates-section">
+            {/* <section className="candidates-section">
         <div className="auto-container">
           <div className="sec-title">
             <h2>Featured Candidates</h2>
@@ -105,15 +106,15 @@ const index = () => {
           </div>
         </div>
       </section> */}
-      {/* <!-- End Candidates Section --> */}
+            {/* <!-- End Candidates Section --> */}
 
-      {/* <section
+            {/* <section
         className="testimonial-section style-two alternate"
         style={{ backgroundImage: "url(images/background/9.png)" }}
       >
         <div className="auto-container"> */}
-          {/* <!-- Sec Title --> */}
-          {/* <div className="sec-title light text-center">
+            {/* <!-- Sec Title --> */}
+            {/* <div className="sec-title light text-center">
             <h2>Testimonials From Our Customers</h2>
             <div className="text">
               Lorem ipsum dolor sit amet elit, sed do eiusmod tempor
@@ -126,23 +127,23 @@ const index = () => {
               <Testimonia4 />
             </div>
           </div> */}
-          {/* End .carousel-outer */}
-        {/* </div> */}
-        {/* End auto-container */}
-      {/* </section> */}
-      {/* <!-- End Testimonial Section --> */}
+            {/* End .carousel-outer */}
+            {/* </div> */}
+            {/* End auto-container */}
+            {/* </section> */}
+            {/* <!-- End Testimonial Section --> */}
 
-      {/* <!-- Fun Fact Section --> */}
-      {/* <div className="fun-fact-section style-two">
+            {/* <!-- Fun Fact Section --> */}
+            {/* <div className="fun-fact-section style-two">
         <div className="auto-container">
           <div className="row" data-aos="fade-in">
             <Funfact />
           </div>
         </div>
       </div> */}
-      {/* <!-- Fun Fact Section --> */}
+            {/* <!-- Fun Fact Section --> */}
 
-      {/* <section className="news-section">
+            {/* <section className="news-section">
         <div className="auto-container">
           <div className="sec-title text-center">
             <h2>Recent News Articles</h2>
@@ -150,21 +151,21 @@ const index = () => {
               Fresh job related news content posted each day.
             </div>
           </div> */}
-          {/* End ."sec-title */}
-          {/* <div className="row" data-aos="fade-up">
+            {/* End ."sec-title */}
+            {/* <div className="row" data-aos="fade-up">
             <Blog />
           </div>
         </div>
       </section> */}
-      {/* <!-- End News Section --> */}
+            {/* <!-- End News Section --> */}
 
-      <CallToAction6 />
-      {/* <!-- End Call To Action --> */}
+            <CallToAction6 />
+            {/* <!-- End Call To Action --> */}
 
-      <Footer />
-      {/* <!-- End Main Footer --> */}
-    </>
-  );
+            <Footer />
+            {/* <!-- End Main Footer --> */}
+        </>
+    );
 };
 
 export default index;

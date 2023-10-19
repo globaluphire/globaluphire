@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import Map from "../../../Map";
 
 const ContactInfoBox = () => {

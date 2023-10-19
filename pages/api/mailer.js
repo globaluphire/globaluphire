@@ -1,13 +1,13 @@
 export default function handler(req, res) {
-  if (req.method == "POST") {
-    const mail = require("@sendgrid/mail");
-    mail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY);
-    const msg = {
-      to: `${req.body.recipient}`,
-      from: "support@globaluphire.com",
-      subject: `[Volare Health] ${req.body.subject}`,
-      attachments: req.body.attachments,
-      html: `
+    if (req.method === "POST") {
+        const mail = require("@sendgrid/mail");
+        mail.setApiKey(process.env.NEXT_PUBLIC_SENDGRID_API_KEY);
+        const msg = {
+            to: `${req.body.recipient}`,
+            from: "support@globaluphire.com",
+            subject: `[Volare Health] ${req.body.subject}`,
+            attachments: req.body.attachments,
+            html: `
             <html>
                 <head>
                 <style>
@@ -72,16 +72,17 @@ export default function handler(req, res) {
                         </div>
                     </body>
             </html>`,
-    };
-    mail
-      .send(msg)
-      .then(() => {
-        return res.status(200).json({ status: "SUCCESS" });
-      })
-      .catch((error) => {
-        return res.status(400).json({ status: "FAILURE", error });
-      });
-  } else {
-    return res.status(405).json({ status: 405, message: "Method not allowed" });
-  }
+        };
+        mail.send(msg)
+            .then(() => {
+                return res.status(200).json({ status: "SUCCESS" });
+            })
+            .catch((error) => {
+                return res.status(400).json({ status: "FAILURE", error });
+            });
+    } else {
+        return res
+            .status(405)
+            .json({ status: 405, message: "Method not allowed" });
+    }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import MobileMenu from "../../../header/MobileMenu";
 import DashboardHeader from "../../../header/DashboardHeader";
 import LoginPopup from "../../../common/form/login/LoginPopup";
@@ -8,60 +9,60 @@ import MenuToggler from "../../MenuToggler";
 import WithdrawalApplicationsWidgetContentBox from "./components/WithdrawalApplicationsWidgetContentBox";
 
 const index = () => {
-  return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
+    return (
+        <div className="page-wrapper dashboard">
+            <span className="header-span"></span>
+            {/* <!-- Header Span for hight --> */}
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+            <LoginPopup />
+            {/* End Login Popup Modal */}
 
-      <DashboardHeader />
-      {/* End Header */}
+            <DashboardHeader />
+            {/* End Header */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
+            <MobileMenu />
+            {/* End MobileMenu */}
 
-      <DashboardEmployerSidebar />
-      {/* <!-- End User Sidebar Menu --> */}
+            <DashboardEmployerSidebar />
+            {/* <!-- End User Sidebar Menu --> */}
 
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-        <div>
-          {/* <BreadCrumb title="Withdrawal Applicants!" /> */}
-          {/* breadCrumb */}
+            {/* <!-- Dashboard --> */}
+            <section className="user-dashboard">
+                <div>
+                    {/* <BreadCrumb title="Withdrawal Applicants!" /> */}
+                    {/* breadCrumb */}
 
-          <MenuToggler />
-          {/* Collapsible sidebar button */}
+                    <MenuToggler />
+                    {/* Collapsible sidebar button */}
 
-          <div className="row">
-            <div className="col-lg-12">
-              {/* <!-- Ls widget --> */}
-              <div className="ls-widget">
-                <div className="tabs-box">
-                  {/* <div className="widget-title">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            {/* <!-- Ls widget --> */}
+                            <div className="ls-widget">
+                                <div className="tabs-box">
+                                    {/* <div className="widget-title">
                     <h4>Applicant</h4>
                     <WidgetTopFilterBox />
                   </div> */}
-                  {/* End top widget filter bar */}
+                                    {/* End top widget filter bar */}
 
-                  <WithdrawalApplicationsWidgetContentBox />
-                  {/* End widget-content */}
+                                    <WithdrawalApplicationsWidgetContentBox />
+                                    {/* End widget-content */}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* End .row */}
                 </div>
-              </div>
-            </div>
-          </div>
-          {/* End .row */}
-        </div>
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
+                {/* End dashboard-outer */}
+            </section>
+            {/* <!-- End Dashboard --> */}
 
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
-  );
+            <CopyrightFooter />
+            {/* <!-- End Copyright --> */}
+        </div>
+        // End page-wrapper
+    );
 };
 
 export default index;

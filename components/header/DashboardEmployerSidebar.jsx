@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import Link from "next/link";
 import employerMenuData from "../../data/employerMenuData";
 import { isActiveLink } from "../../utils/linkActiveChecker";
@@ -38,11 +39,14 @@ const DashboardEmployerSidebar = () => {
                             key={item.id}
                             onClick={menuToggleHandler}
                         >
-                            <Link href={item.routePath} onClick={(e) => {
-                                if(item.name == 'Logout'){
-                                    logout(dispatch)
-                                }
-                            }}>
+                            <Link
+                                href={item.routePath}
+                                onClick={(e) => {
+                                    if (item.name === "Logout") {
+                                        logout(dispatch);
+                                    }
+                                }}
+                            >
                                 <i className={`la ${item.icon}`}></i>{" "}
                                 {item.name}
                             </Link>

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import Link from "next/link";
 import {
     blogItems,
@@ -175,7 +176,8 @@ const HeaderNavContent = () => {
                             isActiveParent(candidateItems, router.asPath) ||
                             router.asPath === "/candidates-dashboard/dashboard"
                                 ? "current"
-                                : ""
+                                : // eslint-disable-next-line no-constant-condition
+                                ""
                                 ? "current"
                                 : ""
                         } dropdown`}

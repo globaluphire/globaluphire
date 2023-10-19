@@ -1,12 +1,13 @@
+/* eslint-disable no-unused-vars */
 import CopyrightFooter from "./CopyrightFooter";
 import FooterContent from "./FooterContent";
 
 const index = ({ footerStyle = "" }) => {
-  return (
-    <footer className={`main-footer style-six ${footerStyle}`}>
-      {/* <div className="auto-container"> */}
-        {/* <!--Widgets Section--> */}
-        {/* <div className="widgets-section" data-aos="fade-up">
+    return (
+        <footer className={`main-footer style-six ${footerStyle}`}>
+            {/* <div className="auto-container"> */}
+            {/* <!--Widgets Section--> */}
+            {/* <div className="widgets-section" data-aos="fade-up">
           <div className="row">
             <div className="big-column col-xl-4 col-lg-3 col-md-12">
               <div className="footer-column about-widget">
@@ -39,16 +40,16 @@ const index = ({ footerStyle = "" }) => {
               </div>
             </div> */}
             {/* End col-xl-8 */}
-          {/* </div>
+            {/* </div>
         </div>
       </div> */}
-      {/* End auto-container */}
+            {/* End auto-container */}
 
-      <CopyrightFooter />
-      {/* <!--Bottom--> */}
-    </footer>
-    //   {/* <!-- End Main Footer --> */}
-  );
+            <CopyrightFooter />
+            {/* <!--Bottom--> */}
+        </footer>
+        //   {/* <!-- End Main Footer --> */}
+    );
 };
 
 export default index;

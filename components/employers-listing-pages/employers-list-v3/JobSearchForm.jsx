@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useDispatch, useSelector } from "react-redux";
 import { addFoundationDate } from "../../../features/filter/employerFilterSlice";
 import Categories from "../components/Categories";

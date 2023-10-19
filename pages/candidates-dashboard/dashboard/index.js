@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import dynamic from "next/dynamic";
 import Seo from "../../../components/common/Seo";
 import DashboadHome from "../../../components/dashboard-pages/candidates-dashboard/dashboard";

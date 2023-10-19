@@ -8,6 +8,7 @@
     "start": "next start",
     "start-dev": "copy .env.dev .env && npm run start",
     "start-prod": "copy .env.prod .env && npm run start",
+    "eslint": "eslint --fix --ext .js,.jsx .",
     "lint": "next lint"
   },
   "dependencies": {
@@ -25,7 +26,6 @@
     "csv-writer": "^1.6.0",
     "docusign-esign": "^6.4.0",
     "draft-js": "^0.11.7",
-    "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
     "firebase": "^9.22.0",
     "google-map-react": "^2.2.0",
@@ -65,5 +65,14 @@
     "suneditor": "^2.44.10",
     "suneditor-react": "^3.5.0",
     "twilio": "^4.16.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "^3.0.3"
   }
 }

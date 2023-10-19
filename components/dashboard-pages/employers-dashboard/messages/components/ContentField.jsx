@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import ChatHamburger from "./ChatHamburger";
 
 const ChatBoxContentField = () => {

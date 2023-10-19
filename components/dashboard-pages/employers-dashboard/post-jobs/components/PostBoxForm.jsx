@@ -1,127 +1,137 @@
-import Map from "../../../Map";
-import Select from "react-select";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { supabase } from "../../../../../config/supabaseClient";
 import dynamic from "next/dynamic";
-import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
-import { Typeahead } from 'react-bootstrap-typeahead';
+import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
+import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
-  ssr: false,
+    ssr: false,
 });
 
 const apiKey = envConfig.JOB_PORTAL_GMAP_API_KEY;
-const mapApiJs = 'https://maps.googleapis.com/maps/api/js';
-
+const mapApiJs = "https://maps.googleapis.com/maps/api/js";
 
 // load google map api js
 function loadAsyncScript(src) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
         const script = document.createElement("Script");
         Object.assign(script, {
             type: "text/javascript",
             async: true,
-            src
-        })
+            src,
+        });
         script.addEventListener("load", () => resolve(script));
         document.head.appendChild(script);
-    })
+    });
 }
 
 const addJobFields = {
-  jobTitle: "",
-  jobDesc: "",
-  jobType: "",
-  salary: "",
-  salaryRate: "",
-  education: "",
-  exp: "",
-  address: "",
-  completeAddress: "",
-  facility: ""
-}
+    jobTitle: "",
+    jobDesc: "",
+    jobType: "",
+    salary: "",
+    salaryRate: "",
+    education: "",
+    exp: "",
+    address: "",
+    completeAddress: "",
+    facility: "",
+};
 
 const submitJobPost = async (
-  { jobTitle, jobDesc, jobType, salary, salaryRate, education, exp, completeAddress, address, facility },
-  setJobData,
-  user
+    {
+        jobTitle,
+        jobDesc,
+        jobType,
+        salary,
+        salaryRate,
+        education,
+        exp,
+        completeAddress,
+        address,
+        facility,
+    },
+    setJobData,
+    user
 ) => {
     if (jobTitle && jobDesc && jobType && completeAddress && facility) {
         try {
-          
-          let { data: facilityData, error: facilityError } = await supabase
-            .from('facility')
-            .select('facility_id')
-            .eq('facility_name', facility)
-            .single()
+            const { data: facilityData, error: facilityError } = await supabase
+                .from("facility")
+                .select("facility_id")
+                .eq("facility_name", facility)
+                .single();
 
-          if (facilityData) {
-              const { data, error } = await supabase
-                .from('jobs')
-                .insert([
-                  { 
-                    user_id: user.id,
-                    job_title: jobTitle,
-                    job_desc: jobDesc,
-                    job_type: jobType,
-                    experience: exp,
-                    education: education,
-                    salary: salary,
-                    salary_rate: salaryRate,
-                    job_comp_add: completeAddress,
-                    facility_name: facility,
-                    facility_id: facilityData.facility_id
-                  }
-            ])
+            if (facilityData) {
+                const { data, error } = await supabase.from("jobs").insert([
+                    {
+                        user_id: user.id,
+                        job_title: jobTitle,
+                        job_desc: jobDesc,
+                        job_type: jobType,
+                        experience: exp,
+                        education,
+                        salary,
+                        salary_rate: salaryRate,
+                        job_comp_add: completeAddress,
+                        facility_name: facility,
+                        facility_id: facilityData.facility_id,
+                    },
+                ]);
 
+                // open toast
+                toast.success("Job Posted successfully", {
+                    position: "bottom-right",
+                    autoClose: 8000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                setJobData(JSON.parse(JSON.stringify(addJobFields)));
+            } else {
+                // open toast
+                toast.error(
+                    "Error while saving your job application, Please try again later or contact tech support",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+            }
+        } catch (err) {
             // open toast
-            toast.success('Job Posted successfully', {
-                position: "bottom-right",
-                autoClose: 8000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-            setJobData(JSON.parse(JSON.stringify(addJobFields)))
-
-          } else {
-            // open toast
-            toast.error('Error while saving your job application, Please try again later or contact tech support', {
-                position: "bottom-right",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-          }
-      } catch (err) {
-        // open toast
-        toast.error('Error while saving your job application, Please try again later or contact tech support', {
-            position: "bottom-right",
-            autoClose: false,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        });
-        // console.warn(err);
-      }
+            toast.error(
+                "Error while saving your job application, Please try again later or contact tech support",
+                {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
+            );
+            // console.warn(err);
+        }
     } else {
         // open toast
-        toast.error('Please fill all the required fields.', {
+        toast.error("Please fill all the required fields.", {
             position: "top-center",
             autoClose: false,
             hideProgressBar: false,
@@ -135,121 +145,139 @@ const submitJobPost = async (
 };
 
 const PostBoxForm = () => {
-  // const [jobTitle, setJobTitle] = useState("");
-  // const [jobDesc, setJobDesc] = useState("");
-  //const [email, setEmail] = useState("");
-  //const [username, setUsername] = useState("");
-  //const [specialism, setSpecialism] = useState([]);
-  // const [jobType, setJobType] = useState("");
-  // const [salary, setSalary] = useState("");
-  // const [salaryRate, setSalaryRate] = useState("");
-  // const [education, setEducation] = useState("");
-  // const [exp, setExp] = useState("");
-  //const [gender, setGender] = useState("");
-  //const [industy, setIndustry] = useState("");
-  //const [qualification, setQualification] = useState("");
-  //const [deadline, setDeadline] = useState("");
-  //const [country, setCountry] = useState("");
-  //const [city, setCity] = useState("");
-  // const [address, setAddress] = useState("");
-  const user = useSelector(state => state.candidate.user)
-  const [jobData, setJobData] = useState(JSON.parse(JSON.stringify(addJobFields)));
-  const { jobTitle, jobDesc, jobType, salary, salaryRate, education, exp, address, completeAddress, facility } = useMemo(() => jobData, [jobData])
-
-  const searchInput = useRef(null);
-
-  const [singleSelections, setSingleSelections] = useState([]);
-  const [facilityNames, setFacilityNames] = useState([]);
-  const [facilitySingleSelections, setFacilitySingleSelections] = useState([]);
-
-  const addresses = [
-    "601 Evergreen Rd., Woodburn, OR 97071",
-    "160 NE Conifer Blvd., Corvallis, OR 97330",
-    "1735 Adkins St., Eugene, OR 97401",
-    "1201 McLean Blvd., Eugene, OR 97405",
-    "1166 E 28th Ave., Eugene, OR 97403",
-    "740 NW Hill Pl., Roseburg, OR 97471",
-    "525 W Umpqua St., Roseburg, OR 97471",
-    "2075 NW Highland Avenue, Grants Pass, OR 97526",
-    "2201 NW Highland Avenue, Grants Pass, OR 97526",
-    "2901 E Barnett Rd., Medford, OR 97504",
-    "4062 Arleta Ave NE, Keizer,	OR 97303",
-    "2350 Oakmont Way, Suite 204, Eugene, OR 97401",
-    "1677 Pensacola Street, Honolulu, HI 96822",
-    "10503 Timberwood Cir, Suite 200, Louisville, KY 40223",
-    "252 LA Hwy 402, Napoleonville, LA 70390",
-    "5976 Highway 65N, Lake Providence, LA 71254",
-    "1400 Lindberg Street, Slidell, LA 70458",
-    "4021 Cadillac Street, New Orleans, LA 70122"
-  ]
-
-  async function getFacilityNames() {
-    // call reference to get applicantStatus options
-    let { data: refData, error: e } = await supabase
-      .from('reference')
-      .select("*")
-      .eq('ref_nm',  'facilityName');
-
-    if (refData) {
-        // setFacilityNames(refData)
-        let facilities = []
-        for (let i = 0; i < refData.length; i++) {
-          facilities.push(refData[i].ref_dspl)
-        }
-        facilities.sort()
-        setFacilityNames(facilities)
-    }
-  }
-
-  useEffect(() => {
-    getFacilityNames();
-  }, []);
-
-  useEffect(() => {
-    jobData.facility = facilitySingleSelections[0]
-  }, [facilitySingleSelections])
-
-  useEffect(() => {
-    jobData.completeAddress = singleSelections[0]
-  }, [singleSelections])
-
-  // init google map script
-  const initMapScript = () => {
-    // if script already loaded
-    if (window.google) {
-        return Promise.resolve();
-    }
-    const src = `${mapApiJs}?key=${apiKey}&libraries=places&v=weekly`;
-    return loadAsyncScript(src);
-  }
-
-  // do something on address change
-  const onChangeAddress = (autocomplete) => {
-    const location = autocomplete.getPlace();
-    setJobData((previousState) => ({ 
-      ...previousState,
-      address: searchInput.current.value
-    }))
-  }
-
-  // init autocomplete
-  const initAutocomplete = () => {
-    if (!searchInput.current) return;
-
-    const autocomplete = new window.google.maps.places.Autocomplete(searchInput.current, {
-        types: ['(cities)']
-      }
+    // const [jobTitle, setJobTitle] = useState("");
+    // const [jobDesc, setJobDesc] = useState("");
+    // const [email, setEmail] = useState("");
+    // const [username, setUsername] = useState("");
+    // const [specialism, setSpecialism] = useState([]);
+    // const [jobType, setJobType] = useState("");
+    // const [salary, setSalary] = useState("");
+    // const [salaryRate, setSalaryRate] = useState("");
+    // const [education, setEducation] = useState("");
+    // const [exp, setExp] = useState("");
+    // const [gender, setGender] = useState("");
+    // const [industy, setIndustry] = useState("");
+    // const [qualification, setQualification] = useState("");
+    // const [deadline, setDeadline] = useState("");
+    // const [country, setCountry] = useState("");
+    // const [city, setCity] = useState("");
+    // const [address, setAddress] = useState("");
+    const user = useSelector((state) => state.candidate.user);
+    const [jobData, setJobData] = useState(
+        JSON.parse(JSON.stringify(addJobFields))
     );
-    autocomplete.setFields(["address_component", "geometry"]);
-    autocomplete.addListener("place_changed", () => onChangeAddress(autocomplete))
+    const {
+        jobTitle,
+        jobDesc,
+        jobType,
+        salary,
+        salaryRate,
+        education,
+        exp,
+        address,
+        completeAddress,
+        facility,
+    } = useMemo(() => jobData, [jobData]);
 
-  }
+    const searchInput = useRef(null);
 
-  // load map script after mounted
-  useEffect(() => {
-    initMapScript().then(() => initAutocomplete())
-  }, []);
-/*
+    const [singleSelections, setSingleSelections] = useState([]);
+    const [facilityNames, setFacilityNames] = useState([]);
+    const [facilitySingleSelections, setFacilitySingleSelections] = useState(
+        []
+    );
+
+    const addresses = [
+        "601 Evergreen Rd., Woodburn, OR 97071",
+        "160 NE Conifer Blvd., Corvallis, OR 97330",
+        "1735 Adkins St., Eugene, OR 97401",
+        "1201 McLean Blvd., Eugene, OR 97405",
+        "1166 E 28th Ave., Eugene, OR 97403",
+        "740 NW Hill Pl., Roseburg, OR 97471",
+        "525 W Umpqua St., Roseburg, OR 97471",
+        "2075 NW Highland Avenue, Grants Pass, OR 97526",
+        "2201 NW Highland Avenue, Grants Pass, OR 97526",
+        "2901 E Barnett Rd., Medford, OR 97504",
+        "4062 Arleta Ave NE, Keizer,	OR 97303",
+        "2350 Oakmont Way, Suite 204, Eugene, OR 97401",
+        "1677 Pensacola Street, Honolulu, HI 96822",
+        "10503 Timberwood Cir, Suite 200, Louisville, KY 40223",
+        "252 LA Hwy 402, Napoleonville, LA 70390",
+        "5976 Highway 65N, Lake Providence, LA 71254",
+        "1400 Lindberg Street, Slidell, LA 70458",
+        "4021 Cadillac Street, New Orleans, LA 70122",
+    ];
+
+    async function getFacilityNames() {
+        // call reference to get applicantStatus options
+        const { data: refData, error: e } = await supabase
+            .from("reference")
+            .select("*")
+            .eq("ref_nm", "facilityName");
+
+        if (refData) {
+            // setFacilityNames(refData)
+            const facilities = [];
+            for (let i = 0; i < refData.length; i++) {
+                facilities.push(refData[i].ref_dspl);
+            }
+            facilities.sort();
+            setFacilityNames(facilities);
+        }
+    }
+
+    useEffect(() => {
+        getFacilityNames();
+    }, []);
+
+    useEffect(() => {
+        jobData.facility = facilitySingleSelections[0];
+    }, [facilitySingleSelections]);
+
+    useEffect(() => {
+        jobData.completeAddress = singleSelections[0];
+    }, [singleSelections]);
+
+    // init google map script
+    const initMapScript = () => {
+        // if script already loaded
+        if (window.google) {
+            return Promise.resolve();
+        }
+        const src = `${mapApiJs}?key=${apiKey}&libraries=places&v=weekly`;
+        return loadAsyncScript(src);
+    };
+
+    // do something on address change
+    const onChangeAddress = (autocomplete) => {
+        const location = autocomplete.getPlace();
+        setJobData((previousState) => ({
+            ...previousState,
+            address: searchInput.current.value,
+        }));
+    };
+
+    // init autocomplete
+    const initAutocomplete = () => {
+        if (!searchInput.current) return;
+
+        const autocomplete = new window.google.maps.places.Autocomplete(
+            searchInput.current,
+            {
+                types: ["(cities)"],
+            }
+        );
+        autocomplete.setFields(["address_component", "geometry"]);
+        autocomplete.addListener("place_changed", () =>
+            onChangeAddress(autocomplete)
+        );
+    };
+
+    // load map script after mounted
+    useEffect(() => {
+        initMapScript().then(() => initAutocomplete());
+    }, []);
+    /*
   const specialisms = [
     { value: "Banking", label: "Banking" },
     { value: "Digital & Creative", label: "Digital & Creative" },
@@ -263,56 +291,68 @@ const PostBoxForm = () => {
   ];
  */
 
-  return (
-    <form className="default-form">     
-      <div className="row">
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-12 col-md-12">
-          <label>Job Title <span className="required">(required)</span></label>
-          <input
-            type="text"
-            name="globaluphire-jobTitle"
-            value={jobTitle}
-            required
-            onChange={(e) => {
-              setJobData((previousState) => ({ 
-                ...previousState,
-                jobTitle: e.target.value
-              }))
-            }}
-            placeholder="Job Title"
-          />
-        </div>
-        {/* <!-- About Company --> */}
-        <div className="form-group col-lg-12 col-md-12">
-          <label>Job Description <span className="required">(required)</span></label>
-          <SunEditor 
-            setOptions={{
-            buttonList: [
-              ["fontSize", "formatBlock"],
-              ["bold", "underline", "italic", "strike", "subscript", "superscript"],
-              ["align", "horizontalRule", "list", "table"],
-              ["fontColor", "hiliteColor"],
-              ["outdent", "indent"],
-              ["undo", "redo"],
-              ["removeFormat"],
-              ["outdent", "indent"],
-              ["link"],
-              ["preview", "print"],
-              ["fullScreen", "showBlocks", "codeView"],
-            ],
-          }}
-          setDefaultStyle="color:black;"
-          onChange={(e) => {
-            setJobData((previousState) => ({ 
-              ...previousState,
-              jobDesc: e
-            }))
-          }}
-          />
-        </div>
-        {/* <!-- Input --> */}
-{/*
+    return (
+        <form className="default-form">
+            <div className="row">
+                {/* <!-- Input --> */}
+                <div className="form-group col-lg-12 col-md-12">
+                    <label>
+                        Job Title <span className="required">(required)</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="globaluphire-jobTitle"
+                        value={jobTitle}
+                        required
+                        onChange={(e) => {
+                            setJobData((previousState) => ({
+                                ...previousState,
+                                jobTitle: e.target.value,
+                            }));
+                        }}
+                        placeholder="Job Title"
+                    />
+                </div>
+                {/* <!-- About Company --> */}
+                <div className="form-group col-lg-12 col-md-12">
+                    <label>
+                        Job Description{" "}
+                        <span className="required">(required)</span>
+                    </label>
+                    <SunEditor
+                        setOptions={{
+                            buttonList: [
+                                ["fontSize", "formatBlock"],
+                                [
+                                    "bold",
+                                    "underline",
+                                    "italic",
+                                    "strike",
+                                    "subscript",
+                                    "superscript",
+                                ],
+                                ["align", "horizontalRule", "list", "table"],
+                                ["fontColor", "hiliteColor"],
+                                ["outdent", "indent"],
+                                ["undo", "redo"],
+                                ["removeFormat"],
+                                ["outdent", "indent"],
+                                ["link"],
+                                ["preview", "print"],
+                                ["fullScreen", "showBlocks", "codeView"],
+                            ],
+                        }}
+                        setDefaultStyle="color:black;"
+                        onChange={(e) => {
+                            setJobData((previousState) => ({
+                                ...previousState,
+                                jobDesc: e,
+                            }));
+                        }}
+                    />
+                </div>
+                {/* <!-- Input --> */}
+                {/*
         <div className="form-group col-lg-6 col-md-12">
           <label>Email Address <span className="optional">(optional)</span></label>
           <input
@@ -326,8 +366,8 @@ const PostBoxForm = () => {
           />
         </div>
  */}
-        {/* <!-- Input --> */}
-{/*
+                {/* <!-- Input --> */}
+                {/*
         <div className="form-group col-lg-6 col-md-12">
           <label>Username</label>
           <input
@@ -341,8 +381,8 @@ const PostBoxForm = () => {
           />
         </div>
  */}
-        {/* <!-- Search Select --> */}
-{/*
+                {/* <!-- Search Select --> */}
+                {/*
         <div className="form-group col-lg-6 col-md-12">
           <label>Specialisms </label>
           <Select
@@ -364,108 +404,119 @@ const PostBoxForm = () => {
           />
         </div>
  */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Job Type <span className="required"> (required)</span></label>
-          <select
-            className="chosen-single form-select"
-            value={jobType}
-            required
-            onChange={(e) => {
-              setJobData((previousState) => ({ 
-                ...previousState,
-                jobType: e.target.value
-              }))
-            }}
-          >
-            <option></option>
-            <option>Full Time</option>
-            <option>Part Time</option>
-            <option>Both</option>
-            <option>PRN</option>
-          </select>
-        </div>
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Experience<span className="optional"> (optional)</span></label>
-          <select
-            className="chosen-single form-select"
-            value={exp}
-            onChange={(e) => {
-              setJobData((previousState) => ({ 
-                ...previousState,
-                exp: e.target.value
-              }))
-            }}
-          >
-            <option></option>
-            <option>1 year</option>
-            <option>2 years</option>
-            <option>3 years</option>
-            <option>4 years</option>
-            <option>5 years</option>
-            <option>6 years</option>
-            <option>7 years</option>
-            <option>8 years</option>
-            <option>9 years</option>
-            <option>10+ years</option>
-          </select>
-        </div>
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Offered Salary <span className="required">(required)</span></label>
-          <input
-            type="text"
-            name="globaluphire-salary"
-            value={salary}
-            placeholder="$100,000.00"
-            onChange={(e) => {
-              setJobData((previousState) => ({ 
-                ...previousState,
-                salary: e.target.value
-              }))
-            }}
-            required
-          />
-        </div>
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Salary Rate <span className="required">(required)</span></label>
-          <select
-            className="chosen-single form-select"
-            value={salaryRate}
-            onChange={(e) => {
-              setJobData((previousState) => ({ 
-                ...previousState,
-                salaryRate: e.target.value
-              }))
-            }}
-            required
-          >
-            <option></option>
-            <option>Per hour</option>
-            <option>Per month</option>
-            <option>Per year</option>
-          </select>
-        </div>
-        <div className="form-group col-lg-6 col-md-12">
-          <label>Education<span className="optional"> (optional)</span></label>
-          <select
-            className="chosen-single form-select"
-            value={education}
-            onChange={(e) => {
-              setJobData((previousState) => ({ 
-                ...previousState,
-                education: e.target.value
-              }))
-            }}
-          >
-            <option></option>
-            <option>Certificate</option>
-            <option>High School</option>
-            <option>Associate Degree</option>
-            <option>Bachelor's Degree</option>
-            <option>Master's Degree</option>
-          </select>
-        </div>
-{/*
+                <div className="form-group col-lg-6 col-md-12">
+                    <label>
+                        Job Type <span className="required"> (required)</span>
+                    </label>
+                    <select
+                        className="chosen-single form-select"
+                        value={jobType}
+                        required
+                        onChange={(e) => {
+                            setJobData((previousState) => ({
+                                ...previousState,
+                                jobType: e.target.value,
+                            }));
+                        }}
+                    >
+                        <option></option>
+                        <option>Full Time</option>
+                        <option>Part Time</option>
+                        <option>Both</option>
+                        <option>PRN</option>
+                    </select>
+                </div>
+                <div className="form-group col-lg-6 col-md-12">
+                    <label>
+                        Experience<span className="optional"> (optional)</span>
+                    </label>
+                    <select
+                        className="chosen-single form-select"
+                        value={exp}
+                        onChange={(e) => {
+                            setJobData((previousState) => ({
+                                ...previousState,
+                                exp: e.target.value,
+                            }));
+                        }}
+                    >
+                        <option></option>
+                        <option>1 year</option>
+                        <option>2 years</option>
+                        <option>3 years</option>
+                        <option>4 years</option>
+                        <option>5 years</option>
+                        <option>6 years</option>
+                        <option>7 years</option>
+                        <option>8 years</option>
+                        <option>9 years</option>
+                        <option>10+ years</option>
+                    </select>
+                </div>
+                {/* <!-- Input --> */}
+                <div className="form-group col-lg-6 col-md-12">
+                    <label>
+                        Offered Salary{" "}
+                        <span className="required">(required)</span>
+                    </label>
+                    <input
+                        type="text"
+                        name="globaluphire-salary"
+                        value={salary}
+                        placeholder="$100,000.00"
+                        onChange={(e) => {
+                            setJobData((previousState) => ({
+                                ...previousState,
+                                salary: e.target.value,
+                            }));
+                        }}
+                        required
+                    />
+                </div>
+                <div className="form-group col-lg-6 col-md-12">
+                    <label>
+                        Salary Rate <span className="required">(required)</span>
+                    </label>
+                    <select
+                        className="chosen-single form-select"
+                        value={salaryRate}
+                        onChange={(e) => {
+                            setJobData((previousState) => ({
+                                ...previousState,
+                                salaryRate: e.target.value,
+                            }));
+                        }}
+                        required
+                    >
+                        <option></option>
+                        <option>Per hour</option>
+                        <option>Per month</option>
+                        <option>Per year</option>
+                    </select>
+                </div>
+                <div className="form-group col-lg-6 col-md-12">
+                    <label>
+                        Education<span className="optional"> (optional)</span>
+                    </label>
+                    <select
+                        className="chosen-single form-select"
+                        value={education}
+                        onChange={(e) => {
+                            setJobData((previousState) => ({
+                                ...previousState,
+                                education: e.target.value,
+                            }));
+                        }}
+                    >
+                        <option></option>
+                        <option>Certificate</option>
+                        <option>High School</option>
+                        <option>Associate Degree</option>
+                        <option>Bachelor's Degree</option>
+                        <option>Master's Degree</option>
+                    </select>
+                </div>
+                {/*
         <div className="form-group col-lg-6 col-md-12">
           <label>Gender</label>
           <select
@@ -482,7 +533,7 @@ const PostBoxForm = () => {
           </select>
         </div>
  */}
-{/*
+                {/*
         <div className="form-group col-lg-6 col-md-12">
           <label>Industry</label>
           <select
@@ -501,7 +552,7 @@ const PostBoxForm = () => {
           </select>
         </div>
  */}
-{/*
+                {/*
         <div className="form-group col-lg-6 col-md-12">
           <label>Qualification</label>
           <select
@@ -520,8 +571,8 @@ const PostBoxForm = () => {
           </select>
         </div>
  */}
-        {/* <!-- Input --> */}
-{/*
+                {/* <!-- Input --> */}
+                {/*
         <div className="form-group col-lg-12 col-md-12">
           <label>Application Deadline Date</label>
           <input
@@ -535,7 +586,7 @@ const PostBoxForm = () => {
           />
         </div>
  */}
-{/*
+                {/*
         <div className="form-group col-lg-6 col-md-12">
           <label>City <span className="required">(required)</span></label>
           <input
@@ -550,7 +601,8 @@ const PostBoxForm = () => {
           />
         </div>
          */}
-{/* <!-- Input --> */}{/*
+                {/* <!-- Input --> */}
+                {/*
 
         <div className="form-group col-lg-6 col-md-12">
           <label>Country <span className="required">(required)</span></label>
@@ -572,7 +624,7 @@ const PostBoxForm = () => {
         </div>
  */}
 
-        {/* <div className="form-group col-lg-12 col-md-12">
+                {/* <div className="form-group col-lg-12 col-md-12">
           <label>Complete Address <span className="optional">(optional)</span></label>
           <input
             type="text"
@@ -588,34 +640,40 @@ const PostBoxForm = () => {
           />
         </div> */}
 
-        <div className="form-group col-lg-12 col-md-12">
-          <label>Facility Name <span className="required">(required)</span></label>
-          <Typeahead
-            onChange={setFacilitySingleSelections}
-            id="facilityName"
-            className="form-group"
-            placeholder="Facility Name"
-            options={facilityNames}
-            selected={facilitySingleSelections}
-            required
-          />
-        </div>
+                <div className="form-group col-lg-12 col-md-12">
+                    <label>
+                        Facility Name{" "}
+                        <span className="required">(required)</span>
+                    </label>
+                    <Typeahead
+                        onChange={setFacilitySingleSelections}
+                        id="facilityName"
+                        className="form-group"
+                        placeholder="Facility Name"
+                        options={facilityNames}
+                        selected={facilitySingleSelections}
+                        required
+                    />
+                </div>
 
-        <div className="form-group col-lg-12 col-md-12">
-          <label>Complete Address <span className="required">(required)</span></label>
-          <Typeahead
-            onChange={setSingleSelections}
-            id="completeAddress"
-            className="form-group"
-            placeholder="Address"
-            options={addresses}
-            selected={singleSelections}
-            required
-          />
-        </div>
+                <div className="form-group col-lg-12 col-md-12">
+                    <label>
+                        Complete Address{" "}
+                        <span className="required">(required)</span>
+                    </label>
+                    <Typeahead
+                        onChange={setSingleSelections}
+                        id="completeAddress"
+                        className="form-group"
+                        placeholder="Address"
+                        options={addresses}
+                        selected={singleSelections}
+                        required
+                    />
+                </div>
 
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-12 col-md-12">
+                {/* <!-- Input --> */}
+                {/* <div className="form-group col-lg-12 col-md-12">
           <label>City, State <span className="required">(required)</span></label>
           <input
             type="text"
@@ -625,9 +683,9 @@ const PostBoxForm = () => {
             required
           />
         </div> */}
-        
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-6 col-md-12">
+
+                {/* <!-- Input --> */}
+                {/* <div className="form-group col-lg-6 col-md-12">
           <label>Find On Map</label>
           <input
             type="text"
@@ -635,18 +693,18 @@ const PostBoxForm = () => {
             placeholder="329 Queensberry Street, North Melbourne VIC 3051, Australia."
           />
         </div> */}
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-3 col-md-12">
+                {/* <!-- Input --> */}
+                {/* <div className="form-group col-lg-3 col-md-12">
           <label>Latitude</label>
           <input type="text" name="name" placeholder="Melbourne" />
         </div> */}
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-3 col-md-12">
+                {/* <!-- Input --> */}
+                {/* <div className="form-group col-lg-3 col-md-12">
           <label>Longitude</label>
           <input type="text" name="name" placeholder="Melbourne" />
         </div> */}
-        {/* <!-- Input --> */}
-        {/* <div className="form-group col-lg-12 col-md-12">
+                {/* <!-- Input --> */}
+                {/* <div className="form-group col-lg-12 col-md-12">
           <button className="theme-btn btn-style-three">Search Location</button>
         </div>
         <div className="form-group col-lg-12 col-md-12">
@@ -656,21 +714,21 @@ const PostBoxForm = () => {
             </div>
           </div>
         </div> */}
-        {/* <!-- Input --> */}
-        <div className="form-group col-lg-12 col-md-12 text-right">
-          <button
-            className="theme-btn btn-style-one"
-            onClick={(e) => {
-              e.preventDefault();
-              submitJobPost(jobData, setJobData, user);
-            }}
-          >
-            Post
-          </button>
-        </div>
-      </div>
-    </form>
-  );
+                {/* <!-- Input --> */}
+                <div className="form-group col-lg-12 col-md-12 text-right">
+                    <button
+                        className="theme-btn btn-style-one"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            submitJobPost(jobData, setJobData, user);
+                        }}
+                    >
+                        Post
+                    </button>
+                </div>
+            </div>
+        </form>
+    );
 };
 
 export default PostBoxForm;

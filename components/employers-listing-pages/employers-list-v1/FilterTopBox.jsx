@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Link from "next/link";
 import ListingShowing from "../components/ListingShowing";
 import companyData from "../../../data/topCompany";
@@ -57,7 +58,7 @@ const FilterTopBox = () => {
     const sortFilter = (a, b) =>
         sort === "des" ? a.id > b.id && -1 : a.id < b.id && -1;
 
-    let content = companyData
+    const content = companyData
         ?.slice(perPage.start !== 0 && 12, perPage.end !== 0 ? perPage.end : 20)
         ?.filter(keywordFilter)
         ?.filter(locationFilter)

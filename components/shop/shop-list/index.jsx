@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import LoginPopup from "../../common/form/login/LoginPopup";
 import FooterDefault from "../../footer/common-footer";
 import ShopHeader from "../../header/ShopHeader";
@@ -7,41 +8,41 @@ import ShopItems from "./components/ShopItems";
 import Pagination from "./components/Pagination";
 
 const index = () => {
-  return (
-    <>
-      {/* <!-- Header Span --> */}
-      <span className="header-span"></span>
+    return (
+        <>
+            {/* <!-- Header Span --> */}
+            <span className="header-span"></span>
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+            <LoginPopup />
+            {/* End Login Popup Modal */}
 
-      <ShopHeader />
-      {/* <!--End Main Header --> */}
+            <ShopHeader />
+            {/* <!--End Main Header --> */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
+            <MobileMenu />
+            {/* End MobileMenu */}
 
-      <Breadcrumb title="Shop" meta="Shop" />
-      {/* <!--End Page Title--> */}
+            <Breadcrumb title="Shop" meta="Shop" />
+            {/* <!--End Page Title--> */}
 
-      <div className="products-section">
-        <div className="auto-container">
-          <div className="row">
-            <ShopItems />
-          </div>
-          {/* End .row */}
+            <div className="products-section">
+                <div className="auto-container">
+                    <div className="row">
+                        <ShopItems />
+                    </div>
+                    {/* End .row */}
 
-          <Pagination />
-          {/* End .pagination */}
-        </div>
-        {/* End auto-container */}
-      </div>
-      {/* <!-- End Product Section --> */}
+                    <Pagination />
+                    {/* End .pagination */}
+                </div>
+                {/* End auto-container */}
+            </div>
+            {/* <!-- End Product Section --> */}
 
-      <FooterDefault footerStyle="alternate5" />
-      {/* <!-- End Main Footer --> */}
-    </>
-  );
+            <FooterDefault footerStyle="alternate5" />
+            {/* <!-- End Main Footer --> */}
+        </>
+    );
 };
 
 export default index;

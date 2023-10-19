@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import MobileMenu from "../../../header/MobileMenu";
 import DashboardHeader from "../../../header/DashboardHeader";
@@ -11,77 +12,81 @@ import MenuToggler from "../../MenuToggler";
 import { supabase } from "../../../../config/supabaseClient";
 
 const index = () => {
-  const [applicantData, setApplicantData] = useState()
-  
-  async function getApplicant(){
-    const params = new URLSearchParams(window.location.search);
-    const applicationId = params.get("applicationId");
-    let { data, error } = await supabase
-    .from('applicants_view')
-    .select("*")
-    .eq('status', 'Hired')
-    .eq('application_id', applicationId)
-    .single();
-    setApplicantData(data)
-  }
+    const [applicantData, setApplicantData] = useState();
 
-  useEffect(()=>{
-    getApplicant()
-  },[])
+    async function getApplicant() {
+        const params = new URLSearchParams(window.location.search);
+        const applicationId = params.get("applicationId");
+        const { data, error } = await supabase
+            .from("applicants_view")
+            .select("*")
+            .eq("status", "Hired")
+            .eq("application_id", applicationId)
+            .single();
+        setApplicantData(data);
+    }
 
-  return (
-    <div className="page-wrapper dashboard">
-      <span className="header-span"></span>
-      {/* <!-- Header Span for hight --> */}
+    useEffect(() => {
+        getApplicant();
+    }, []);
 
-      <LoginPopup />
-      {/* End Login Popup Modal */}
+    return (
+        <div className="page-wrapper dashboard">
+            <span className="header-span"></span>
+            {/* <!-- Header Span for hight --> */}
 
-      <DashboardHeader />
-      {/* End Header */}
+            <LoginPopup />
+            {/* End Login Popup Modal */}
 
-      <MobileMenu />
-      {/* End MobileMenu */}
+            <DashboardHeader />
+            {/* End Header */}
 
-      <DashboardEmployerSidebar />
-      {/* <!-- End User Sidebar Menu --> */}
+            <MobileMenu />
+            {/* End MobileMenu */}
 
-      {/* <!-- Dashboard --> */}
-      <section className="user-dashboard">
-          {/* breadCrumb */}
+            <DashboardEmployerSidebar />
+            {/* <!-- End User Sidebar Menu --> */}
 
-          <MenuToggler />
-          {/* Collapsible sidebar button */}
+            {/* <!-- Dashboard --> */}
+            <section className="user-dashboard">
+                {/* breadCrumb */}
 
-          <div className="row">
-            <div className="col-lg-12">
-              {/* <!-- Ls widget --> */}
-              <div className="ls-widget">
-                <div className="tabs-box">
-                  <div className="widget-title">
-                    <h4>Applicant Information</h4>
-                  </div>
+                <MenuToggler />
+                {/* Collapsible sidebar button */}
 
-                  <div className="widget-content">
-                    <UserDetails applicantData={applicantData} />
-                    {/* End job steps form */}
-                    <UserDocuments applicantData={applicantData} />
-                    {/* End post box form */}
-                  </div>
+                <div className="row">
+                    <div className="col-lg-12">
+                        {/* <!-- Ls widget --> */}
+                        <div className="ls-widget">
+                            <div className="tabs-box">
+                                <div className="widget-title">
+                                    <h4>Applicant Information</h4>
+                                </div>
+
+                                <div className="widget-content">
+                                    <UserDetails
+                                        applicantData={applicantData}
+                                    />
+                                    {/* End job steps form */}
+                                    <UserDocuments
+                                        applicantData={applicantData}
+                                    />
+                                    {/* End post box form */}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
-          {/* End .row */}
-        {/* End dashboard-outer */}
-      </section>
-      {/* <!-- End Dashboard --> */}
+                {/* End .row */}
+                {/* End dashboard-outer */}
+            </section>
+            {/* <!-- End Dashboard --> */}
 
-      <CopyrightFooter />
-      {/* <!-- End Copyright --> */}
-    </div>
-    // End page-wrapper
-  );
+            <CopyrightFooter />
+            {/* <!-- End Copyright --> */}
+        </div>
+        // End page-wrapper
+    );
 };
 
 export default index;

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import Select from "react-select";
 
 const FormInfoBox = () => {
