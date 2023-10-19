@@ -34,7 +34,6 @@ export default [
             min: 0,
             max: 500,
         },
-        tag: "app",
     },
     {
         id: 2,
@@ -71,7 +70,6 @@ export default [
             min: 500,
             max: 1000,
         },
-        tag: "administrative",
     },
     {
         id: 3,
@@ -104,7 +102,6 @@ export default [
             min: 1000,
             max: 1500,
         },
-        tag: "android",
     },
     {
         id: 4,
@@ -141,7 +138,6 @@ export default [
             min: 1500,
             max: 2000,
         },
-        tag: "wordpress",
     },
     {
         id: 5,
@@ -178,7 +174,6 @@ export default [
             min: 2000,
             max: 2500,
         },
-        tag: "design",
     },
     {
         id: 6,
@@ -215,7 +210,6 @@ export default [
             min: 2500,
             max: 3000,
         },
-        tag: "react",
     },
     {
         id: 7,
@@ -252,7 +246,6 @@ export default [
             min: 3000,
             max: 3500,
         },
-        tag: "app",
     },
     {
         id: 8,
@@ -285,7 +278,6 @@ export default [
             min: 3500,
             max: 4000,
         },
-        tag: "administrative",
     },
     {
         id: 9,
@@ -318,7 +310,6 @@ export default [
             min: 4000,
             max: 4500,
         },
-        tag: "android",
     },
     {
         id: 10,
@@ -347,7 +338,6 @@ export default [
             min: 4500,
             max: 5000,
         },
-        tag: "wordpress",
     },
     {
         id: 11,
@@ -376,7 +366,6 @@ export default [
             min: 5000,
             max: 5500,
         },
-        tag: "design",
     },
     {
         id: 12,
@@ -409,7 +398,6 @@ export default [
             min: 5500,
             max: 6000,
         },
-        tag: "react",
     },
     {
         id: 13,
@@ -442,7 +430,6 @@ export default [
             min: 6000,
             max: 6500,
         },
-        tag: "app",
     },
     {
         id: 14,
@@ -475,7 +462,6 @@ export default [
             min: 6500,
             max: 7000,
         },
-        tag: "administrative",
     },
     {
         id: 15,
@@ -508,7 +494,6 @@ export default [
             min: 7000,
             max: 7500,
         },
-        tag: "android",
     },
     {
         id: 16,
@@ -541,7 +526,6 @@ export default [
             min: 7500,
             max: 8000,
         },
-        tag: "wordpress",
     },
     {
         id: 17,
@@ -573,7 +557,6 @@ export default [
             min: 8000,
             max: 8500,
         },
-        tag: "design",
     },
     {
         id: 18,
@@ -605,7 +588,6 @@ export default [
             min: 8500,
             max: 9000,
         },
-        tag: "react",
     },
     {
         id: 19,
@@ -637,7 +619,6 @@ export default [
             min: 9000,
             max: 9500,
         },
-        tag: "app",
     },
     {
         id: 20,
@@ -670,7 +651,6 @@ export default [
             min: 10000,
             max: 10500,
         },
-        tag: "administrative",
     },
     // for home 5 job featured
     {
@@ -709,7 +689,6 @@ export default [
             min: 10500,
             max: 11000,
         },
-        tag: "android",
     },
     {
         id: 22,
@@ -747,7 +726,6 @@ export default [
             min: 11500,
             max: 12000,
         },
-        tag: "wordpress",
     },
     {
         id: 23,
@@ -785,7 +763,6 @@ export default [
             min: 12000,
             max: 12500,
         },
-        tag: "design",
     },
     {
         id: 24,
@@ -823,7 +800,6 @@ export default [
             min: 12500,
             max: 13000,
         },
-        tag: "react",
     },
     {
         id: 25,
@@ -861,7 +837,6 @@ export default [
             min: 13000,
             max: 13500,
         },
-        tag: "app",
     },
     {
         id: 26,
@@ -935,7 +910,6 @@ export default [
             min: 14000,
             max: 14500,
         },
-        tag: "android",
     },
     {
         id: 28,
@@ -972,7 +946,6 @@ export default [
             min: 14500,
             max: 15000,
         },
-        tag: "wordpress",
     },
     {
         id: 29,
@@ -1010,7 +983,6 @@ export default [
             min: 15000,
             max: 15500,
         },
-        tag: "design",
     },
     {
         id: 30,
@@ -1048,7 +1020,6 @@ export default [
             min: 15500,
             max: 16000,
         },
-        tag: "react",
     },
     {
         id: 31,
@@ -1086,7 +1057,6 @@ export default [
             min: 16000,
             max: 16500,
         },
-        tag: "app",
     },
     {
         id: 32,
@@ -1124,7 +1094,6 @@ export default [
             min: 16500,
             max: 17000,
         },
-        tag: "administrative",
     },
     {
         id: 33,
@@ -1162,7 +1131,6 @@ export default [
             min: 17000,
             max: 17500,
         },
-        tag: "android",
     },
     // for home 11 job featured
     {
@@ -1185,7 +1153,6 @@ export default [
             min: 17500,
             max: 18000,
         },
-        tag: "wordpress",
     },
     {
         id: 35,
@@ -1207,7 +1174,6 @@ export default [
             min: 18000,
             max: 18500,
         },
-        tag: "design",
     },
     {
         id: 36,
@@ -1229,7 +1195,6 @@ export default [
             min: 18500,
             max: 19000,
         },
-        tag: "react",
     },
     {
         id: 37,
@@ -1251,7 +1216,6 @@ export default [
             min: 19000,
             max: 19500,
         },
-        tag: "app",
     },
     {
         id: 38,
@@ -1273,7 +1237,6 @@ export default [
             min: 19500,
             max: 20000,
         },
-        tag: "administrative",
     },
     {
         id: 39,
@@ -1295,7 +1258,6 @@ export default [
             min: 1000,
             max: 2000,
         },
-        tag: "android",
     },
     {
         id: 40,
@@ -1317,7 +1279,6 @@ export default [
             min: 2000,
             max: 3000,
         },
-        tag: "wordpress",
     },
     {
         id: 41,
@@ -1339,6 +1300,5 @@ export default [
             min: 4000,
             max: 5000,
         },
-        tag: "design",
     },
 ];
