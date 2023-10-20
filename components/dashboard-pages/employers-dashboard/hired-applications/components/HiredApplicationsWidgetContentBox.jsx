@@ -78,7 +78,7 @@ const HiredApplicationsWidgetContentBox = () => {
             .eq("status", "Hired")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .order("created_at", { ascending: false });
+            .order("hired_date", { ascending: false });
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -111,8 +111,9 @@ const HiredApplicationsWidgetContentBox = () => {
                 .eq("status", "Hired")
                 .ilike("name", "%" + name + "%")
                 .ilike("job_title", "%" + jobTitle + "%")
-                .order("created_at", { ascending: false });
+                .order("hired_date", { ascending: false });
 
+            console.log(allApplicantsView);
             if (facility) {
                 allApplicantsView = allApplicantsView.filter(
                     (i) => i.facility_name === facility
@@ -246,16 +247,16 @@ const HiredApplicationsWidgetContentBox = () => {
 
     const determineBadgeColor = (status) => {
         switch (status?.toLowerCase()) {
-        case "sent":
-            return { color: "orange", tag: "Sent" };
-        case "read":
-            return { color: "#87CEEB", tag: "Read" };
-        case "completed":
-            return { color: "green", tag: "Signed" };
-        case "signed":
-            return { color: "green", tag: "Signed" };
-        default:
-            return { color: "red", tag: "Not Sent" };
+            case "sent":
+                return { color: "orange", tag: "Sent" };
+            case "read":
+                return { color: "#87CEEB", tag: "Read" };
+            case "completed":
+                return { color: "green", tag: "Signed" };
+            case "signed":
+                return { color: "green", tag: "Signed" };
+            default:
+                return { color: "red", tag: "Not Sent" };
         }
     };
 
