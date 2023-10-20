@@ -65,8 +65,8 @@ function FormContent() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    recipient: "support@globaluphire.com",
-                    subject: "New Enrollment for Nursing Course.",
+                    recipient: "erin.hunnicutt@volarehcm.com",
+                    subject: "New Enrollment for Nursing Course",
                     content,
                 }),
             });

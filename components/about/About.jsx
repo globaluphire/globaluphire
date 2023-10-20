@@ -10,7 +10,7 @@ const About = () => {
                     <div className="sec-title">
                         <h3>
                             OUR NURSE ASSISTANT TRAINING COURSES ARE NOW OPEN
-                            FOR ENROLLMENT IN (City) CLASSES RUN EVERY 6 WEEKS
+                            FOR ENROLLMENT IN OREGON CLASSES RUN EVERY 6 WEEKS
                         </h3>
                         <div className="mt-3" style={{ textAlign: "justify" }}>
                             Are you Passionate, Caring and interested in working
@@ -23,8 +23,9 @@ const About = () => {
                             state approved Nursing Assistant Training Program.
                             Successful completion of this course will enable you
                             to take the state exam to become a Certified Nursing
-                            Assistant. We offer day classes and at some
-                            locations evening classes.
+                            Assistant. We currently offer daytime classes and
+                            depending on the need we may add evening classes as
+                            well.
                         </div>
                     </div>
                     {/* <ul className="list-style-one">

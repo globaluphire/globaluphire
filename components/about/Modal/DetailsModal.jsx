@@ -31,7 +31,7 @@ function DetailsModal() {
                             It meets the Oregon State Board of Nursing hours for
                             nursing assistant training requirements. The
                             standard (1:8 or 1:10 depending on location) ratio
-                            course has 68 classroom hours, 49 clinical hours.
+                            course has 65 classroom hours, 42 clinical hours.
                             This course includes instruction in basic nursing
                             skills, basic restorative services, psychosocial
                             needs, personal care, and resident rights.
@@ -53,39 +53,20 @@ function DetailsModal() {
                                 provide information about a qualified exemption
                                 based on religious belief or disability. *{" "}
                             </li>
-                            <li>
-                                Must hold an American Heart Association – BLS
-                                (Basic Life Support) certification. If you do
-                                not currently hold one, please review the
-                                following options below to obtain it: (Offered
-                                during class in Eugene and Grants Pass){" "}
-                            </li>
-                            <a href="https://cpr.heart.org/en/courses/basic-life-support-course-options">
-                                Click here to find BLS Certification courses
-                                near you
-                            </a>
                         </ul>
                         <div>
-                            $80-$100 BLS Certification in Springfield:{" "}
-                            <a href="https://www.oregoncprtraining.com/">
-                                https://www.oregoncprtraining.com/
-                            </a>
-                            <br />
-                            $60 – Andy Hatfield, you can reach him at(541)
-                            784-6820. You are welcome to call or text to get it
-                            set up! <br /> <br />* Oregon State mandates require
-                            employees to either be fully vaccinated against
-                            COVID-19 OR comply by providing information about a
-                            qualifying exemption based on religious belief or
-                            disability to work in a health care facility. Upon
-                            acceptance into the Nurse Assistant training course,
-                            you will be required to provide evidence of vaccine
-                            records and/or submit an exemption request along
-                            with your attestation for qualifying reason to
-                            complete clinical rotations in the facility. Volare
-                            Health Care follows the recommendations of the CDC
-                            in regards to COVID-19 employee testing and safety
-                            procedures.
+                            * Oregon State mandates require employees to either
+                            be fully vaccinated against COVID-19 OR comply by
+                            providing information about a qualifying exemption
+                            based on religious belief or disability to work in a
+                            health care facility. Upon acceptance into the Nurse
+                            Assistant training course, you will be required to
+                            provide evidence of vaccine records and/or submit an
+                            exemption request along with your attestation for
+                            qualifying reason to complete clinical rotations in
+                            the facility. Volare Health Care follows the
+                            recommendations of the CDC in regards to COVID-19
+                            employee testing and safety procedures.
                         </div>
                         <h4 className="mt-3">Costs:</h4>
 
@@ -99,8 +80,9 @@ function DetailsModal() {
                                 <li>Clinical instruction </li>
                                 <li>Textbook </li>
                                 <li>Name badge </li>
-                                <li>Clinical instruction </li>
-                                <li>Clinical instruction </li>
+                                <li>CPR BLS Class </li>
+                                <li>2 step ppd TB Testing </li>
+                                <li>Flu shot (during flu season) </li>
                             </ul>
                             Students are responsible for purchasing:
                             <ul className="list-style-one">
@@ -111,7 +93,6 @@ function DetailsModal() {
                                     Pen and paper (blue or black ink pen's
                                     recommended/preferred){" "}
                                 </li>
-                                <li>Flash Cards </li>
                             </ul>
                         </div>
                         <strong>
