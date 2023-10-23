@@ -205,19 +205,19 @@ const WidgetContentBox = () => {
                 .ilike("status", "%" + status + "%")
                 .order("created_at", { ascending: false });
 
-            allApplicantsView.sort((a, b) => {
-                if (!a.last_contacted_at && b.last_contacted_at) {
-                    return 1;
-                } else if (a.last_contacted_at && !b.last_contacted_at) {
-                    return -1;
-                } else if (!a.last_contacted_at && !b.last_contacted_at) {
-                    return 0;
-                }
-                return (
-                    new Date(b.last_contacted_at) -
-                    new Date(a.last_contacted_at)
-                );
-            });
+            // allApplicantsView.sort((a, b) => {
+            //     if (!a.last_contacted_at && b.last_contacted_at) {
+            //         return 1;
+            //     } else if (a.last_contacted_at && !b.last_contacted_at) {
+            //         return -1;
+            //     } else if (!a.last_contacted_at && !b.last_contacted_at) {
+            //         return 0;
+            //     }
+            //     return (
+            //         new Date(b.last_contacted_at) -
+            //         new Date(a.last_contacted_at)
+            //     );
+            // });
 
             if (localSearchFilters) {
                 setSearchFilters((previousState) => ({
@@ -713,7 +713,14 @@ const WidgetContentBox = () => {
                                                                 ).toLocaleString()}
                                                             </strong>
                                                         ) : (
-                                                            ""
+                                                            <div
+                                                                style={{
+                                                                    textDecoration:
+                                                                        "underline",
+                                                                }}
+                                                            >
+                                                                No contact yet
+                                                            </div>
                                                         )}
                                                     </li>
                                                     <li>
