@@ -408,7 +408,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                 <th>Hired On</th>
                                 <th>Job Title</th>
                                 <th>Facility</th>
-                                <th>Status</th>
+                                {/* <th>Status</th> */}
                                 <th>Onboarding Status</th>
                                 <th>Notes</th>
                                 <th>Actions</th>
@@ -477,7 +477,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                             </td>
                                             <td>{applicant.job_title}</td>
                                             <td>{applicant.facility_name}</td>
-                                            <td>
+                                            {/* <td>
                                                 <select
                                                     className="chosen-single form-select"
                                                     value={applicant.status}
@@ -497,7 +497,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                                         )
                                                     )}
                                                 </select>
-                                            </td>
+                                            </td> */}
                                             <td>
                                                 <div
                                                     className="badge"
@@ -575,8 +575,21 @@ const HiredApplicationsWidgetContentBox = () => {
                                                                     applicant
                                                                 );
                                                             }}
+                                                            style={{
+                                                                backgroundColor:
+                                                                    "inherit !important",
+                                                                color: "inherit !important",
+                                                            }}
                                                         >
-                                                            <button data-text="Transfer To Smartlinx">
+                                                            <button
+                                                                data-text="Transfer To Smartlinx"
+                                                                disabled
+                                                                style={{
+                                                                    backgroundColor:
+                                                                        "inherit !important",
+                                                                    color: "inherit !important",
+                                                                }}
+                                                            >
                                                                 <span className="la la-file-csv"></span>
                                                             </button>
                                                         </li>

@@ -28,7 +28,7 @@ const TopCardBlock = () => {
         useState(0);
 
     // states for Messages
-    const [totalMessages, setTotalMessages] = useState(0);
+    const [totalNewMessages, setTotalNewMessages] = useState(0);
 
     // states for Shortlisted Applications
     const [totalShortlist, setTotalShortlist] = useState(0);
@@ -225,6 +225,15 @@ const TopCardBlock = () => {
                     countTotalRejectedApplications.count
                 );
             }
+
+            const countTotalNewMessages = await supabase
+                .from("applications")
+                .select("*", { count: "exact", head: true })
+                .eq("new_message_received", true);
+
+            if (countTotalNewMessages) {
+                setTotalNewMessages(countTotalNewMessages.count);
+            }
         }
 
         // fetch data for Messages
@@ -308,11 +317,11 @@ const TopCardBlock = () => {
         },
         {
             id: 4,
-            icon: "la-file-invoice",
-            countNumber: totalWithdrawedApplications,
-            metaName: "Withdrawn",
-            link: "/employers-dashboard/withdrawal-applications",
-            uiClass: "ui-red",
+            icon: "flaticon-chat",
+            countNumber: totalNewMessages,
+            metaName: "New Messages",
+            link: "/employers-dashboard/all-applicants",
+            uiClass: "ui-green",
         },
         {
             id: 5,
@@ -320,6 +329,14 @@ const TopCardBlock = () => {
             countNumber: totalRejectedApplications,
             metaName: "Rejected",
             link: "/employers-dashboard/rejected-applications",
+            uiClass: "ui-red",
+        },
+        {
+            id: 6,
+            icon: "la-file-invoice",
+            countNumber: totalWithdrawedApplications,
+            metaName: "Withdrawn",
+            link: "/employers-dashboard/withdrawal-applications",
             uiClass: "ui-red",
         },
     ];

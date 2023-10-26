@@ -8,7 +8,7 @@ const AppSection = () => {
                         src="images/resource/mobile-app.png" 
                         alt="mobile app"
                     />
-                </figure>
+                </figure> 
             </div>
             {/* <!-- Image Column --> */}
 
