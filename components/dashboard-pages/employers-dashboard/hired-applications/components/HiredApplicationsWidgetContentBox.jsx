@@ -575,8 +575,21 @@ const HiredApplicationsWidgetContentBox = () => {
                                                                     applicant
                                                                 );
                                                             }}
+                                                            style={{
+                                                                backgroundColor:
+                                                                    "inherit !important",
+                                                                color: "inherit !important",
+                                                            }}
                                                         >
-                                                            <button data-text="Transfer To Smartlinx">
+                                                            <button
+                                                                data-text="Transfer To Smartlinx"
+                                                                disabled
+                                                                style={{
+                                                                    backgroundColor:
+                                                                        "inherit !important",
+                                                                    color: "inherit !important",
+                                                                }}
+                                                            >
                                                                 <span className="la la-file-csv"></span>
                                                             </button>
                                                         </li>
