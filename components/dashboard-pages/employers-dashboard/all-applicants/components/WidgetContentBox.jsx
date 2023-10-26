@@ -417,7 +417,7 @@ const WidgetContentBox = () => {
 
     useEffect(() => {
         if (!isCommunicationModalOpen) {
-            fetchedAllApplicantsView({ name: "", jobTitle: "", status: "" });
+            fetchedAllApplicantsView(searchFilters);
         }
     }, [isCommunicationModalOpen]);
 
@@ -707,11 +707,24 @@ const WidgetContentBox = () => {
                                                     </li>
                                                     <li>
                                                         {applicant?.last_contacted_at ? (
-                                                            <strong>
-                                                                {new Date(
-                                                                    applicant?.last_contacted_at
-                                                                ).toLocaleString()}
-                                                            </strong>
+                                                            applicant?.new_message_received ? (
+                                                                <strong>
+                                                                    {new Date(
+                                                                        applicant?.last_contacted_at
+                                                                    ).toLocaleString()}
+                                                                </strong>
+                                                            ) : (
+                                                                <div
+                                                                    style={{
+                                                                        textDecoration:
+                                                                            "underline",
+                                                                    }}
+                                                                >
+                                                                    {new Date(
+                                                                        applicant?.last_contacted_at
+                                                                    ).toLocaleString()}
+                                                                </div>
+                                                            )
                                                         ) : (
                                                             <div
                                                                 style={{

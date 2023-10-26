@@ -84,7 +84,7 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
                                             dangerouslySetInnerHTML={{
                                                 __html: `
                 <strong>To: ${applicantData?.email} </strong><br/>
-                Your Message:${el.message}
+                Your Message: <div class="email-message">${el.message}</div>
                 `,
                                             }}
                                         />
