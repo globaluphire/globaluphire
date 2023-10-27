@@ -34,6 +34,8 @@ const WidgetContentBox = () => {
     ] = useState(null);
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
+    const [filterByNewMessage, setFilterByNewMessage] = useState(false);
+    const [newMessageDot, setNewMessageDot] = useState(false);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -180,6 +182,38 @@ const WidgetContentBox = () => {
         }
     }
 
+    const toggleNewMessageFilter = () => {
+        setFilterByNewMessage(!filterByNewMessage);
+    };
+
+    useEffect(() => {
+        if (filterByNewMessage) {
+            try {
+                const filteredApplicants = [...fetchedAllApplicants];
+                filteredApplicants.sort((a, b) => {
+                    if (b.last_contacted_at && a.last_contacted_at) {
+                        return (
+                            new Date(b.last_contacted_at) -
+                            new Date(a.last_contacted_at)
+                        );
+                    } else if (b.last_contacted_at) {
+                        return 1;
+                    } else if (a.last_contacted_at) {
+                        return -1;
+                    }
+
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+
+                setFetchedAllApplicantsData(filteredApplicants);
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            fetchedAllApplicantsView(searchFilters);
+        }
+    }, [filterByNewMessage]);
+
     async function fetchedAllApplicantsView({ name, jobTitle, status }) {
         try {
             const localSearchFilters = localStorage.getItem("status");
@@ -204,6 +238,10 @@ const WidgetContentBox = () => {
                 .ilike("job_title", "%" + jobTitle + "%")
                 .ilike("status", "%" + status + "%")
                 .order("created_at", { ascending: false });
+
+            setNewMessageDot(
+                data.some((el) => el.new_message_received === true)
+            );
 
             // allApplicantsView.sort((a, b) => {
             //     if (!a.last_contacted_at && b.last_contacted_at) {
@@ -572,7 +610,50 @@ const WidgetContentBox = () => {
                                 <th>Facility</th>
                                 <th>Status</th>
                                 <th>Notes</th>
-                                <th>Last Contacted</th>
+                                <th>
+                                    Last Contacted{" "}
+                                    <button
+                                        onClick={() => {
+                                            toggleNewMessageFilter();
+                                        }}
+                                    >
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            viewBox="0 0 150 130"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M0 0H75.8844H150L94.3396 39.4333V130H76.8868H59.9057V39.4333L0 0Z"
+                                                fill={
+                                                    filterByNewMessage
+                                                        ? "#f9ab00"
+                                                        : "#004f8d"
+                                                }
+                                            />
+                                        </svg>
+                                        {newMessageDot ? (
+                                            <svg
+                                                width="11"
+                                                height="11"
+                                                viewBox="0 0 70 70"
+                                                fill="none"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                style={{ right: "20px" }}
+                                            >
+                                                <circle
+                                                    cx="35"
+                                                    cy="35"
+                                                    r="35"
+                                                    fill="green"
+                                                />
+                                            </svg>
+                                        ) : (
+                                            ""
+                                        )}
+                                    </button>
+                                </th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
