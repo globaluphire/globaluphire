@@ -448,7 +448,7 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                 }}
             >
                 Showing ({fetchedAllApplicants.length}) Withdraw Applicants Out
-                of ({totalRecords})
+                of ({totalRecords}) <br /> Page: {currentPage}
             </div>
 
             {/* Start table widget content */}

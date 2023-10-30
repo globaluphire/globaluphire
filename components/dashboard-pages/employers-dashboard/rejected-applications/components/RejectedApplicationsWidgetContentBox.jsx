@@ -519,7 +519,7 @@ const RejectedApplicationsWidgetContentBox = () => {
                 }}
             >
                 Showing ({fetchedAllApplicants.length}) Rejection Applicants Out
-                of ({totalRecords})
+                of ({totalRecords}) <br /> Page: {currentPage}
             </div>
 
             {/* Start table widget content */}

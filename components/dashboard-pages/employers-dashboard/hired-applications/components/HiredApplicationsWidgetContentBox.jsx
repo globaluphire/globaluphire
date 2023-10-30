@@ -464,7 +464,7 @@ const HiredApplicationsWidgetContentBox = () => {
                 }}
             >
                 Showing ({fetchedAllApplicants.length}) Applicants Hired Out of
-                ({totalRecords})
+                ({totalRecords}) <br /> Page: {currentPage}
             </div>
 
             {/* Start table widget content */}
