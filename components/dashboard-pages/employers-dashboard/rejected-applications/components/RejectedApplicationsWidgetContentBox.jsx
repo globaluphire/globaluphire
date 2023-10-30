@@ -147,13 +147,25 @@ const RejectedApplicationsWidgetContentBox = () => {
             setApplicationStatusReferenceOptions(refData);
         }
 
+        setTotalRecords(
+            (
+                await supabase
+                    .from("applicants_view")
+                    .select("*")
+                    .eq("status", "Rejection")
+                    .ilike("name", "%" + name + "%")
+                    .ilike("job_title", "%" + jobTitle + "%")
+            ).data.length
+        );
+
         let { data, error } = await supabase
             .from("applicants_view")
             .select("*")
             .eq("status", "Rejection")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);

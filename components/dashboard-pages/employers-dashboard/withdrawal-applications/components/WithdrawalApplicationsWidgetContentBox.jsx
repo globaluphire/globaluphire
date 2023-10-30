@@ -61,12 +61,14 @@ const WithdrawalApplicationsWidgetContentBox = () => {
 
     // clear all filters
     const clearAll = () => {
+        setCurrentPage(1);
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
         fetchedAllApplicantsView({ name: "", jobTitle: "" });
     };
 
     async function findApplicant() {
         // call reference to get applicantStatus options
+        setCurrentPage(1);
         const { data: refData, error: e } = await supabase
             .from("reference")
             .select("*")
@@ -76,13 +78,25 @@ const WithdrawalApplicationsWidgetContentBox = () => {
             setApplicationStatusReferenceOptions(refData);
         }
 
+        setTotalRecords(
+            (
+                await supabase
+                    .from("applicants_view")
+                    .select("*")
+                    .eq("status", "Withdraw")
+                    .ilike("name", "%" + name + "%")
+                    .ilike("job_title", "%" + jobTitle + "%")
+            ).data.length
+        );
+
         let { data, error } = await supabase
             .from("applicants_view")
             .select("*")
             .eq("status", "Withdraw")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);

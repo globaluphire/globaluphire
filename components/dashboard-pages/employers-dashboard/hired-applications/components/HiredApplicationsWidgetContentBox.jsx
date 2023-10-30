@@ -78,13 +78,25 @@ const HiredApplicationsWidgetContentBox = () => {
             setApplicationStatusReferenceOptions(refData);
         }
 
+        setTotalRecords(
+            (
+                await supabase
+                    .from("applicants_view")
+                    .select("*")
+                    .eq("status", "Hired")
+                    .ilike("name", "%" + name + "%")
+                    .ilike("job_title", "%" + jobTitle + "%")
+            ).data.length
+        );
+
         let { data, error } = await supabase
             .from("applicants_view")
             .select("*")
             .eq("status", "Hired")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .order("hired_date", { ascending: false });
+            .order("hired_date", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -132,7 +144,6 @@ const HiredApplicationsWidgetContentBox = () => {
                     currentPage * pageSize - 1
                 );
 
-            console.log(allApplicantsView);
             if (facility) {
                 allApplicantsView = allApplicantsView.filter(
                     (i) => i.facility_name === facility
