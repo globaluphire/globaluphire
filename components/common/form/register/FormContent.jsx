@@ -80,6 +80,7 @@ const FormContent = () => {
                         auth_provider: "local",
                         role: "CANDIDATE",
                     };
+                    await supabase.from("users").insert([userData]);
                     await supabase
                         .from("users_dtl")
                         .insert([{ user_id: user.uid }]);
