@@ -17,6 +17,7 @@ import { Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import "react-chat-elements/dist/main.css";
 import CommunicationModal from "./communicationModal";
+import Pagination from "../../../../common/Pagination";
 
 const addSearchFilters = {
     name: "",
@@ -36,6 +37,11 @@ const WidgetContentBox = () => {
     const [applicationId, setApplicationId] = useState("");
     const [filterByNewMessage, setFilterByNewMessage] = useState(false);
     const [newMessageDot, setNewMessageDot] = useState(false);
+
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -157,6 +163,21 @@ const WidgetContentBox = () => {
     };
 
     async function findApplicant({ name, jobTitle, status }) {
+        setCurrentPage(1);
+        setTotalRecords(
+            (
+                await supabase
+                    .from("applicants_view")
+                    .select("*")
+                    .neq("status", "Rejection")
+                    .neq("status", "Hired")
+                    .neq("status", "Withdraw")
+                    .ilike("name", "%" + name + "%")
+                    .ilike("job_title", "%" + jobTitle + "%")
+                    .ilike("status", "%" + status + "%")
+            ).data.length
+        );
+
         let { data, error } = await supabase
             .from("applicants_view")
             .select("*")
@@ -166,7 +187,8 @@ const WidgetContentBox = () => {
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
             .ilike("status", "%" + status + "%")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (data) {
             data.forEach(
@@ -228,6 +250,20 @@ const WidgetContentBox = () => {
                 setApplicationStatusReferenceOptions(data);
             }
 
+            setTotalRecords(
+                (
+                    await supabase
+                        .from("applicants_view")
+                        .select("*")
+                        .neq("status", "Rejection")
+                        .neq("status", "Hired")
+                        .neq("status", "Withdraw")
+                        .ilike("name", "%" + name + "%")
+                        .ilike("job_title", "%" + jobTitle + "%")
+                        .ilike("status", "%" + status + "%")
+                ).data.length
+            );
+
             let { data: allApplicantsView, error } = await supabase
                 .from("applicants_view")
                 .select("*")
@@ -237,7 +273,11 @@ const WidgetContentBox = () => {
                 .ilike("name", "%" + name + "%")
                 .ilike("job_title", "%" + jobTitle + "%")
                 .ilike("status", "%" + status + "%")
-                .order("created_at", { ascending: false });
+                .order("created_at", { ascending: false })
+                .range(
+                    (currentPage - 1) * pageSize,
+                    currentPage * pageSize - 1
+                );
 
             setNewMessageDot(
                 data.some((el) => el.new_message_received === true)
@@ -305,7 +345,7 @@ const WidgetContentBox = () => {
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility]);
+    }, [facility, currentPage, pageSize]);
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
@@ -459,6 +499,17 @@ const WidgetContentBox = () => {
         }
     }, [isCommunicationModalOpen]);
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    function perPageHandler(event) {
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
+
+        setPageSize(end);
+    }
     return (
         <div className="tabs-box">
             <div
@@ -555,6 +606,45 @@ const WidgetContentBox = () => {
                                 </Form.Select>
                             </Form.Group>
                         </Col>
+                        <Form.Group
+                            className="mb-3 mx-3"
+                            style={{
+                                width: "20%",
+                            }}
+                        >
+                            <Form.Label className="chosen-single form-input chosen-container">
+                                Per Page Size
+                            </Form.Label>
+                            <Form.Select
+                                onChange={perPageHandler}
+                                className="chosen-single form-select"
+                            >
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 10,
+                                    })}
+                                >
+                                    10 per page
+                                </option>
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 20,
+                                    })}
+                                >
+                                    20 per page
+                                </option>
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 30,
+                                    })}
+                                >
+                                    30 per page
+                                </option>
+                            </Form.Select>
+                        </Form.Group>
                     </Row>
                     <Row className="mx-3">
                         <Col>
@@ -587,7 +677,6 @@ const WidgetContentBox = () => {
                 ""
             )}
             {/* End filter top bar */}
-
             {/* Start table widget content */}
             <div
                 className="optional"
@@ -597,7 +686,8 @@ const WidgetContentBox = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({fetchedAllApplicants.length}) Applicants Applied
+                Showing ({fetchedAllApplicants.length}) Applicants Applied Out
+                of ({totalRecords}) <br /> Page: {currentPage}
             </div>
             <div className="widget-content">
                 <div className="table-outer">
@@ -885,7 +975,6 @@ const WidgetContentBox = () => {
                             </tbody>
                         )}
                     </Table>
-
                     {/* Add Notes Modal Popup */}
                     <div
                         className="modal fade"
@@ -947,6 +1036,14 @@ const WidgetContentBox = () => {
                             setIsCommunicationModalOpen
                         }
                     />
+                    {!hidePagination ? (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalRecords={totalRecords}
+                            pageSize={pageSize}
+                            onPageChange={handlePageChange}
+                        />
+                    ) : null}
                 </div>
             </div>
             {/* End table widget content */}
