@@ -3,14 +3,10 @@ import React from "react";
 
 const Pagination = ({ currentPage, totalRecords, pageSize, onPageChange }) => {
     // Calculate the total number of pages
-    console.log("currentPage", currentPage);
-    console.log("totalRecords", totalRecords);
-    console.log("pageSize", pageSize);
-    console.log("onPageChange", onPageChange);
     const totalPages = Math.ceil(totalRecords / pageSize);
     const getPageNumbers = () => {
         const pageNumbers = [];
-        const visiblePages = 3; // Number of visible page numbers before and after the current page
+        const visiblePages = 2; // Number of visible page numbers before and after the current page
 
         if (totalPages <= 3) {
             for (let i = 1; i <= totalPages; i++) {
