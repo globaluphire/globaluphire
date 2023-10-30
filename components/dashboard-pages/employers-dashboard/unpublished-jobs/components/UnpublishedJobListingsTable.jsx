@@ -104,6 +104,7 @@ const UnpublishedJobListingsTable = () => {
 
     // Search function
     async function findJob({ jobTitle, jobType }) {
+        setCurrentPage(1);
         setTotalRecords(
             (
                 await supabase

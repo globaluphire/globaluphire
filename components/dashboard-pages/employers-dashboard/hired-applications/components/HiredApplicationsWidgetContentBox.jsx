@@ -69,6 +69,7 @@ const HiredApplicationsWidgetContentBox = () => {
 
     async function findApplicant() {
         // call reference to get applicantStatus options
+        setCurrentPage(1);
         const { data: refData, error: e } = await supabase
             .from("reference")
             .select("*")
