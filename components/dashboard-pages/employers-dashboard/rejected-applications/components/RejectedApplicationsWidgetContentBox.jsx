@@ -518,8 +518,8 @@ const RejectedApplicationsWidgetContentBox = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({fetchedAllApplicants.length}) Applicants got
-                Rejection!
+                Showing ({fetchedAllApplicants.length}) Rejection Applicants Out
+                of ({totalRecords})
             </div>
 
             {/* Start table widget content */}
