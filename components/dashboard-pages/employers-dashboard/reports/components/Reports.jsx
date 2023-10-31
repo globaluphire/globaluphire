@@ -1,17 +1,14 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-lone-blocks */
 /* eslint-disable no-unused-vars */
 
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { useEffect, useState, useMemo } from "react";
-import { useSelector } from "react-redux";
-import { supabase } from "../../../../../config/supabaseClient";
-import { toast, ToastContainer } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { Table } from "react-bootstrap";
-// import reports from "../../../../../../../../../data/reports";
+import { supabase } from "../../../../../config/supabaseClient";
+import { toast } from "react-toastify";
 
 const addSearchFilters = {
     reportsTitle: "",
@@ -19,9 +16,10 @@ const addSearchFilters = {
 };
 
 const Reports = () => {
-    const [jobs, setjobs] = useState([]);
+    const [reportItem, setReportItem] = useState([]);
+    // console.log(reportItems);
 
-    // for search filters
+    // // for search filters
     const [searchFilters, setSearchFilters] = useState(
         JSON.parse(JSON.stringify(addSearchFilters))
     );
@@ -30,118 +28,88 @@ const Reports = () => {
         [searchFilters]
     );
 
-    // const [jobStatus, setJobStatus] = useState('');
-    const user = useSelector((state) => state.candidate.user);
-    const router = useRouter();
+    // // clear all filters
+    const clearAll = () => {
+        setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
+        // fetchPost({ reportsTitle: "", reportsType: "" });
+    };
 
-    // global states
-    const facility = useSelector((state) => state.employer.facility.payload);
+    // Initial Function
+    async function fetchPost() {
+        try {
+            const tmpRepo = reportItems.map(
+                (x) =>
+                    `
+                        <p>${x.report_id}</p>
+                        <p>${x.report_name}</p>
+                        <p>${x.column_names}</p>
+                        <p>${x.query}</p>
+                        
+                        `
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const DownloadHandler = async (applicant) => {
+        const { data, error } = await supabase
+            .from("applicants_view")
+            .select("*")
+            .eq("application_id", applicant.application_id);
 
-    const dateFormat = (val) => {
-        if (val) {
-            const date = new Date(val);
-            return (
-                date.toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                }) +
-                ", " +
-                date.getFullYear()
+        if (data) {
+            const fileName = data[0].doc_dwnld_url.slice(14, -2);
+            fetch(fileName, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/pdf",
+                },
+            })
+                .then((response) => response.blob())
+                .then((blob) => {
+                    const url = window.URL.createObjectURL(new Blob([blob]));
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    link.parentNode.removeChild(link);
+                });
+            // window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
+        }
+        if (error) {
+            toast.error(
+                "Error while retrieving CV.  Please try again later or contact tech support!",
+                {
+                    position: "bottom-right",
+                    autoClose: true,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                }
             );
         }
     };
 
-    // Publish job action
-    const publishJob = async (jobId, status) => {
-        if (status !== "Published") {
-            const { data, error } = await supabase
-                .from("jobs")
-                .update({
-                    status: "Published",
-                    published_date: new Date(),
-                })
-                .eq("job_id", jobId);
-
-            // open toast
-            toast.success("Job successfully published!", {
-                position: "bottom-right",
-                autoClose: 8000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-
-            // fetching all posts to refresh the data in Job Listing Table
-            fetchPost(searchFilters);
-        } else {
-            // open toast
-            toast.error("Job is already published!", {
-                position: "bottom-right",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-        }
-    };
-
-    // clear all filters
-    const clearAll = () => {
-        setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        fetchPost({ reportsTitle: "", reportsType: "" });
-    };
-
-    // Search function
-    async function findJob({ reportsTitle, reportsType }) {
-        let { data, error } = await supabase
-            .from("manage_jobs_view")
-            .select()
-            .eq("status", "Unpublished")
-            .ilike("report_name", "%" + reportsTitle + "%")
-            .ilike("report_type", "%" + reportsType + "%")
-            .order("unpublished_date", { ascending: false });
-
-        if (facility) {
-            data = data.filter((i) => i.facility_name === facility);
-        }
-
-        data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
-        data.forEach(
-            (job) => (job.unpublished_date = dateFormat(job.unpublished_date))
-        );
-        setjobs(data);
-    }
-
-    // Initial Function
-    async function fetchPost({ reportsTitle, reportsType }) {
-        let { data, error } = await supabase
-            .from("manage_jobs_view")
-            .select()
-            .eq("status", "Unpublished")
-            .ilike("job_title", "%" + reportsTitle + "%")
-            .ilike("job_type", "%" + reportsType + "%")
-            .order("unpublished_date", { ascending: true });
-
-        if (facility) {
-            data = data.filter((i) => i.facility_name === facility);
-        }
-        setjobs(data);
+    async function fetchReportItems() {
+        const response = await fetch("/api/report/getReportItems", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        // setReportItem(await response.json());
+        const reportItems = await response.json();
+        setReportItem(reportItems.data);
     }
 
     useEffect(() => {
-        fetchPost({ reportsTitle, reportsType });
-        if (facility) {
-            localStorage.setItem("facility", facility);
-        } else {
-            localStorage.setItem("facility", "");
-        }
-    }, [facility]);
+        // fetchPost(reportItems);
+        fetchReportItems();
+    }, []);
 
     return (
         <div className="tabs-box">
@@ -180,7 +148,7 @@ const Reports = () => {
                                 }}
                                 onKeyDown={(e) => {
                                     if (e.key === "Enter") {
-                                        findJob(searchFilters);
+                                        // findJob(searchFilters);
                                     }
                                 }}
                                 style={{ maxWidth: "300px" }}
@@ -197,16 +165,18 @@ const Reports = () => {
                                 onChange={(e) => {
                                     setSearchFilters((previousState) => ({
                                         ...previousState,
-                                        reportsType: e.target.value,
+                                        report_id: e.target.value,
                                     }));
                                 }}
                                 // value={reportsType}
                                 style={{ maxWidth: "300px" }}
                             >
-                                <option value=""></option>
-                                <option value="Weekly">Weekly Reports</option>
-                                <option value="Monthly">Monthly Reports</option>
-                                <option value="Yearly">Yearly Reports</option>
+                                {/* {reportItems.map((item) => {
+                                    return <option>{item.report_name}</option>;
+                                })} */}
+                                {reportItem.map((item) => {
+                                    return <option>{item.reportName}</option>;
+                                })}
                             </Form.Select>
                         </Form.Group>
                     </Col>
@@ -218,7 +188,11 @@ const Reports = () => {
                                 variant="primary"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    findJob(searchFilters);
+                                    {
+                                        reportItems.map(
+                                            (item) => `${item.report_name}`
+                                        );
+                                    }
                                 }}
                                 className="btn btn-submit btn-sm text-nowrap m-1"
                             >
@@ -232,38 +206,53 @@ const Reports = () => {
                             >
                                 Clear
                             </Button>
+
+                            {/* <li onClick={() => DownloadHandler(applicant)}>
+                                <Button
+                                    data-text="Download CV"
+                                    variant="primary"
+                                >
+                                    <span className="la la-download"></span>
+                                </Button>
+                            </li> */}
                         </Form.Group>
                     </Col>
                 </Row>
             </Form>
             {/* End filter top bar */}
-
-            {/* Start table widget content */}
-            <div
-                className="optional"
-                style={{
-                    textAlign: "right",
-                    marginRight: "50px",
-                    marginBottom: "10px",
-                }}
-            >
-                {/* Showing ({jobs.length}) Published Reports(s) */}
-            </div>
-            <div className="widget-content">
-                <div className="table-outer">
-                    <Table className="default-table manage-job-table">
-                        <thead>
-                            <tr>
-                                <th>Job Title</th>
-                            </tr>
-                        </thead>
-                        {<tbody></tbody>}
-                    </Table>
-                </div>
-            </div>
-            {/* End table widget content */}
         </div>
     );
 };
 
 export default Reports;
+
+{
+    /*
+ <div className="widget-content">
+                <div className="table-outer">
+                    <Table className="default-table manage-job-table">
+                        <thead>
+                            <tr>
+                                <th>Report Id</th>
+                                <th>Report Name</th>
+                                <th>Column Names</th>
+                                 <th>Query</th> 
+                            </tr>
+                        </thead>
+                        {
+                            <tbody>
+                                {reportItems.map((x) => (
+                                    <tr>
+                                        <td>{x.report_id}</td>
+                                        <td>{x.report_name}</td>
+                                        <td>{x.column_names}</td>
+                                         <td>{x.query}</td> 
+                                    </tr>
+                                ))}
+                            </tbody>
+                        }
+                    </Table>
+                </div>
+            </div>
+*/
+}

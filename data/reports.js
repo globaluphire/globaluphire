@@ -1,32 +1,32 @@
-export const reportsItems = [
+export const reportItems = [
     {
-        report_name: "topmost 5 recruited jobs",
-        report_id: "1",
-        column_names: ["name"],
+        reportName: "Total posted jobs",
+        reportId: "1",
+        columnNames: ["name"],
         query: "select job_name from hired_job where status = 'recruited'",
     },
     {
-        report_name: "most popular roles",
-        report_id: "2",
-        column_names: ["role_title"],
+        reportName: "most popular roles",
+        reportId: "2",
+        columnNames: ["role_title"],
         query: "select role_title from recruitment_data where hired = 'yes'",
     },
     {
-        report_name: "top engineering positions",
-        report_id: "3",
-        column_names: ["position_title"],
+        reportName: "top engineering positions",
+        reportId: "3",
+        columnNames: ["position_title"],
         query: "select position_title from engineering_positions where status = 'recruited'",
     },
     {
-        report_name: "most sought-after professions",
-        report_id: "4",
-        column_names: ["profession_name"],
+        reportName: "most sought-after professions",
+        reportId: "4",
+        columnNames: ["profession_name"],
         query: "select profession_name from job_applications where status = 'hired'",
     },
     {
-        report_name: "top 5 recruited candidates",
-        report_id: "5",
-        column_names: ["candidate_name"],
+        reportName: "top 5 recruited candidates",
+        reportId: "5",
+        columnNames: ["candidate_name"],
         query: "select candidate_name from hired_candidates where employment_status = 'employed'",
     },
 ];

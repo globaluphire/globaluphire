@@ -600,21 +600,42 @@ const RejectedApplicationsWidgetContentBox = () => {
                                                                 <span className="la la-download"></span>
                                                             </button>
                                                         </li>
-                                                        {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
-                                                    <button data-text="Qualified">
-                                                    <span className="la la-check"></span>
-                                                    </button>
-                                                </li>
-                                                <li onClick={()=>{ NotQualified(applicant.application_id, applicant.status) }} >
-                                                    <button data-text="Not Qualified">
-                                                    <span className="la la-times-circle"></span>
-                                                    </button>
-                                                </li>
-                                                <li onClick={()=>{ ResetStatus(applicant.application_id, applicant.status) }} >
-                                                    <button data-text="Reset Status">
-                                                    <span className="la la-undo-alt"></span>
-                                                    </button>
-                                                </li> */}
+                                                        <li
+                                                            onClick={() => {
+                                                                Qualified(
+                                                                    applicant.application_id,
+                                                                    applicant.status
+                                                                );
+                                                            }}
+                                                        >
+                                                            <button data-text="Qualified">
+                                                                <span className="la la-check"></span>
+                                                            </button>
+                                                        </li>
+                                                        <li
+                                                            onClick={() => {
+                                                                NotQualified(
+                                                                    applicant.application_id,
+                                                                    applicant.status
+                                                                );
+                                                            }}
+                                                        >
+                                                            <button data-text="Not Qualified">
+                                                                <span className="la la-times-circle"></span>
+                                                            </button>
+                                                        </li>
+                                                        <li
+                                                            onClick={() => {
+                                                                ResetStatus(
+                                                                    applicant.application_id,
+                                                                    applicant.status
+                                                                );
+                                                            }}
+                                                        >
+                                                            <button data-text="Reset Status">
+                                                                <span className="la la-undo-alt"></span>
+                                                            </button>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
