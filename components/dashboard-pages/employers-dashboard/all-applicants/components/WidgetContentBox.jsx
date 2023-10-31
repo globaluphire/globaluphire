@@ -208,33 +208,72 @@ const WidgetContentBox = () => {
         setFilterByNewMessage(!filterByNewMessage);
     };
 
+    async function newMessageFilter() {
+        try {
+            setTotalRecords(
+                (
+                    await supabase
+                        .from("applicants_view")
+                        .select("*")
+                        .neq("status", "Rejection")
+                        .neq("status", "Hired")
+                        .neq("status", "Withdraw")
+                        .ilike("name", "%" + name + "%")
+                        .ilike("job_title", "%" + jobTitle + "%")
+                        .ilike("status", "%" + status + "%")
+                ).data.length
+            );
+
+            // eslint-disable-next-line prefer-const
+            let { data, error } = await supabase
+                .from("applicants_view")
+                .select("*")
+                .neq("status", "Rejection")
+                .neq("status", "Hired")
+                .neq("status", "Withdraw")
+                .ilike("name", "%" + name + "%")
+                .ilike("job_title", "%" + jobTitle + "%")
+                .ilike("status", "%" + status + "%")
+                .order("last_contacted_at", { ascending: true })
+                .order("created_at", { ascending: false })
+                .range(
+                    (currentPage - 1) * pageSize,
+                    currentPage * pageSize - 1
+                );
+
+            data.sort((a, b) => {
+                if (b.last_contacted_at && a.last_contacted_at) {
+                    return (
+                        new Date(b.last_contacted_at) -
+                        new Date(a.last_contacted_at)
+                    );
+                } else if (b.last_contacted_at) {
+                    return 1;
+                } else if (a.last_contacted_at) {
+                    return -1;
+                }
+
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+
+            data.forEach(
+                (applicant) =>
+                    (applicant.created_at = dateFormat(applicant.created_at))
+            );
+
+            setFetchedAllApplicantsData(data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         if (filterByNewMessage) {
-            try {
-                const filteredApplicants = [...fetchedAllApplicants];
-                filteredApplicants.sort((a, b) => {
-                    if (b.last_contacted_at && a.last_contacted_at) {
-                        return (
-                            new Date(b.last_contacted_at) -
-                            new Date(a.last_contacted_at)
-                        );
-                    } else if (b.last_contacted_at) {
-                        return 1;
-                    } else if (a.last_contacted_at) {
-                        return -1;
-                    }
-
-                    return new Date(b.created_at) - new Date(a.created_at);
-                });
-
-                setFetchedAllApplicantsData(filteredApplicants);
-            } catch (error) {
-                console.log(error);
-            }
+            newMessageFilter();
         } else {
             fetchedAllApplicantsView(searchFilters);
         }
-    }, [filterByNewMessage]);
+    }, [filterByNewMessage, pageSize, currentPage]);
 
     async function fetchedAllApplicantsView({ name, jobTitle, status }) {
         try {
@@ -339,7 +378,6 @@ const WidgetContentBox = () => {
     }
 
     useEffect(() => {
-        fetchedAllApplicantsView(searchFilters);
         if (facility) {
             localStorage.setItem("facility", facility);
         } else {
