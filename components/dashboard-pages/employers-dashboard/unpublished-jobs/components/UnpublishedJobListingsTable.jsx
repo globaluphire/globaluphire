@@ -14,6 +14,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Table } from "react-bootstrap";
+import Pagination from "../../../../common/Pagination";
 
 const addSearchFilters = {
     jobTitle: "",
@@ -32,6 +33,11 @@ const UnpublishedJobListingsTable = () => {
     // const [jobStatus, setJobStatus] = useState('');
     const user = useSelector((state) => state.candidate.user);
     const router = useRouter();
+
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
 
     // global states
     const facility = useSelector((state) => state.employer.facility.payload);
@@ -98,13 +104,25 @@ const UnpublishedJobListingsTable = () => {
 
     // Search function
     async function findJob({ jobTitle, jobType }) {
+        setCurrentPage(1);
+        setTotalRecords(
+            (
+                await supabase
+                    .from("manage_jobs_view")
+                    .select("*")
+                    .eq("status", "Unpublished")
+                    .ilike("job_title", "%" + jobTitle + "%")
+                    .ilike("job_type", "%" + jobType + "%")
+            ).data.length
+        );
         let { data, error } = await supabase
             .from("manage_jobs_view")
             .select()
             .eq("status", "Unpublished")
             .ilike("job_title", "%" + jobTitle + "%")
             .ilike("job_type", "%" + jobType + "%")
-            .order("unpublished_date", { ascending: false });
+            .order("unpublished_date", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -136,13 +154,24 @@ const UnpublishedJobListingsTable = () => {
 
     // Initial Function
     async function fetchPost({ jobTitle, jobType }) {
+        setTotalRecords(
+            (
+                await supabase
+                    .from("manage_jobs_view")
+                    .select("*")
+                    .eq("status", "Unpublished")
+                    .ilike("job_title", "%" + jobTitle + "%")
+                    .ilike("job_type", "%" + jobType + "%")
+            ).data.length
+        );
         let { data, error } = await supabase
             .from("manage_jobs_view")
             .select()
             .eq("status", "Unpublished")
             .ilike("job_title", "%" + jobTitle + "%")
             .ilike("job_type", "%" + jobType + "%")
-            .order("unpublished_date", { ascending: true });
+            .order("unpublished_date", { ascending: true })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -171,6 +200,18 @@ const UnpublishedJobListingsTable = () => {
         setjobs(data);
     }
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    function perPageHandler(event) {
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
+
+        setPageSize(end);
+    }
+
     useEffect(() => {
         fetchPost({ jobTitle, jobType });
         if (facility) {
@@ -178,7 +219,7 @@ const UnpublishedJobListingsTable = () => {
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility]);
+    }, [facility, pageSize, currentPage]);
 
     return (
         <div className="tabs-box">
@@ -285,7 +326,8 @@ const UnpublishedJobListingsTable = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({jobs.length}) Published Job(s)
+                Showing ({jobs.length}) Published Job(s) Out of ({totalRecords})
+                <br /> Page: {currentPage}
             </div>
             <div className="widget-content">
                 <div className="table-outer">
@@ -460,6 +502,14 @@ const UnpublishedJobListingsTable = () => {
                             </tbody>
                         )}
                     </Table>
+                    {!hidePagination ? (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalRecords={totalRecords}
+                            pageSize={pageSize}
+                            onPageChange={handlePageChange}
+                        />
+                    ) : null}
                 </div>
             </div>
             {/* End table widget content */}

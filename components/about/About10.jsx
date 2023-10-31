@@ -2,7 +2,7 @@
 import AboutBlock from "../block/AboutBlock";
 
 const About10 = () => {
-    return (
+    return ( 
         <>
             {/* <!-- About Section --> */}
             <section className="about-section-two style-two layout-pt-120 layout-pb-120  -light-blue">

@@ -14,6 +14,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import Pagination from "../../../../common/Pagination";
 
 const addSearchFilters = {
     name: "",
@@ -29,6 +30,11 @@ const RejectedApplicationsWidgetContentBox = () => {
     ] = useState(null);
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
+
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -132,6 +138,7 @@ const RejectedApplicationsWidgetContentBox = () => {
 
     async function findApplicant() {
         // call reference to get applicantStatus options
+        setCurrentPage(1);
         const { data: refData, error: e } = await supabase
             .from("reference")
             .select("*")
@@ -141,13 +148,25 @@ const RejectedApplicationsWidgetContentBox = () => {
             setApplicationStatusReferenceOptions(refData);
         }
 
+        setTotalRecords(
+            (
+                await supabase
+                    .from("applicants_view")
+                    .select("*")
+                    .eq("status", "Rejection")
+                    .ilike("name", "%" + name + "%")
+                    .ilike("job_title", "%" + jobTitle + "%")
+            ).data.length
+        );
+
         let { data, error } = await supabase
             .from("applicants_view")
             .select("*")
             .eq("status", "Rejection")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -174,11 +193,24 @@ const RejectedApplicationsWidgetContentBox = () => {
                 setApplicationStatusReferenceOptions(data);
             }
 
+            setTotalRecords(
+                (
+                    await supabase
+                        .from("applicants_view")
+                        .select("*")
+                        .eq("status", "Rejection")
+                ).data.length
+            );
+
             let { data: allApplicantsView, error } = await supabase
                 .from("applicants_view")
                 .select("*")
                 .eq("status", "Rejection")
-                .order("created_at", { ascending: false });
+                .order("created_at", { ascending: false })
+                .range(
+                    (currentPage - 1) * pageSize,
+                    currentPage * pageSize - 1
+                );
 
             if (facility) {
                 allApplicantsView = allApplicantsView.filter(
@@ -210,6 +242,18 @@ const RejectedApplicationsWidgetContentBox = () => {
         }
     }
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    function perPageHandler(event) {
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
+
+        setPageSize(end);
+    }
+
     useEffect(() => {
         fetchedAllApplicantsView(searchFilters);
         if (facility) {
@@ -217,7 +261,7 @@ const RejectedApplicationsWidgetContentBox = () => {
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility]);
+    }, [facility, pageSize, currentPage]);
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
@@ -406,6 +450,45 @@ const RejectedApplicationsWidgetContentBox = () => {
                                 />
                             </Form.Group>
                         </Col>
+                        <Form.Group
+                            className="mb-3 mx-3"
+                            style={{
+                                width: "20%",
+                            }}
+                        >
+                            <Form.Label className="chosen-single form-input chosen-container">
+                                Per Page Size
+                            </Form.Label>
+                            <Form.Select
+                                onChange={perPageHandler}
+                                className="chosen-single form-select"
+                            >
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 10,
+                                    })}
+                                >
+                                    10 per page
+                                </option>
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 20,
+                                    })}
+                                >
+                                    20 per page
+                                </option>
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 30,
+                                    })}
+                                >
+                                    30 per page
+                                </option>
+                            </Form.Select>
+                        </Form.Group>
                     </Row>
                     <Row className="mx-3">
                         <Col>
@@ -448,8 +531,8 @@ const RejectedApplicationsWidgetContentBox = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({fetchedAllApplicants.length}) Applicants got
-                Rejection!
+                Showing ({fetchedAllApplicants.length}) Rejection Applicants Out
+                of ({totalRecords}) <br /> Page: {currentPage}
             </div>
 
             {/* Start table widget content */}
@@ -679,6 +762,14 @@ const RejectedApplicationsWidgetContentBox = () => {
                             {/* End .send-private-message-wrapper */}
                         </div>
                     </div>
+                    {!hidePagination ? (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalRecords={totalRecords}
+                            pageSize={pageSize}
+                            onPageChange={handlePageChange}
+                        />
+                    ) : null}
                 </div>
             </div>
             {/* End table widget content */}
