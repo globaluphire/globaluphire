@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import AboutBlock from "../block/AboutBlock";
 
-const About10 = () => {
+const About10 = () => { 
     return ( 
         <>
             {/* <!-- About Section --> */}
