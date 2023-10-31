@@ -741,6 +741,7 @@ const WidgetContentBox = () => {
                                 <th>
                                     Last Contacted{" "}
                                     <button
+                                        id="new-filter-button"
                                         onClick={() => {
                                             toggleNewMessageFilter();
                                         }}
