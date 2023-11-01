@@ -2,7 +2,7 @@
 import Link from "next/link";
 import DetailsModal from "./Modal/DetailsModal";
 
-const About = () => {
+const About = () => { 
     return (
         <>
             <div className="content-column col-lg-12 col-md-12 col-sm-12 order-1">
