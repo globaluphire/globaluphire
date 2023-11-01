@@ -17,6 +17,7 @@ const addSearchFilters = {
 
 const Reports = () => {
     const [reportItem, setReportItem] = useState([]);
+    const [selectReportItem, setSelectReportItem] = useState();
     // console.log(reportItems);
 
     // // for search filters
@@ -51,24 +52,25 @@ const Reports = () => {
             console.log(error);
         }
     }
-    const DownloadHandler = async (applicant) => {
-        const fileName = data[0].doc_dwnld_url.slice(14, -2);
-        fetch(fileName, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/pdf",
-            },
-        })
-            .then((response) => response.blob())
-            .then((blob) => {
-                const url = window.URL.createObjectURL(new Blob([blob]));
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = fileName;
-                document.body.appendChild(link);
-                link.click();
-                link.parentNode.removeChild(link);
-            });
+    const DownloadHandler = async (item) => {
+        console.log(item);
+
+        // fetch(fileName, {
+        //     method: "GET",
+        //     headers: {
+        //         "Content-Type": "application/pdf",
+        //     },
+        // })
+        //     .then((response) => response.blob())
+        //     .then((blob) => {
+        //         const url = window.URL.createObjectURL(new Blob([blob]));
+        //         const link = document.createElement("a");
+        //         link.href = url;
+        //         link.download = fileName;
+        //         document.body.appendChild(link);
+        //         link.click();
+        //         link.parentNode.removeChild(link);
+        //     });
         // window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
     };
 
@@ -141,17 +143,12 @@ const Reports = () => {
                             <Form.Select
                                 className="chosen-single form-select"
                                 onChange={(e) => {
-                                    setSearchFilters((previousState) => ({
-                                        ...previousState,
-                                        report_id: e.target.value,
-                                    }));
+                                    // setSelectReportItem(e.target.value);
+                                    console.log(e.target);
                                 }}
                                 // value={reportsType}
                                 style={{ maxWidth: "300px" }}
                             >
-                                {/* {reportItems.map((item) => {
-                                    return <option>{item.report_name}</option>;
-                                })} */}
                                 {reportItem.map((item) => {
                                     return <option>{item.reportName}</option>;
                                 })}
@@ -163,36 +160,14 @@ const Reports = () => {
                     <Col>
                         <Form.Group className="chosen-single form-input chosen-container mb-3">
                             <Button
+                                onClick={() =>
+                                    DownloadHandler(selectReportItem)
+                                }
+                                data-text="Download CV"
                                 variant="primary"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    {
-                                        reportItems.map(
-                                            (item) => `${item.report_name}`
-                                        );
-                                    }
-                                }}
-                                className="btn btn-submit btn-sm text-nowrap m-1"
                             >
-                                Filter
+                                <span className="la la-download"></span>
                             </Button>
-                            <Button
-                                variant="primary"
-                                onClick={clearAll}
-                                className="btn btn-secondary btn-sm text-nowrap mx-2"
-                                style={{ minHeight: "40px", padding: "0 20px" }}
-                            >
-                                Clear
-                            </Button>
-
-                            {/* <li onClick={() => DownloadHandler(applicant)}>
-                                <Button
-                                    data-text="Download CV"
-                                    variant="primary"
-                                >
-                                    <span className="la la-download"></span>
-                                </Button>
-                            </li> */}
                         </Form.Group>
                     </Col>
                 </Row>
