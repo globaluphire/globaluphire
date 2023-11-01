@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
 import { collection, getDocs, query, where } from "firebase/firestore";
 import Link from "next/link";
@@ -499,22 +500,19 @@ const JobListingsTable = () => {
 
     // Initial Function
     async function fetchPost({ jobTitle, jobType }) {
-        setTotalRecords(
-            (
-                await supabase
-                    .from("manage_jobs_view")
-                    .select("*")
-                    .eq("status", "Published")
-                    .ilike("job_title", "%" + jobTitle + "%")
-                    .ilike("job_type", "%" + jobType + "%")
-            ).data.length
-        );
-        let { data, error } = await supabase
+        let query = supabase
             .from("manage_jobs_view")
-            .select()
+            .select("*")
             .eq("status", "Published")
             .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("job_type", "%" + jobType + "%")
+            .ilike("job_type", "%" + jobType + "%");
+
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+        setTotalRecords((await query).data.length);
+
+        let { data, error } = await query
             .order("published_date", { ascending: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
@@ -523,9 +521,9 @@ const JobListingsTable = () => {
             (job) => (job.published_date = dateFormat(job.published_date))
         );
 
-        if (facility) {
-            data = data.filter((i) => i.facility_name === facility);
-        }
+        // if (facility) {
+        //     data = data.filter((i) => i.facility_name === facility);
+        // }
 
         setjobs(data);
     }
