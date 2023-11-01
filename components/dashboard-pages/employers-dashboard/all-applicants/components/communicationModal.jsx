@@ -105,32 +105,34 @@ function CommunicationModal({ applicantData, setIsCommunicationModalOpen }) {
     };
 
     const handleSetModalData = async (applicantData) => {
-        if (applicantData?.email) {
-            setReceiversEmail(applicantData.email);
+        if (applicantData) {
+            if (applicantData?.email) {
+                setReceiversEmail(applicantData.email);
+            }
+            const { data, error } = await supabase
+                .from("sms_messages")
+                .select("*")
+                .match({ application_id: applicantData?.application_id });
+            // .or(
+            //   `receiver_name.eq.${applicantData?.name}, sender_name.eq.${applicantData?.name}`
+            // );
+            await supabase
+                .from("applications")
+                .update({ new_message_received: false })
+                .eq("application_id", applicantData?.application_id);
+            setReceiversPhoneNumber(applicantData?.phn_nbr);
+            setReceiversEmail(applicantData?.email);
+            // if (data[0]?.receiver_phone) {
+            //   setReceiversPhoneNumber(data[0].receiver_phone);
+            //   // setReceiversEmail(data[0].receiver_email);
+            //   setReceiversPhoneNumberDisabled(true);
+            // } else {
+            //   setReceiversPhoneNumber("");
+            //   // setReceiversEmail("");
+            //   setReceiversPhoneNumberDisabled(false);
+            // }
+            handleSetMessages(data);
         }
-        const { data, error } = await supabase
-            .from("sms_messages")
-            .select("*")
-            .match({ application_id: applicantData?.application_id });
-        // .or(
-        //   `receiver_name.eq.${applicantData?.name}, sender_name.eq.${applicantData?.name}`
-        // );
-        await supabase
-            .from("applications")
-            .update({ new_message_received: false })
-            .eq("application_id", applicantData?.application_id);
-        setReceiversPhoneNumber(applicantData?.phn_nbr);
-        setReceiversEmail(applicantData?.email);
-        // if (data[0]?.receiver_phone) {
-        //   setReceiversPhoneNumber(data[0].receiver_phone);
-        //   // setReceiversEmail(data[0].receiver_email);
-        //   setReceiversPhoneNumberDisabled(true);
-        // } else {
-        //   setReceiversPhoneNumber("");
-        //   // setReceiversEmail("");
-        //   setReceiversPhoneNumberDisabled(false);
-        // }
-        handleSetMessages(data);
     };
 
     function onModalClose() {
