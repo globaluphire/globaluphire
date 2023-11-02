@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
 import candidatesData from "../../../../../data/candidates";
@@ -17,6 +18,7 @@ import { Table } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import "react-chat-elements/dist/main.css";
 import CommunicationModal from "./communicationModal";
+import Pagination from "../../../../common/Pagination";
 
 const addSearchFilters = {
     name: "",
@@ -36,6 +38,11 @@ const WidgetContentBox = () => {
     const [applicationId, setApplicationId] = useState("");
     const [filterByNewMessage, setFilterByNewMessage] = useState(false);
     const [newMessageDot, setNewMessageDot] = useState(false);
+
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -123,7 +130,8 @@ const WidgetContentBox = () => {
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
             .ilike("status", "%" + status + "%")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -157,7 +165,9 @@ const WidgetContentBox = () => {
     };
 
     async function findApplicant({ name, jobTitle, status }) {
-        let { data, error } = await supabase
+        setCurrentPage(1);
+
+        let query = supabase
             .from("applicants_view")
             .select("*")
             .neq("status", "Rejection")
@@ -165,8 +175,17 @@ const WidgetContentBox = () => {
             .neq("status", "Withdraw")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("status", "%" + status + "%")
-            .order("created_at", { ascending: false });
+            .ilike("status", "%" + status + "%");
+
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+
+        setTotalRecords((await query).data.length);
+
+        let { data, error } = await query
+            .order("created_at", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (data) {
             data.forEach(
@@ -174,9 +193,9 @@ const WidgetContentBox = () => {
                     (applicant.created_at = dateFormat(applicant.created_at))
             );
 
-            if (facility) {
-                data = data.filter((i) => i.facility_name === facility);
-            }
+            // if (facility) {
+            //     data = data.filter((i) => i.facility_name === facility);
+            // }
 
             setFetchedAllApplicantsData(data);
         }
@@ -186,33 +205,72 @@ const WidgetContentBox = () => {
         setFilterByNewMessage(!filterByNewMessage);
     };
 
+    async function newMessageFilter() {
+        try {
+            let query = supabase
+                .from("applicants_view")
+                .select("*")
+                .neq("status", "Rejection")
+                .neq("status", "Hired")
+                .neq("status", "Withdraw");
+
+            if (name) {
+                query.ilike("name", "%" + name + "%");
+            }
+            if (jobTitle) {
+                query.ilike("job_title", "%" + jobTitle + "%");
+            }
+            if (status) {
+                query.ilike("status", "%" + status + "%");
+            }
+            if (facility) {
+                query.ilike("facility_name", "%" + facility + "%");
+            }
+
+            setTotalRecords((await query).data.length);
+
+            // eslint-disable-next-line prefer-const
+            let { data, error } = await query
+                .order("last_contacted_at", { ascending: true })
+                .order("created_at", { ascending: false })
+                .range(
+                    (currentPage - 1) * pageSize,
+                    currentPage * pageSize - 1
+                );
+
+            data.sort((a, b) => {
+                if (b.last_contacted_at && a.last_contacted_at) {
+                    return (
+                        new Date(b.last_contacted_at) -
+                        new Date(a.last_contacted_at)
+                    );
+                } else if (b.last_contacted_at) {
+                    return 1;
+                } else if (a.last_contacted_at) {
+                    return -1;
+                }
+
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+
+            data.forEach(
+                (applicant) =>
+                    (applicant.created_at = dateFormat(applicant.created_at))
+            );
+
+            setFetchedAllApplicantsData(data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         if (filterByNewMessage) {
-            try {
-                const filteredApplicants = [...fetchedAllApplicants];
-                filteredApplicants.sort((a, b) => {
-                    if (b.last_contacted_at && a.last_contacted_at) {
-                        return (
-                            new Date(b.last_contacted_at) -
-                            new Date(a.last_contacted_at)
-                        );
-                    } else if (b.last_contacted_at) {
-                        return 1;
-                    } else if (a.last_contacted_at) {
-                        return -1;
-                    }
-
-                    return new Date(b.created_at) - new Date(a.created_at);
-                });
-
-                setFetchedAllApplicantsData(filteredApplicants);
-            } catch (error) {
-                console.log(error);
-            }
+            newMessageFilter();
         } else {
             fetchedAllApplicantsView(searchFilters);
         }
-    }, [filterByNewMessage]);
+    }, [filterByNewMessage, pageSize, currentPage]);
 
     async function fetchedAllApplicantsView({ name, jobTitle, status }) {
         try {
@@ -227,17 +285,38 @@ const WidgetContentBox = () => {
             if (data) {
                 setApplicationStatusReferenceOptions(data);
             }
-
-            let { data: allApplicantsView, error } = await supabase
+            let query = supabase
                 .from("applicants_view")
                 .select("*")
                 .neq("status", "Rejection")
                 .neq("status", "Hired")
-                .neq("status", "Withdraw")
-                .ilike("name", "%" + name + "%")
-                .ilike("job_title", "%" + jobTitle + "%")
-                .ilike("status", "%" + status + "%")
-                .order("created_at", { ascending: false });
+                .neq("status", "Withdraw");
+
+            if (name) {
+                query.ilike("name", "%" + name + "%");
+            }
+            if (jobTitle) {
+                query.ilike("job_title", "%" + jobTitle + "%");
+            }
+            if (status) {
+                query.ilike("status", "%" + status + "%");
+            }
+            if (facility) {
+                query.ilike("facility_name", "%" + facility + "%");
+            }
+
+            setTotalRecords((await query).data.length);
+
+            let { data: allApplicantsView, error } = await query
+                .order("created_at", { ascending: false })
+                .range(
+                    (currentPage - 1) * pageSize,
+                    currentPage * pageSize - 1
+                );
+
+            setNewMessageDot(
+                data.some((el) => el.new_message_received === true)
+            );
 
             setNewMessageDot(
                 data.some((el) => el.new_message_received === true)
@@ -268,11 +347,11 @@ const WidgetContentBox = () => {
                 localStorage.removeItem("status");
             }
 
-            if (facility) {
-                allApplicantsView = allApplicantsView.filter(
-                    (i) => i.facility_name === facility
-                );
-            }
+            // if (facility) {
+            //     allApplicantsView = allApplicantsView.filter(
+            //         (i) => i.facility_name === facility
+            //     );
+            // }
 
             if (allApplicantsView) {
                 allApplicantsView.forEach(
@@ -305,7 +384,7 @@ const WidgetContentBox = () => {
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility]);
+    }, [facility, currentPage, pageSize]);
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
@@ -459,6 +538,17 @@ const WidgetContentBox = () => {
         }
     }, [isCommunicationModalOpen]);
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    function perPageHandler(event) {
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
+
+        setPageSize(end);
+    }
     return (
         <div className="tabs-box">
             <div
@@ -555,6 +645,45 @@ const WidgetContentBox = () => {
                                 </Form.Select>
                             </Form.Group>
                         </Col>
+                        <Form.Group
+                            className="mb-3 mx-3"
+                            style={{
+                                width: "20%",
+                            }}
+                        >
+                            <Form.Label className="chosen-single form-input chosen-container">
+                                Per Page Size
+                            </Form.Label>
+                            <Form.Select
+                                onChange={perPageHandler}
+                                className="chosen-single form-select"
+                            >
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 10,
+                                    })}
+                                >
+                                    10 per page
+                                </option>
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 20,
+                                    })}
+                                >
+                                    20 per page
+                                </option>
+                                <option
+                                    value={JSON.stringify({
+                                        start: 0,
+                                        end: 30,
+                                    })}
+                                >
+                                    30 per page
+                                </option>
+                            </Form.Select>
+                        </Form.Group>
                     </Row>
                     <Row className="mx-3">
                         <Col>
@@ -587,7 +716,6 @@ const WidgetContentBox = () => {
                 ""
             )}
             {/* End filter top bar */}
-
             {/* Start table widget content */}
             <div
                 className="optional"
@@ -597,7 +725,8 @@ const WidgetContentBox = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({fetchedAllApplicants.length}) Applicants Applied
+                Showing ({fetchedAllApplicants.length}) Applicants Applied Out
+                of ({totalRecords}) <br /> Page: {currentPage}
             </div>
             <div className="widget-content">
                 <div className="table-outer">
@@ -613,6 +742,7 @@ const WidgetContentBox = () => {
                                 <th>
                                     Last Contacted{" "}
                                     <button
+                                        id="new-filter-button"
                                         onClick={() => {
                                             toggleNewMessageFilter();
                                         }}
@@ -885,7 +1015,6 @@ const WidgetContentBox = () => {
                             </tbody>
                         )}
                     </Table>
-
                     {/* Add Notes Modal Popup */}
                     <div
                         className="modal fade"
@@ -947,6 +1076,14 @@ const WidgetContentBox = () => {
                             setIsCommunicationModalOpen
                         }
                     />
+                    {!hidePagination ? (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalRecords={totalRecords}
+                            pageSize={pageSize}
+                            onPageChange={handlePageChange}
+                        />
+                    ) : null}
                 </div>
             </div>
             {/* End table widget content */}

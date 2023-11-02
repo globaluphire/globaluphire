@@ -38,6 +38,7 @@ const signInWithGoogle = async (dispatch) => {
                 auth_provider: "google",
                 role: "CANDIDATE",
             };
+            await supabase.from("users").insert([userData]);
             await supabase.from("users_dtl").insert([{ user_id: user.uid }]);
         } else {
             userData = fetchUser.data[0];

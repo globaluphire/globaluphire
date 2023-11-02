@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
 import { collection, getDocs, query, where } from "firebase/firestore";
 import Link from "next/link";
@@ -14,6 +15,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { Table } from "react-bootstrap";
+import Pagination from "../../../../common/Pagination";
 
 const addSearchFilters = {
     jobTitle: "",
@@ -46,6 +48,11 @@ const JobListingsTable = () => {
     // const [jobStatus, setJobStatus] = useState('');
     const user = useSelector((state) => state.candidate.user);
     const router = useRouter();
+
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hidePagination, setHidePagination] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
 
     // global states
     const facility = useSelector((state) => state.employer.facility.payload);
@@ -462,13 +469,24 @@ const JobListingsTable = () => {
 
     // Search function
     async function findJob() {
-        let { data, error } = await supabase
+        let query = supabase
             .from("manage_jobs_view")
-            .select()
-            .eq("status", "Published")
-            .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("job_type", "%" + jobType + "%")
-            .order("published_date", { ascending: false });
+            .select("*")
+            .eq("status", "Published");
+
+        if (jobTitle) {
+            query.ilike("job_title", "%" + jobTitle + "%");
+        }
+        if (jobType) {
+            query.ilike("job_type", "%" + jobType + "%");
+        }
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+        setTotalRecords((await query).data.length);
+        let { data, error } = await query.order("published_date", {
+            ascending: false,
+        });
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -483,24 +501,48 @@ const JobListingsTable = () => {
 
     // Initial Function
     async function fetchPost({ jobTitle, jobType }) {
-        let { data, error } = await supabase
+        let query = supabase
             .from("manage_jobs_view")
-            .select()
-            .eq("status", "Published")
-            .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("job_type", "%" + jobType + "%")
-            .order("published_date", { ascending: false });
+            .select("*")
+            .eq("status", "Published");
+
+        if (jobTitle) {
+            query.ilike("job_title", "%" + jobTitle + "%");
+        }
+        if (jobType) {
+            query.ilike("job_type", "%" + jobType + "%");
+        }
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+        setTotalRecords((await query).data.length);
+
+        let { data, error } = await query
+            .order("published_date", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
         data.forEach(
             (job) => (job.published_date = dateFormat(job.published_date))
         );
 
-        if (facility) {
-            data = data.filter((i) => i.facility_name === facility);
-        }
+        // if (facility) {
+        //     data = data.filter((i) => i.facility_name === facility);
+        // }
 
         setjobs(data);
+    }
+
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    function perPageHandler(event) {
+        setCurrentPage(1);
+        const selectedValue = JSON.parse(event.target.value);
+        const end = selectedValue.end;
+
+        setPageSize(end);
     }
 
     useEffect(() => {
@@ -510,7 +552,7 @@ const JobListingsTable = () => {
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility]);
+    }, [facility, pageSize, currentPage]);
 
     return (
         <div className="tabs-box">
@@ -617,7 +659,8 @@ const JobListingsTable = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({jobs.length}) Published Job(s)
+                Showing ({jobs.length}) Published Job(s) Out of ({totalRecords}){" "}
+                <br /> Page: {currentPage}
             </div>
             <div className="widget-content">
                 <div className="table-outer">
@@ -810,25 +853,25 @@ const JobListingsTable = () => {
                                                         "mHTljO3nNwWNfs2Cmp3lKTJhY002" ||
                                                     user.id ===
                                                         "2M0F2ed7HINNU5qiuoQzCOi4mL92" ? (
-                                                            <li>
-                                                                <button data-text="Add Applicants">
-                                                                    <a
-                                                                        href="#"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#addApplicantsModal"
-                                                                        onClick={() => {
-                                                                            setJobId(
-                                                                                item.job_id
-                                                                            );
-                                                                        }}
-                                                                    >
-                                                                        <span className="la la-file-upload"></span>
-                                                                    </a>
-                                                                </button>
-                                                            </li>
-                                                        ) : (
-                                                            ""
-                                                        )}
+                                                        <li>
+                                                            <button data-text="Add Applicants">
+                                                                <a
+                                                                    href="#"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#addApplicantsModal"
+                                                                    onClick={() => {
+                                                                        setJobId(
+                                                                            item.job_id
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <span className="la la-file-upload"></span>
+                                                                </a>
+                                                            </button>
+                                                        </li>
+                                                    ) : (
+                                                        ""
+                                                    )}
 
                                                     {/* <li onClick={()=>{ addApplicant(item.job_id) }}>
                             <button data-text="Add Applicant">
@@ -1069,6 +1112,14 @@ const JobListingsTable = () => {
                             {/* End .send-private-message-wrapper */}
                         </div>
                     </div>
+                    {!hidePagination ? (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalRecords={totalRecords}
+                            pageSize={pageSize}
+                            onPageChange={handlePageChange}
+                        />
+                    ) : null}
                 </div>
             </div>
             {/* End table widget content */}

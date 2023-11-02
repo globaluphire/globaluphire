@@ -83,7 +83,22 @@ const submitJobPost = async (
                         facility_id: facilityData.facility_id,
                     },
                 ]);
-
+              if (error) {
+                // open toast
+                toast.error(
+                  "Error while fetching facility details, Please try again later or contact tech support",
+                  {
+                      position: "bottom-right",
+                      autoClose: false,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "colored",
+                  }
+                );
+              } else {
                 // open toast
                 toast.success("Job Posted successfully", {
                     position: "bottom-right",
@@ -96,6 +111,7 @@ const submitJobPost = async (
                     theme: "colored",
                 });
                 setJobData(JSON.parse(JSON.stringify(addJobFields)));
+              }
             } else {
                 // open toast
                 toast.error(

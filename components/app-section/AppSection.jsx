@@ -1,11 +1,11 @@
 const AppSection = () => {
     return (
         <div className="row"> 
-            <div className="image-column col-lg-6 col-md-12 col-sm-12">
+            <div className="image-column col-lg-6 col-md-12 col-sm-12"> 
                 <div className="bg-shape"></div>
                 <figure className="image" data-aos="fade-right">
                     <img
-                        src="images/resource/mobile-app.png"
+                        src="images/resource/mobile-app.png" 
                         alt="mobile app"
                     />
                 </figure> 
