@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
 import candidatesData from "../../../../../data/candidates";
@@ -103,7 +104,8 @@ const RejectedApplicationsWidgetContentBox = () => {
             .eq("status", "Rejection")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -147,30 +149,25 @@ const RejectedApplicationsWidgetContentBox = () => {
         if (refData) {
             setApplicationStatusReferenceOptions(refData);
         }
-
-        setTotalRecords(
-            (
-                await supabase
-                    .from("applicants_view")
-                    .select("*")
-                    .eq("status", "Rejection")
-                    .ilike("name", "%" + name + "%")
-                    .ilike("job_title", "%" + jobTitle + "%")
-            ).data.length
-        );
-
-        let { data, error } = await supabase
+        let query = supabase
             .from("applicants_view")
             .select("*")
             .eq("status", "Rejection")
             .ilike("name", "%" + name + "%")
-            .ilike("job_title", "%" + jobTitle + "%")
+            .ilike("job_title", "%" + jobTitle + "%");
+
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+        setTotalRecords((await query).data.length);
+
+        let { data, error } = await query
             .order("created_at", { ascending: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
-        if (facility) {
-            data = data.filter((i) => i.facility_name === facility);
-        }
+        // if (facility) {
+        //     data = data.filter((i) => i.facility_name === facility);
+        // }
 
         if (data) {
             data.forEach(
@@ -192,31 +189,28 @@ const RejectedApplicationsWidgetContentBox = () => {
             if (data) {
                 setApplicationStatusReferenceOptions(data);
             }
-
-            setTotalRecords(
-                (
-                    await supabase
-                        .from("applicants_view")
-                        .select("*")
-                        .eq("status", "Rejection")
-                ).data.length
-            );
-
-            let { data: allApplicantsView, error } = await supabase
+            let query = supabase
                 .from("applicants_view")
                 .select("*")
-                .eq("status", "Rejection")
+                .eq("status", "Rejection");
+
+            if (facility) {
+                query.ilike("facility_name", "%" + facility + "%");
+            }
+            setTotalRecords((await query).data.length);
+
+            let { data: allApplicantsView, error } = await query
                 .order("created_at", { ascending: false })
                 .range(
                     (currentPage - 1) * pageSize,
                     currentPage * pageSize - 1
                 );
 
-            if (facility) {
-                allApplicantsView = allApplicantsView.filter(
-                    (i) => i.facility_name === facility
-                );
-            }
+            // if (facility) {
+            //     allApplicantsView = allApplicantsView.filter(
+            //         (i) => i.facility_name === facility
+            //     );
+            // }
 
             if (allApplicantsView) {
                 allApplicantsView.forEach(

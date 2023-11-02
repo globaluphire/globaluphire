@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
 import candidatesData from "../../../../../data/candidates";
@@ -129,7 +130,8 @@ const WidgetContentBox = () => {
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
             .ilike("status", "%" + status + "%")
-            .order("created_at", { ascending: false });
+            .order("created_at", { ascending: false })
+            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -164,21 +166,8 @@ const WidgetContentBox = () => {
 
     async function findApplicant({ name, jobTitle, status }) {
         setCurrentPage(1);
-        setTotalRecords(
-            (
-                await supabase
-                    .from("applicants_view")
-                    .select("*")
-                    .neq("status", "Rejection")
-                    .neq("status", "Hired")
-                    .neq("status", "Withdraw")
-                    .ilike("name", "%" + name + "%")
-                    .ilike("job_title", "%" + jobTitle + "%")
-                    .ilike("status", "%" + status + "%")
-            ).data.length
-        );
 
-        let { data, error } = await supabase
+        let query = supabase
             .from("applicants_view")
             .select("*")
             .neq("status", "Rejection")
@@ -186,7 +175,15 @@ const WidgetContentBox = () => {
             .neq("status", "Withdraw")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("status", "%" + status + "%")
+            .ilike("status", "%" + status + "%");
+
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+
+        setTotalRecords((await query).data.length);
+
+        let { data, error } = await query
             .order("created_at", { ascending: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
@@ -196,9 +193,9 @@ const WidgetContentBox = () => {
                     (applicant.created_at = dateFormat(applicant.created_at))
             );
 
-            if (facility) {
-                data = data.filter((i) => i.facility_name === facility);
-            }
+            // if (facility) {
+            //     data = data.filter((i) => i.facility_name === facility);
+            // }
 
             setFetchedAllApplicantsData(data);
         }
@@ -210,22 +207,7 @@ const WidgetContentBox = () => {
 
     async function newMessageFilter() {
         try {
-            setTotalRecords(
-                (
-                    await supabase
-                        .from("applicants_view")
-                        .select("*")
-                        .neq("status", "Rejection")
-                        .neq("status", "Hired")
-                        .neq("status", "Withdraw")
-                        .ilike("name", "%" + name + "%")
-                        .ilike("job_title", "%" + jobTitle + "%")
-                        .ilike("status", "%" + status + "%")
-                ).data.length
-            );
-
-            // eslint-disable-next-line prefer-const
-            let { data, error } = await supabase
+            let query = supabase
                 .from("applicants_view")
                 .select("*")
                 .neq("status", "Rejection")
@@ -233,7 +215,15 @@ const WidgetContentBox = () => {
                 .neq("status", "Withdraw")
                 .ilike("name", "%" + name + "%")
                 .ilike("job_title", "%" + jobTitle + "%")
-                .ilike("status", "%" + status + "%")
+                .ilike("status", "%" + status + "%");
+
+            if (facility) {
+                query.ilike("facility_name", "%" + facility + "%");
+            }
+            setTotalRecords((await query).data.length);
+
+            // eslint-disable-next-line prefer-const
+            let { data, error } = await query
                 .order("last_contacted_at", { ascending: true })
                 .order("created_at", { ascending: false })
                 .range(
@@ -288,22 +278,7 @@ const WidgetContentBox = () => {
             if (data) {
                 setApplicationStatusReferenceOptions(data);
             }
-
-            setTotalRecords(
-                (
-                    await supabase
-                        .from("applicants_view")
-                        .select("*")
-                        .neq("status", "Rejection")
-                        .neq("status", "Hired")
-                        .neq("status", "Withdraw")
-                        .ilike("name", "%" + name + "%")
-                        .ilike("job_title", "%" + jobTitle + "%")
-                        .ilike("status", "%" + status + "%")
-                ).data.length
-            );
-
-            let { data: allApplicantsView, error } = await supabase
+            let query = supabase
                 .from("applicants_view")
                 .select("*")
                 .neq("status", "Rejection")
@@ -311,7 +286,14 @@ const WidgetContentBox = () => {
                 .neq("status", "Withdraw")
                 .ilike("name", "%" + name + "%")
                 .ilike("job_title", "%" + jobTitle + "%")
-                .ilike("status", "%" + status + "%")
+                .ilike("status", "%" + status + "%");
+
+            if (facility) {
+                query.ilike("facility_name", "%" + facility + "%");
+            }
+            setTotalRecords((await query).data.length);
+
+            let { data: allApplicantsView, error } = await query
                 .order("created_at", { ascending: false })
                 .range(
                     (currentPage - 1) * pageSize,
@@ -347,11 +329,11 @@ const WidgetContentBox = () => {
                 localStorage.removeItem("status");
             }
 
-            if (facility) {
-                allApplicantsView = allApplicantsView.filter(
-                    (i) => i.facility_name === facility
-                );
-            }
+            // if (facility) {
+            //     allApplicantsView = allApplicantsView.filter(
+            //         (i) => i.facility_name === facility
+            //     );
+            // }
 
             if (allApplicantsView) {
                 allApplicantsView.forEach(
@@ -378,6 +360,7 @@ const WidgetContentBox = () => {
     }
 
     useEffect(() => {
+        fetchedAllApplicantsView(searchFilters);
         if (facility) {
             localStorage.setItem("facility", facility);
         } else {
