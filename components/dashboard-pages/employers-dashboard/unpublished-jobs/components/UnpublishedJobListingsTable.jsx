@@ -106,28 +106,31 @@ const UnpublishedJobListingsTable = () => {
     // Search function
     async function findJob({ jobTitle, jobType }) {
         setCurrentPage(1);
-        setTotalRecords(
-            (
-                await supabase
-                    .from("manage_jobs_view")
-                    .select("*")
-                    .eq("status", "Unpublished")
-                    .ilike("job_title", "%" + jobTitle + "%")
-                    .ilike("job_type", "%" + jobType + "%")
-            ).data.length
-        );
-        let { data, error } = await supabase
+        let query = supabase
             .from("manage_jobs_view")
-            .select()
-            .eq("status", "Unpublished")
-            .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("job_type", "%" + jobType + "%")
+            .select("*")
+            .eq("status", "Unpublished");
+
+        if (jobTitle) {
+            query.ilike("job_title", "%" + jobTitle + "%");
+        }
+
+        if (jobType) {
+            query.ilike("job_type", "%" + jobType + "%");
+        }
+
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+        setTotalRecords((await query).data.length);
+
+        let { data, error } = await query
             .order("unpublished_date", { ascending: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
-        if (facility) {
-            data = data.filter((i) => i.facility_name === facility);
-        }
+        // if (facility) {
+        //     data = data.filter((i) => i.facility_name === facility);
+        // }
 
         data.sort((a, b) => {
             if (a.unpublished_date === null && b.unpublished_date !== null) {
@@ -158,9 +161,15 @@ const UnpublishedJobListingsTable = () => {
         let query = supabase
             .from("manage_jobs_view")
             .select("*")
-            .eq("status", "Unpublished")
-            .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("job_type", "%" + jobType + "%");
+            .eq("status", "Unpublished");
+
+        if (jobTitle) {
+            query.ilike("job_title", "%" + jobTitle + "%");
+        }
+
+        if (jobType) {
+            query.ilike("job_type", "%" + jobType + "%");
+        }
 
         if (facility) {
             query.ilike("facility_name", "%" + facility + "%");

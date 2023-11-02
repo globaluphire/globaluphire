@@ -469,23 +469,24 @@ const JobListingsTable = () => {
 
     // Search function
     async function findJob() {
-        setTotalRecords(
-            (
-                await supabase
-                    .from("manage_jobs_view")
-                    .select("*")
-                    .eq("status", "Published")
-                    .ilike("job_title", "%" + jobTitle + "%")
-                    .ilike("job_type", "%" + jobType + "%")
-            ).data.length
-        );
-        let { data, error } = await supabase
+        let query = supabase
             .from("manage_jobs_view")
-            .select()
-            .eq("status", "Published")
-            .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("job_type", "%" + jobType + "%")
-            .order("published_date", { ascending: false });
+            .select("*")
+            .eq("status", "Published");
+
+        if (jobTitle) {
+            query.ilike("job_title", "%" + jobTitle + "%");
+        }
+        if (jobType) {
+            query.ilike("job_type", "%" + jobType + "%");
+        }
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+        setTotalRecords((await query).data.length);
+        let { data, error } = await query.order("published_date", {
+            ascending: false,
+        });
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -503,10 +504,14 @@ const JobListingsTable = () => {
         let query = supabase
             .from("manage_jobs_view")
             .select("*")
-            .eq("status", "Published")
-            .ilike("job_title", "%" + jobTitle + "%")
-            .ilike("job_type", "%" + jobType + "%");
+            .eq("status", "Published");
 
+        if (jobTitle) {
+            query.ilike("job_title", "%" + jobTitle + "%");
+        }
+        if (jobType) {
+            query.ilike("job_type", "%" + jobType + "%");
+        }
         if (facility) {
             query.ilike("facility_name", "%" + facility + "%");
         }
