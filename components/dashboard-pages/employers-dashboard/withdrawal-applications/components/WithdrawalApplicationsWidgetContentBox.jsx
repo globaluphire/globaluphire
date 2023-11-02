@@ -82,13 +82,18 @@ const WithdrawalApplicationsWidgetContentBox = () => {
         let query = supabase
             .from("applicants_view")
             .select("*")
-            .eq("status", "Withdraw")
-            .ilike("name", "%" + name + "%")
-            .ilike("job_title", "%" + jobTitle + "%");
+            .eq("status", "Withdraw");
 
+        if (name) {
+            query.ilike("name", "%" + name + "%");
+        }
+        if (jobTitle) {
+            query.ilike("job_title", "%" + jobTitle + "%");
+        }
         if (facility) {
             query.ilike("facility_name", "%" + facility + "%");
         }
+
         setTotalRecords((await query).data.length);
 
         let { data, error } = await query
@@ -125,6 +130,12 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                 .select("*")
                 .eq("status", "Withdraw");
 
+            if (name) {
+                query.ilike("name", "%" + name + "%");
+            }
+            if (jobTitle) {
+                query.ilike("job_title", "%" + jobTitle + "%");
+            }
             if (facility) {
                 query.ilike("facility_name", "%" + facility + "%");
             }
