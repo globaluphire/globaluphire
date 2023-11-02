@@ -315,15 +315,15 @@ const TopCardBlock = () => {
             link: "/employers-dashboard/hired-applications",
             uiClass: "ui-green",
         },
-        {
-            id: 4,
-            icon: "flaticon-chat",
-            countNumber: totalNewMessages,
-            metaName: "New Messages",
-            link: "/employers-dashboard/all-applicants",
-            buttonId: "new-filter-button",
-            uiClass: "ui-green",
-        },
+        // {
+        //     id: 4,
+        //     icon: "flaticon-chat",
+        //     countNumber: totalNewMessages,
+        //     metaName: "New Messages",
+        //     link: "/employers-dashboard/all-applicants",
+        //     buttonId: "new-filter-button",
+        //     uiClass: "ui-green",
+        // },
         {
             id: 5,
             icon: "la-file-invoice",
@@ -419,13 +419,13 @@ const TopCardBlock = () => {
                         <Link
                             href={item.link ? item.link : "#"}
                             onClick={() => {
-                                if (item.buttonId) {
-                                    window.setTimeout(() => {
-                                        window.document
-                                            .getElementById(item.buttonId)
-                                            .click();
-                                    }, 1000);
-                                }
+                                // if (item.buttonId) {
+                                //     window.setTimeout(() => {
+                                //         window.document
+                                //             .getElementById(item.buttonId)
+                                //             ?.click();
+                                //     }, 1000);
+                                // }
                                 if (item.metaName === "New Applications") {
                                     localStorage.setItem("status", "New");
                                 }
