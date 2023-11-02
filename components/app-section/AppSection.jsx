@@ -4,7 +4,7 @@ const AppSection = () => {
             <div className="image-column col-lg-6 col-md-12 col-sm-12"> 
                 <div className="bg-shape"></div>
                 <figure className="image" data-aos="fade-right">
-                    <img
+                    <img 
                         src="images/resource/mobile-app.png" 
                         alt="mobile app"
                     />
