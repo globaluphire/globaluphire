@@ -83,10 +83,14 @@ const HiredApplicationsWidgetContentBox = () => {
         let query = supabase
             .from("applicants_view")
             .select("*")
-            .eq("status", "Hired")
-            .ilike("name", "%" + name + "%")
-            .ilike("job_title", "%" + jobTitle + "%");
+            .eq("status", "Hired");
 
+        if (name) {
+            query.ilike("name", "%" + name + "%");
+        }
+        if (jobTitle) {
+            query.ilike("job_title", "%" + jobTitle + "%");
+        }
         if (facility) {
             query.ilike("facility_name", "%" + facility + "%");
         }
@@ -131,6 +135,12 @@ const HiredApplicationsWidgetContentBox = () => {
                 .select("*")
                 .eq("status", "Hired");
 
+            if (name) {
+                query.ilike("name", "%" + name + "%");
+            }
+            if (jobTitle) {
+                query.ilike("job_title", "%" + jobTitle + "%");
+            }
             if (facility) {
                 query.ilike("facility_name", "%" + facility + "%");
             }
@@ -138,8 +148,6 @@ const HiredApplicationsWidgetContentBox = () => {
             setTotalRecords((await query).data.length);
 
             let { data: allApplicantsView, error } = await query
-                .ilike("name", "%" + name + "%")
-                .ilike("job_title", "%" + jobTitle + "%")
                 .order("hired_date", { ascending: false })
                 .range(
                     (currentPage - 1) * pageSize,

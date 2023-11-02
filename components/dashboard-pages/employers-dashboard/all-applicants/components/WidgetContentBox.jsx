@@ -212,14 +212,21 @@ const WidgetContentBox = () => {
                 .select("*")
                 .neq("status", "Rejection")
                 .neq("status", "Hired")
-                .neq("status", "Withdraw")
-                .ilike("name", "%" + name + "%")
-                .ilike("job_title", "%" + jobTitle + "%")
-                .ilike("status", "%" + status + "%");
+                .neq("status", "Withdraw");
 
+            if (name) {
+                query.ilike("name", "%" + name + "%");
+            }
+            if (jobTitle) {
+                query.ilike("job_title", "%" + jobTitle + "%");
+            }
+            if (status) {
+                query.ilike("status", "%" + status + "%");
+            }
             if (facility) {
                 query.ilike("facility_name", "%" + facility + "%");
             }
+
             setTotalRecords((await query).data.length);
 
             // eslint-disable-next-line prefer-const
@@ -283,14 +290,21 @@ const WidgetContentBox = () => {
                 .select("*")
                 .neq("status", "Rejection")
                 .neq("status", "Hired")
-                .neq("status", "Withdraw")
-                .ilike("name", "%" + name + "%")
-                .ilike("job_title", "%" + jobTitle + "%")
-                .ilike("status", "%" + status + "%");
+                .neq("status", "Withdraw");
 
+            if (name) {
+                query.ilike("name", "%" + name + "%");
+            }
+            if (jobTitle) {
+                query.ilike("job_title", "%" + jobTitle + "%");
+            }
+            if (status) {
+                query.ilike("status", "%" + status + "%");
+            }
             if (facility) {
                 query.ilike("facility_name", "%" + facility + "%");
             }
+
             setTotalRecords((await query).data.length);
 
             let { data: allApplicantsView, error } = await query
