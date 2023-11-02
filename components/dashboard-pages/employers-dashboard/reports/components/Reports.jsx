@@ -17,7 +17,7 @@ const addSearchFilters = {
 
 const Reports = () => {
     const [reportItem, setReportItem] = useState([]);
-    const [selectReportItem, setSelectReportItem] = useState();
+    const [selectReportItem, setSelectReportItem] = useState(0);
     // console.log(reportItems);
 
     // // for search filters
@@ -52,26 +52,20 @@ const Reports = () => {
             console.log(error);
         }
     }
+    const handleSelectChanges = (e) => {
+        console.log(e.target.selectedIndex);
+        setSelectReportItem(e.target.selectedIndex);
+    };
     const DownloadHandler = async (item) => {
-        console.log(item);
+        // console.log(item);
 
-        // fetch(fileName, {
-        //     method: "GET",
-        //     headers: {
-        //         "Content-Type": "application/pdf",
-        //     },
-        // })
-        //     .then((response) => response.blob())
-        //     .then((blob) => {
-        //         const url = window.URL.createObjectURL(new Blob([blob]));
-        //         const link = document.createElement("a");
-        //         link.href = url;
-        //         link.download = fileName;
-        //         document.body.appendChild(link);
-        //         link.click();
-        //         link.parentNode.removeChild(link);
-        //     });
-        // window.open(data[0].doc_dwnld_url.slice(14, -2), '_blank', 'noreferrer');
+        const response = await fetch(`/api/report/${item}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        console.log(response);
     };
 
     async function fetchReportItems() {
@@ -144,13 +138,19 @@ const Reports = () => {
                                 className="chosen-single form-select"
                                 onChange={(e) => {
                                     // setSelectReportItem(e.target.value);
-                                    console.log(e.target);
+                                    handleSelectChanges(e);
                                 }}
-                                // value={reportsType}
                                 style={{ maxWidth: "300px" }}
                             >
                                 {reportItem.map((item) => {
-                                    return <option>{item.reportName}</option>;
+                                    return (
+                                        <option
+                                            key={item.reportId}
+                                            value={item.reportName}
+                                        >
+                                            {item.reportName}
+                                        </option>
+                                    );
                                 })}
                             </Form.Select>
                         </Form.Group>
