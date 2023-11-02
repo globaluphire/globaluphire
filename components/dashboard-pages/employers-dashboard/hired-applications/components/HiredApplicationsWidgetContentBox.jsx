@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable no-unused-vars */
 import candidatesData from "../../../../../data/candidates";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -79,31 +80,32 @@ const HiredApplicationsWidgetContentBox = () => {
             setApplicationStatusReferenceOptions(refData);
         }
 
-        setTotalRecords(
-            (
-                await supabase
-                    .from("applicants_view")
-                    .select("*")
-                    .eq("status", "Hired")
-                    .ilike("name", "%" + name + "%")
-                    .ilike("job_title", "%" + jobTitle + "%")
-            ).data.length
-        );
-
-        let { data, error } = await supabase
+        let query = supabase
             .from("applicants_view")
             .select("*")
             .eq("status", "Hired")
             .ilike("name", "%" + name + "%")
-            .ilike("job_title", "%" + jobTitle + "%")
+            .ilike("job_title", "%" + jobTitle + "%");
+
+        if (facility) {
+            query.ilike("facility_name", "%" + facility + "%");
+        }
+
+        setTotalRecords((await query).data.length);
+
+        let { data, error } = await query
             .order("hired_date", { ascending: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
-        if (facility) {
-            data = data.filter((i) => i.facility_name === facility);
-        }
+        // if (facility) {
+        //     data = data.filter((i) => i.facility_name === facility);
+        // }
 
         if (data) {
+            data.forEach(
+                (applicant) =>
+                    (applicant.hired_date = dateFormat(applicant.hired_date))
+            );
             data.forEach(
                 (applicant) =>
                     (applicant.created_at = dateFormat(applicant.created_at))
@@ -124,19 +126,18 @@ const HiredApplicationsWidgetContentBox = () => {
                 setApplicationStatusReferenceOptions(data);
             }
 
-            setTotalRecords(
-                (
-                    await supabase
-                        .from("applicants_view")
-                        .select("*")
-                        .eq("status", "Hired")
-                ).data.length
-            );
-
-            let { data: allApplicantsView, error } = await supabase
+            let query = supabase
                 .from("applicants_view")
                 .select("*")
-                .eq("status", "Hired")
+                .eq("status", "Hired");
+
+            if (facility) {
+                query.ilike("facility_name", "%" + facility + "%");
+            }
+
+            setTotalRecords((await query).data.length);
+
+            let { data: allApplicantsView, error } = await query
                 .ilike("name", "%" + name + "%")
                 .ilike("job_title", "%" + jobTitle + "%")
                 .order("hired_date", { ascending: false })
@@ -145,11 +146,11 @@ const HiredApplicationsWidgetContentBox = () => {
                     currentPage * pageSize - 1
                 );
 
-            if (facility) {
-                allApplicantsView = allApplicantsView.filter(
-                    (i) => i.facility_name === facility
-                );
-            }
+            // if (facility) {
+            //     allApplicantsView = allApplicantsView.filter(
+            //         (i) => i.facility_name === facility
+            //     );
+            // }
 
             if (allApplicantsView) {
                 allApplicantsView.forEach(
