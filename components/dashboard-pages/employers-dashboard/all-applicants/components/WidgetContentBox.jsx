@@ -264,13 +264,7 @@ const WidgetContentBox = () => {
         }
     }
 
-    useEffect(() => {
-        if (filterByNewMessage) {
-            newMessageFilter();
-        } else {
-            fetchedAllApplicantsView(searchFilters);
-        }
-    }, [filterByNewMessage, pageSize, currentPage]);
+    // useEffect(() => {}, [filterByNewMessage, pageSize, currentPage]);
 
     async function fetchedAllApplicantsView({ name, jobTitle, status }) {
         try {
@@ -374,13 +368,17 @@ const WidgetContentBox = () => {
     }
 
     useEffect(() => {
-        fetchedAllApplicantsView(searchFilters);
+        if (filterByNewMessage) {
+            newMessageFilter();
+        } else {
+            fetchedAllApplicantsView(searchFilters);
+        }
         if (facility) {
             localStorage.setItem("facility", facility);
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility, currentPage, pageSize]);
+    }, [filterByNewMessage, facility, currentPage, pageSize]);
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
