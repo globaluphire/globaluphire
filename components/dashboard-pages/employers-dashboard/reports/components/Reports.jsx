@@ -8,9 +8,9 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Papa from "papaparse";
-
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
+import { Loader } from "react-bootstrap-typeahead";
 
 const addSearchFilters = {
     reportsTitle: "",
@@ -20,45 +20,14 @@ const addSearchFilters = {
 const Reports = () => {
     const [reportItem, setReportItem] = useState([]);
     const [selectReportItem, setSelectReportItem] = useState(0);
-    // console.log(reportItems);
+    const [isLoading, setIsLoading] = useState(false);
 
-    // // for search filters
-    const [searchFilters, setSearchFilters] = useState(
-        JSON.parse(JSON.stringify(addSearchFilters))
-    );
-    // const { reportsTitle, reportsType } = useMemo(
-    //     () => searchFilters,
-    //     [searchFilters]
-    // );
-
-    // // clear all filters
-    const clearAll = () => {
-        setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
-        // fetchPost({ reportsTitle: "", reportsType: "" });
-    };
-
-    // Initial Function
-    async function fetchPost() {
-        try {
-            const tmpRepo = reportItems.map(
-                (x) =>
-                    `
-                        <p>${x.report_id}</p>
-                        <p>${x.report_name}</p>
-                        <p>${x.column_names}</p>
-                        <p>${x.query}</p>
-                        
-                        `
-            );
-        } catch (error) {
-            console.log(error);
-        }
-    }
     const handleSelectChanges = (e) => {
         console.log(e.target.selectedIndex);
         setSelectReportItem(e.target.selectedIndex);
     };
     const DownloadHandler = async (item) => {
+        setIsLoading(true);
         // console.log(item);
         try {
             const response = await fetch(`/api/report/${item}`, {
@@ -68,24 +37,24 @@ const Reports = () => {
                 },
             });
 
-            // console.log(response.data.data);
+            const res = await response.json();
+            const csv = Papa.unparse(res.data);
 
-            // const csv = Papa.unparse(response.data);
+            const blob = new Blob([csv], { type: "text/csv" });
 
-            // const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
 
-            // const url = URL.createObjectURL(blob);
+            // Create a temporary link element and click it to initiate download
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${reportItem[selectReportItem].reportName}.csv`;
+            document.body.appendChild(link);
+            link.click();
 
-            // // Create a temporary link element and click it to initiate download
-            // const link = document.createElement("a");
-            // link.href = url;
-            // link.download = "data.csv";
-            // document.body.appendChild(link);
-            // link.click();
+            document.body.removeChild(link);
 
-            // document.body.removeChild(link);
-
-            // URL.revokeObjectURL(url);
+            URL.revokeObjectURL(url);
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -128,30 +97,6 @@ const Reports = () => {
                     Download your reports
                 </Form.Label>
                 <Row className="mx-1" md={4}>
-                    {/* <Col>
-                        <Form.Group className="mb-3 mx-3">
-                            <Form.Label className="chosen-single form-input chosen-container">
-                                Report Title
-                            </Form.Label>
-                            <Form.Control
-                                className="chosen-single form-input chosen-container"
-                                type="text"
-                                value={reportsTitle}
-                                onChange={(e) => {
-                                    setSearchFilters((previousState) => ({
-                                        ...previousState,
-                                        reportsTitle: e.target.value,
-                                    }));
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") {
-                                        // findJob(searchFilters);
-                                    }
-                                }}
-                                style={{ maxWidth: "300px" }}
-                            />
-                        </Form.Group>
-                    </Col> */}
                     <Col>
                         <Form.Group className="mb-3 mx-3">
                             <Form.Label className="chosen-single form-input chosen-container">
@@ -188,8 +133,14 @@ const Reports = () => {
                                 }
                                 data-text="Download CV"
                                 variant="primary"
+                                disabled={isLoading}
                             >
-                                <span className="la la-download"></span>
+                                {" "}
+                                {isLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <span className="la la-download"></span>
+                                )}
                             </Button>
                         </Form.Group>
                     </Col>
