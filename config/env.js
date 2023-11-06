@@ -12,6 +12,7 @@ const envConfig = {
     DOCUSIGN_API_URL: process.env.NEXT_DOCUSIGN_API_URL,
     DOCUSIGN_ACCESS_TOKEN_URL: process.env.NEXT_DOCUSIGN_ACCESS_TOKEN_URL,
     DOCUSIGN_RSA_KEY: process.env.NEXT_DOCUSIGN_RSA_KEY,
+    SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
 };
 
 module.exports = {
