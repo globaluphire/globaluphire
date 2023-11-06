@@ -23,12 +23,10 @@ const Reports = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSelectChanges = (e) => {
-        console.log(e.target.selectedIndex);
         setSelectReportItem(e.target.selectedIndex);
     };
     const DownloadHandler = async (item) => {
         setIsLoading(true);
-        // console.log(item);
         try {
             const response = await fetch(`/api/report/${item}`, {
                 method: "GET",
