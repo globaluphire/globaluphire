@@ -11,7 +11,7 @@ export const reportItems = [
         columnNames: ["application_id"],
         query: "SELECT COUNT(*) FROM APPLICATIONS",
     },
-    // DOUTE IN QUERY
+
     {
         reportName: "Average no of Applicants per Jobs",
         reportId: "3",
