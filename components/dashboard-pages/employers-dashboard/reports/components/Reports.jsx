@@ -12,11 +12,6 @@ import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import { Loader } from "react-bootstrap-typeahead";
 
-const addSearchFilters = {
-    reportsTitle: "",
-    reportsType: "",
-};
-
 const Reports = () => {
     const [reportItem, setReportItem] = useState([]);
     const [selectReportItem, setSelectReportItem] = useState(0);
@@ -53,8 +48,29 @@ const Reports = () => {
 
             URL.revokeObjectURL(url);
             setIsLoading(false);
+
+            toast.success("Report generated!", {
+                position: "bottom-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
         } catch (error) {
             console.log(error);
+            toast.error("Some error occured, try again after some time!", {
+                position: "bottom-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
         }
     };
 
@@ -103,7 +119,6 @@ const Reports = () => {
                             <Form.Select
                                 className="chosen-single form-select"
                                 onChange={(e) => {
-                                    // setSelectReportItem(e.target.value);
                                     handleSelectChanges(e);
                                 }}
                                 style={{ maxWidth: "300px" }}
