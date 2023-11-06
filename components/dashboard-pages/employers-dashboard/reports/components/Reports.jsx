@@ -19,8 +19,8 @@ const Reports = () => {
         setSelectReportItem(e.target.selectedIndex);
     };
     const DownloadHandler = async (item) => {
-        setIsLoading(true);
         try {
+            setIsLoading(true);
             const response = await fetch(`/api/report/${item}`, {
                 method: "GET",
                 headers: {
@@ -28,23 +28,43 @@ const Reports = () => {
                 },
             });
 
-            const res = await response.json();
-            const csv = Papa.unparse(res.data);
+            if (!response.ok) {
+                toast.error("Some error occurred, try again after some time!", {
+                    position: "bottom-right",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                throw new Error(
+                    `Failed to fetch data (HTTP status: ${response.status})`
+                );
+            }
+
+            const responseData = await response.json();
+
+            const csv = Papa.unparse(responseData.data);
 
             const blob = new Blob([csv], { type: "text/csv" });
 
             const url = URL.createObjectURL(blob);
 
-            // Create a temporary link element and click it to initiate download
+            const filename =
+                reportItem[selectReportItem].reportName || "report.csv";
+
             const link = document.createElement("a");
             link.href = url;
-            link.download = `${reportItem[selectReportItem].reportName}.csv`;
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
 
             document.body.removeChild(link);
 
             URL.revokeObjectURL(url);
+
             setIsLoading(false);
 
             toast.success("Report generated!", {
@@ -58,17 +78,7 @@ const Reports = () => {
                 theme: "colored",
             });
         } catch (error) {
-            console.log(error);
-            toast.error("Some error occured, try again after some time!", {
-                position: "bottom-right",
-                autoClose: 4000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
+            throw new Error("Failed to fetch data!");
         }
     };
 
