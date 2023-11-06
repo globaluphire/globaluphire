@@ -1,9 +1,21 @@
+/* eslint-disable no-undef */
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { reportItems } from "../../../data/reports";
 
 export default async function handler(req, res) {
     if (req.method === "GET") {
         try {
+            // const obj = {};
+            // for (const [key, value] of Object.entries(reportItems)) {
+            //     obj[key] = value;
+            // }
+            // // console.log(obj);
+            // data.push(obj);
+            // const headers = [];
+            // for (const [key, value] of Object.entries(reportItems)) {
+            //     headers.push({ id: key, title: convertCamelCase(key) });
+            // }
+
             const newReportItems = reportItems.map(
                 ({ reportId, reportName }) => ({
                     reportId,

@@ -11,11 +11,13 @@ export const reportItems = [
         columnNames: ["application_id"],
         query: "SELECT COUNT(*) FROM APPLICATIONS",
     },
+    // DOUTE IN QUERY
     {
         reportName: "Average no of Applicants per Jobs",
         reportId: "3",
         columnNames: ["application_id"],
-        query: "SELECT AVG(COUNT(*)) FROM APPLICATIONS GROUP BY JOB_TITLE",
+
+        query: "SELECT AVG(count) FROM (SELECT COUNT(*) AS count FROM APPLICATIONS GROUP BY JOB_ID)",
     },
     {
         reportName: "No of Interviews Completed",

@@ -16,9 +16,21 @@ export default async function handler(req, res) {
             return res.status(404).json({ message: "Report not found" });
         }
         const result = await qry.$queryRawUnsafe(report.query);
+
+        const resultWithNumbers = result.map((row) => {
+            for (const key in row) {
+                if (typeof row[key] === "bigint") {
+                    row[key] = Number(row[key]);
+                }
+            }
+            return row;
+        });
+
         await qry.$disconnect();
 
-        return res.status(200).json({ message: "success", data: result });
+        return res
+            .status(200)
+            .json({ message: "success", data: resultWithNumbers });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal Server Error" });

@@ -7,6 +7,8 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Papa from "papaparse";
+
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 
@@ -58,14 +60,35 @@ const Reports = () => {
     };
     const DownloadHandler = async (item) => {
         // console.log(item);
+        try {
+            const response = await fetch(`/api/report/${item}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
 
-        const response = await fetch(`/api/report/${item}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        console.log(response);
+            // console.log(response.data.data);
+
+            // const csv = Papa.unparse(response.data);
+
+            // const blob = new Blob([csv], { type: "text/csv" });
+
+            // const url = URL.createObjectURL(blob);
+
+            // // Create a temporary link element and click it to initiate download
+            // const link = document.createElement("a");
+            // link.href = url;
+            // link.download = "data.csv";
+            // document.body.appendChild(link);
+            // link.click();
+
+            // document.body.removeChild(link);
+
+            // URL.revokeObjectURL(url);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     async function fetchReportItems() {
