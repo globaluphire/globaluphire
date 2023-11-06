@@ -24,10 +24,10 @@ const Reports = () => {
     const [searchFilters, setSearchFilters] = useState(
         JSON.parse(JSON.stringify(addSearchFilters))
     );
-    const { reportsTitle, reportsType } = useMemo(
-        () => searchFilters,
-        [searchFilters]
-    );
+    // const { reportsTitle, reportsType } = useMemo(
+    //     () => searchFilters,
+    //     [searchFilters]
+    // );
 
     // // clear all filters
     const clearAll = () => {
@@ -102,10 +102,10 @@ const Reports = () => {
                         fontSize: "12px",
                     }}
                 >
-                    SEARCH BY
+                    Download your reports
                 </Form.Label>
                 <Row className="mx-1" md={4}>
-                    <Col>
+                    {/* <Col>
                         <Form.Group className="mb-3 mx-3">
                             <Form.Label className="chosen-single form-input chosen-container">
                                 Report Title
@@ -128,7 +128,7 @@ const Reports = () => {
                                 style={{ maxWidth: "300px" }}
                             />
                         </Form.Group>
-                    </Col>
+                    </Col> */}
                     <Col>
                         <Form.Group className="mb-3 mx-3">
                             <Form.Label className="chosen-single form-input chosen-container">
@@ -178,34 +178,3 @@ const Reports = () => {
 };
 
 export default Reports;
-
-{
-    /*
- <div className="widget-content">
-                <div className="table-outer">
-                    <Table className="default-table manage-job-table">
-                        <thead>
-                            <tr>
-                                <th>Report Id</th>
-                                <th>Report Name</th>
-                                <th>Column Names</th>
-                                 <th>Query</th> 
-                            </tr>
-                        </thead>
-                        {
-                            <tbody>
-                                {reportItems.map((x) => (
-                                    <tr>
-                                        <td>{x.report_id}</td>
-                                        <td>{x.report_name}</td>
-                                        <td>{x.column_names}</td>
-                                         <td>{x.query}</td> 
-                                    </tr>
-                                ))}
-                            </tbody>
-                        }
-                    </Table>
-                </div>
-            </div>
-*/
-}

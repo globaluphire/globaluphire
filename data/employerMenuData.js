@@ -84,7 +84,14 @@ module.exports = [
     //   active: "",
     // },
     {
-        id: 9,
+        id: 10,
+        name: "Reports",
+        icon: "la-file-invoice",
+        routePath: "/employers-dashboard/reports",
+        active: "",
+    },
+    {
+        id: 11,
         name: "Resume Alerts",
         icon: "la-bell",
         routePath: "/employers-dashboard/resume-alerts",
@@ -98,7 +105,7 @@ module.exports = [
     //   active: "",
     // },
     {
-        id: 11,
+        id: 12,
         name: "Logout",
         icon: "la-sign-out",
         routePath: "/",
