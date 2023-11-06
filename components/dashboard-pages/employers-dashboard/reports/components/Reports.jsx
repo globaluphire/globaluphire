@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-lone-blocks */
 /* eslint-disable no-unused-vars */
 
 import { useEffect, useState, useMemo } from "react";
