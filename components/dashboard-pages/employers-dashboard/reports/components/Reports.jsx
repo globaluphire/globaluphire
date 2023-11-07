@@ -18,16 +18,87 @@ const Reports = () => {
     const handleSelectChanges = (e) => {
         setSelectReportItem(e.target.selectedIndex);
     };
-    const DownloadHandler = async (item) => {
+
+    const getReport = async (item) => {
         try {
-            setIsLoading(true);
             const response = await fetch(`/api/report/${item}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
             });
+            return response;
+        } catch (error) {
+            throw new Error(error);
+        }
+    };
 
+    const SendMailHandler = async (item) => {
+        try {
+            setIsLoading(true);
+            const response = await getReport(item);
+            const responseData = await response.json();
+            const csv = Papa.unparse(responseData.data);
+
+            // Create a FormData object and append the CSV file as a Blob
+            const formData = new FormData();
+            formData.append("recipient", "aniket17112000@gmail.com");
+            formData.append(
+                "subject",
+                `Your Report for "${reportItem[selectReportItem].reportName}" is ready`
+            );
+            formData.append(
+                "content",
+                "<h1>Please check the attached report!</h1>"
+            );
+            formData.append(
+                "reportName",
+                reportItem[selectReportItem].reportName
+            );
+            formData.append(
+                "attachments",
+                new Blob([csv], { type: "text/csv" })
+            );
+
+            const mailResponse = await fetch("/api/report/mail", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!mailResponse.ok) {
+                setIsLoading(false);
+                toast.error("Some error occurred, try again after some time!", {
+                    position: "bottom-right",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            } else {
+                setIsLoading(false);
+                toast.success("Report send to mail!", {
+                    position: "bottom-right",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            }
+        } catch (error) {
+            throw new Error("Failed to fetch data!");
+        }
+    };
+
+    const DownloadHandler = async (item) => {
+        try {
+            setIsLoading(true);
+            const response = await getReport(item);
             if (!response.ok) {
                 toast.error("Some error occurred, try again after some time!", {
                     position: "bottom-right",
@@ -105,7 +176,7 @@ const Reports = () => {
                 className="widget-title"
                 style={{ fontSize: "1.5rem", fontWeight: "500" }}
             >
-                <b>Reports!</b>
+                <b>Rejected Applicants!</b>
             </div>
             <Form>
                 <Form.Label
@@ -116,7 +187,7 @@ const Reports = () => {
                         fontSize: "12px",
                     }}
                 >
-                    Download your reports
+                    DOWNLOAD YOUR REPORTS
                 </Form.Label>
                 <Row className="mx-1" md={4}>
                     <Col>
@@ -147,7 +218,7 @@ const Reports = () => {
                 </Row>
                 <Row className="mx-3">
                     <Col>
-                        <Form.Group className="chosen-single form-input chosen-container mb-3">
+                        <Form.Group className="chosen-single form-input chosen-container mt-3">
                             <Button
                                 onClick={() =>
                                     DownloadHandler(selectReportItem)
@@ -155,12 +226,36 @@ const Reports = () => {
                                 data-text="Download CV"
                                 variant="primary"
                                 disabled={isLoading}
+                                className="btn btn-submit btn-sm text-nowrap m-1"
                             >
-                                {" "}
                                 {isLoading ? (
                                     <Loader />
                                 ) : (
                                     <span className="la la-download"></span>
+                                )}
+                            </Button>
+                            <Button
+                                onClick={() =>
+                                    SendMailHandler(selectReportItem)
+                                }
+                                data-text="Send to mail" // Change button text
+                                variant="primary"
+                                disabled={isLoading}
+                                style={{
+                                    minHeight: "40px",
+                                    padding: "0 20px",
+                                }}
+                                className="btn btn-submit btn-sm text-nowrap mx-2"
+                            >
+                                {isLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <>
+                                        <span className="la la-send"></span>
+                                        <span style={{ marginLeft: "0.5em" }}>
+                                            Send to mail
+                                        </span>
+                                    </>
                                 )}
                             </Button>
                         </Form.Group>
@@ -168,6 +263,11 @@ const Reports = () => {
                 </Row>
             </Form>
             {/* End filter top bar */}
+            {/* Start table widget content */}
+            <div className="widget-content">
+                <div className="table-outer"></div>
+            </div>
+            {/* End table widget content */}
         </div>
     );
 };
