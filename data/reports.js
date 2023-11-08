@@ -34,13 +34,13 @@ export const reportItems = [
         reportName: "No of Active Employee",
         reportId: "6",
         columnNames: ["application_id"],
-        query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Hired'",
+        // query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Hired'",
     },
     {
         reportName: "No of Employee Terminated",
         reportId: "7",
         columnNames: ["application_id"],
-        query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Rejection'",
+        query: "SELECT * FROM APPLICATIONS WHERE termination_date <> NULL",
     },
     {
         reportName: "No of Unpublished Jobs",
