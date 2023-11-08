@@ -486,11 +486,12 @@ const JobListingsTable = () => {
         setTotalRecords((await query).data.length);
         let { data, error } = await query.order("published_date", {
             ascending: false,
+            nullsFirst: false,
         });
 
-        if (facility) {
-            data = data.filter((i) => i.facility_name === facility);
-        }
+        // if (facility) {
+        //     data = data.filter((i) => i.facility_name === facility);
+        // }
 
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
         data.forEach(
@@ -518,7 +519,7 @@ const JobListingsTable = () => {
         setTotalRecords((await query).data.length);
 
         let { data, error } = await query
-            .order("published_date", { ascending: false })
+            .order("published_date", { ascending: false, nullsFirst: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
