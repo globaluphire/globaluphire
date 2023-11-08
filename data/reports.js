@@ -22,7 +22,7 @@ export const reportItems = [
         reportName: "No of Interviews Completed",
         reportId: "4",
         columnNames: ["application_id"],
-        query: "SELECT * FROM APPLICATIONS WHERE ONBOARDING_STATUS = 'sent'",
+        query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Interview Completed'",
     },
     {
         reportName: "No of Hires",
@@ -30,12 +30,12 @@ export const reportItems = [
         columnNames: ["application_id"],
         query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Hired'",
     },
-    {
-        reportName: "No of Active Employee",
-        reportId: "6",
-        columnNames: ["application_id"],
-        // query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Hired'",
-    },
+    // {
+    //     reportName: "No of Active Employee",
+    //     reportId: "6",
+    //     columnNames: ["application_id"],
+    //     query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Hired'",
+    // },
     {
         reportName: "No of Employee Terminated",
         reportId: "7",
