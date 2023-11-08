@@ -183,22 +183,6 @@ const UnpublishedJobListingsTable = () => {
         // if (facility) {
         //     data = data.filter((i) => i.facility_name === facility);
         // }
-        data.sort((a, b) => {
-            if (a.unpublished_date === null && b.unpublished_date !== null) {
-                return 1;
-            } else if (
-                a.unpublished_date !== null &&
-                b.unpublished_date === null
-            ) {
-                return -1;
-            } else if (a.unpublished_date > b.unpublished_date) {
-                return -1;
-            } else if (a.unpublished_date < b.unpublished_date) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
 
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
         data.forEach(
