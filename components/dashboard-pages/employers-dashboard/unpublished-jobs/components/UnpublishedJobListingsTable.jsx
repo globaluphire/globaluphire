@@ -202,6 +202,9 @@ const UnpublishedJobListingsTable = () => {
 
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
         data.forEach(
+            (job) => (job.published_date = dateFormat(job.published_date))
+        );
+        data.forEach(
             (job) => (job.unpublished_date = dateFormat(job.unpublished_date))
         );
         setjobs(data);
@@ -344,6 +347,7 @@ const UnpublishedJobListingsTable = () => {
                                 <th>Job Title</th>
                                 <th>Facility</th>
                                 <th>Applications</th>
+                                <th>Published On</th>
                                 <th>Unpublished On</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -439,6 +443,15 @@ const UnpublishedJobListingsTable = () => {
                                                     {item.total_applicants}{" "}
                                                     applied
                                                 </a>
+                                            ) : (
+                                                <span>-</span>
+                                            )}
+                                        </td>
+                                        <td>
+                                            {item.published_date ? (
+                                                <span>
+                                                    {item.published_date}
+                                                </span>
                                             ) : (
                                                 <span>-</span>
                                             )}
