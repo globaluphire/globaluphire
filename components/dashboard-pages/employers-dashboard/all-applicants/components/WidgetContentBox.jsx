@@ -100,7 +100,7 @@ const WidgetContentBox = () => {
                 .from("applications")
                 .update({
                     status: applicationStatus,
-                    hired_date: new Date(),
+                    hired_date: today,
                     emp_id: empID,
                 })
                 .eq("application_id", selectedApplicant.application_id);
