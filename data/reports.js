@@ -6,7 +6,7 @@ export const reportItems = [
         query: "SELECT * FROM JOBS",
     },
     {
-        reportName: "Total no of Applicants",
+        reportName: "Total no of Applicants (last 7 days)",
         reportId: "2",
         columnNames: ["application_id"],
         query: "SELECT * FROM APPLICATIONS WHERE created_at >= NOW() - INTERVAL '07' DAY",
