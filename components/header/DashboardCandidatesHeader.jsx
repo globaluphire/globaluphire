@@ -3,13 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import candidatesMenuData from "../../data/candidatesMenuData";
+import { useSelector } from "react-redux";
 // import HeaderNavContent from "./HeaderNavContent";
 import { isActiveLink } from "../../utils/linkActiveChecker";
 import { useRouter } from "next/router";
 
 const DashboardCandidatesHeader = () => {
     const [navbar, setNavbar] = useState(false);
-
+    const user = useSelector((state) => state.candidate.user);
     const router = useRouter();
 
     const changeBackground = () => {
@@ -87,26 +88,34 @@ const DashboardCandidatesHeader = () => {
                             </a>
 
                             <ul className="dropdown-menu">
-                                {candidatesMenuData.map((item) => (
-                                    <li
-                                        className={`${
-                                            isActiveLink(
-                                                item.routePath,
-                                                router.asPath
-                                            )
-                                                ? "active"
-                                                : ""
-                                        } mb-1`}
-                                        key={item.id}
-                                    >
-                                        <Link href={item.routePath}>
-                                            <i
-                                                className={`la ${item.icon}`}
-                                            ></i>{" "}
-                                            {item.name}
-                                        </Link>
-                                    </li>
-                                ))}
+                                {candidatesMenuData.map((item) => {
+                                    const isUserAllowed = item.access.includes(
+                                        user.role
+                                    );
+                                    if (!isUserAllowed) {
+                                        return null;
+                                    }
+                                    return (
+                                        <li
+                                            className={`${
+                                                isActiveLink(
+                                                    item.routePath,
+                                                    router.asPath
+                                                )
+                                                    ? "active"
+                                                    : ""
+                                            } mb-1`}
+                                            key={item.id}
+                                        >
+                                            <Link href={item.routePath}>
+                                                <i
+                                                    className={`la ${item.icon}`}
+                                                ></i>{" "}
+                                                {item.name}
+                                            </Link>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                         {/* End dropdown */}

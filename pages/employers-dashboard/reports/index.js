@@ -8,7 +8,7 @@ import Reports from "../../../components/dashboard-pages/employers-dashboard/rep
 
 const index = () => {
     const user = useSelector((state) => state.candidate.user);
-    const isEmployer = ["SUPER_ADMIN", "ADMIN", "MEMBER"].includes(user.role);
+    const isEmployer = ["SUPER_ADMIN"].includes(user.role);
 
     useEffect(() => {
         if (!isEmployer) {
