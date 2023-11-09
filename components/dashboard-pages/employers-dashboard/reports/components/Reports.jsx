@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable array-callback-return */
+/* eslint-disable camelcase */
 
 import { useEffect, useState, useMemo } from "react";
 import Button from "react-bootstrap/Button";
