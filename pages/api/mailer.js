@@ -3,7 +3,6 @@ import { envConfig } from "../../config/env";
 export default function handler(req, res) {
     if (req.method === "POST") {
         const mail = require("@sendgrid/mail");
-        console.log();
         mail.setApiKey(envConfig.SENDGRID_API_KEY);
         const msg = {
             to: `${req.body.recipient}`,

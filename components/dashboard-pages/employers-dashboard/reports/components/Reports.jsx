@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Papa from "papaparse";
+import { useSelector } from "react-redux";
 import { supabase } from "../../../../../config/supabaseClient";
 import { toast } from "react-toastify";
 import { Loader } from "react-bootstrap-typeahead";
@@ -14,6 +15,7 @@ const Reports = () => {
     const [reportItem, setReportItem] = useState([]);
     const [selectReportItem, setSelectReportItem] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const user = useSelector((state) => state.candidate.user);
 
     const handleSelectChanges = (e) => {
         setSelectReportItem(e.target.selectedIndex);
@@ -36,36 +38,20 @@ const Reports = () => {
     const SendMailHandler = async (item) => {
         try {
             setIsLoading(true);
-            const response = await getReport(item);
-            const responseData = await response.json();
-            const csv = Papa.unparse(responseData.data);
-
-            // Create a FormData object and append the CSV file as a Blob
-            const formData = new FormData();
-            formData.append("recipient", "aniket17112000@gmail.com");
-            formData.append(
-                "subject",
-                `Your Report for "${reportItem[selectReportItem].reportName}" is ready`
-            );
-            formData.append(
-                "content",
-                "<h1>Please check the attached report!</h1>"
-            );
-            formData.append(
-                "reportName",
-                reportItem[selectReportItem].reportName
-            );
-            formData.append(
-                "attachments",
-                new Blob([csv], { type: "text/csv" })
-            );
-
-            const mailResponse = await fetch("/api/report/mail", {
+            const response = await fetch("/api/report/mail", {
                 method: "POST",
-                body: formData,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    recipient: user.email,
+                    url: window.location.origin,
+                    id: item,
+                    reportName: reportItem[selectReportItem].reportName,
+                }),
             });
 
-            if (!mailResponse.ok) {
+            if (!response.ok) {
                 setIsLoading(false);
                 toast.error("Some error occurred, try again after some time!", {
                     position: "bottom-right",
