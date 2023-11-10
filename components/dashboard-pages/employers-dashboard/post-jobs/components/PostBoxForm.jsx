@@ -34,11 +34,11 @@ function loadAsyncScript(src) {
 const addJobFields = {
     jobTitle: "",
     jobDesc: "",
-    jobType: "",
+    jobType: "Full Time",
     salary: "",
-    salaryRate: "",
+    salaryRate: "Per Hour",
     education: "",
-    exp: "",
+    exp: "0 - 1 year",
     address: "",
     completeAddress: "",
     facility: "",
@@ -74,18 +74,18 @@ const PostBoxForm = () => {
     const [jobData, setJobData] = useState(
         JSON.parse(JSON.stringify(addJobFields))
     );
-    const {
-        jobTitle,
-        jobDesc,
-        jobType,
-        salary,
-        salaryRate,
-        education,
-        exp,
-        address,
-        completeAddress,
-        facility,
-    } = useMemo(() => jobData, [jobData]);
+    // const {
+    //     jobTitle,
+    //     jobDesc,
+    //     jobType,
+    //     salary,
+    //     salaryRate,
+    //     education,
+    //     exp,
+    //     address,
+    //     completeAddress,
+    //     facility,
+    // } = useMemo(() => jobData, [jobData]);
 
     const searchInput = useRef(null);
 
@@ -218,10 +218,7 @@ const PostBoxForm = () => {
             if (!upperLimit || !lowerLimit) {
                 return;
             }
-            setJobData((previousState) => ({
-                ...previousState,
-                salary: `${upperLimit} - ${lowerLimit}`,
-            }));
+            salary = `${upperLimit} - ${lowerLimit}`;
         }
         if (
             jobTitle &&
@@ -345,7 +342,7 @@ const PostBoxForm = () => {
                     <input
                         type="text"
                         name="globaluphire-jobTitle"
-                        value={jobTitle}
+                        value={jobData.jobTitle}
                         required
                         onChange={(e) => {
                             setJobData((previousState) => ({
@@ -453,9 +450,10 @@ const PostBoxForm = () => {
                     </label>
                     <select
                         className="chosen-single form-select"
-                        value={jobType}
+                        value={jobData.jobType}
                         required
                         onChange={(e) => {
+                            console.log(e.target.value);
                             setJobData((previousState) => ({
                                 ...previousState,
                                 jobType: e.target.value,
@@ -474,7 +472,7 @@ const PostBoxForm = () => {
                     </label>
                     <select
                         className="chosen-single form-select"
-                        value={exp}
+                        value={jobData.exp}
                         onChange={(e) => {
                             setJobData((previousState) => ({
                                 ...previousState,
@@ -570,7 +568,7 @@ const PostBoxForm = () => {
                     </label>
                     <select
                         className="chosen-single form-select"
-                        value={salaryRate}
+                        value={jobData.salaryRate}
                         onChange={(e) => {
                             setJobData((previousState) => ({
                                 ...previousState,
@@ -591,7 +589,7 @@ const PostBoxForm = () => {
                     </label>
                     <select
                         className="chosen-single form-select"
-                        value={education}
+                        value={jobData.education}
                         onChange={(e) => {
                             setJobData((previousState) => ({
                                 ...previousState,
