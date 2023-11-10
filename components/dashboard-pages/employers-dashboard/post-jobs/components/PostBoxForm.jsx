@@ -218,7 +218,7 @@ const PostBoxForm = () => {
             if (!upperLimit || !lowerLimit) {
                 return;
             }
-            salary = `${upperLimit} - ${lowerLimit}`;
+            salary = `${lowerLimit} - ${upperLimit}`;
         }
         if (
             jobTitle &&
