@@ -1,14 +1,70 @@
+/* eslint-disable no-undef */
 import { supabase } from "../../../../config/supabaseClient";
+import { useState } from "react";
 // const mail = require("@sendgrid/mail");
+import { reportItems } from "../../../../data/reports";
+import Papa from "papaparse";
 
 export default async function handler(req, res) {
+    const [reportItem, setReportItem] = useState([]);
+
     if (req.method === "GET") {
-        const fetchUser = await supabase
-            .from("users")
-            .select("email")
-            .ilike("role", "SUPER_ADMIN");
-        console.log(fetchUser);
-        // try {
+        try {
+            const fetchUser = await supabase
+                .from("users")
+                .select("email")
+                .ilike("role", "SUPER_ADMIN");
+            console.log(fetchUser);
+
+            let reportsArray = [];
+
+            for (const user of reportItems) {
+                // console.log("User data :: " + user.query);
+                // const reportDataQuery = ` ${user.query}`;
+                reportsArray = [
+                    user.reportId,
+                    user.reportName,
+                    user.columnNames,
+                    user.query,
+                ];
+            }
+            // console.log("arr :: " + reportsArray);
+
+            const csv = Papa.unparse(fetchUser.data);
+            const base64EncodedContent = Buffer.from(csv).toString("base64");
+
+            const blob = new Blob([csv], { type: "text/csv" });
+
+            const url = URL.createObjectURL(blob);
+
+            const filename =
+                reportItem[setReportItem].reportName || "report.csv";
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
+            console.log("URL :: " + filename);
+
+            reportsArray.push({
+                content: toBase64(base64EncodedContent),
+                filename: `${req.body.reportName}.csv`,
+                type: "text/csv",
+                disposition: "attachment",
+            });
+
+            // console.log(reportsArray);
+            res.json(reportsArray);
+        } catch (error) {
+            console.error("Error ::", error.message);
+            // res.status(500).json({ error: "Internal Server Error" });
+        }
+
         //     const response = await fetch(
         //         `${req.body.url}/api/report/${req.body.id}`,
         //         {
