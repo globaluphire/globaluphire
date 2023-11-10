@@ -73,6 +73,7 @@ const submitJobPost = async (
                     salary_rate: editedSalaryRate,
                     change_dttm: new Date(),
                     update_ver_nbr: fetchedJobData.update_ver_nbr + 1,
+                    is_edited: true,
                 })
                 .eq("job_id", fetchedJobData.job_id);
             // .select() -- this will return the updated record in object

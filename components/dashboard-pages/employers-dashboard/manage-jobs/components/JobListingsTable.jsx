@@ -781,6 +781,28 @@ const JobListingsTable = () => {
                                         ) : (
                                             <td className="status">
                                                 {item.status}
+                                                {item?.is_edited ? (
+                                                    <div
+                                                        style={{
+                                                            color: "green",
+                                                        }}
+                                                    >
+                                                        Edited
+                                                    </div>
+                                                ) : (
+                                                    ""
+                                                )}
+                                                {item?.is_cloned ? (
+                                                    <div
+                                                        style={{
+                                                            color: "green",
+                                                        }}
+                                                    >
+                                                        Cloned
+                                                    </div>
+                                                ) : (
+                                                    ""
+                                                )}
                                             </td>
                                         )}
                                         <td>

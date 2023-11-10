@@ -435,18 +435,31 @@ const UnpublishedJobListingsTable = () => {
                                                 <span>-</span>
                                             )}
                                         </td>
-                                        {item?.status === "Published" ? (
-                                            <td className="status">
-                                                {item.status}
-                                            </td>
-                                        ) : (
-                                            <td
-                                                className="status"
-                                                style={{ color: "red" }}
-                                            >
-                                                {item.status}
-                                            </td>
-                                        )}
+                                        <td
+                                            className="status"
+                                            style={{
+                                                color:
+                                                    item?.status !==
+                                                        "Published" && "red",
+                                            }}
+                                        >
+                                            {item.status}
+                                            {item?.is_edited ? (
+                                                <div style={{ color: "green" }}>
+                                                    Edited
+                                                </div>
+                                            ) : (
+                                                ""
+                                            )}
+                                            {item?.is_cloned ? (
+                                                <div style={{ color: "green" }}>
+                                                    Cloned
+                                                </div>
+                                            ) : (
+                                                ""
+                                            )}
+                                        </td>
+
                                         <td>
                                             <div className="option-box">
                                                 <ul className="option-list">

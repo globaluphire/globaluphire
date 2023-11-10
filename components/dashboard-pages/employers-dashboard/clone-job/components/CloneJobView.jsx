@@ -56,6 +56,7 @@ const submitJobPost = async (fetchedJobData, setClonedJobData, user) => {
                     salary_rate: fetchedJobData.salary_rate,
                     job_comp_add: fetchedJobData.job_comp_add,
                     facility_name: fetchedJobData.facility_name,
+                    is_cloned: true,
                 },
             ]);
 
