@@ -9,8 +9,11 @@ const About = () => {
                 <div className="inner-column " data-aos="fade-left">
                     <div className="sec-title">
                         <h3>
-                            OUR NURSE ASSISTANT TRAINING COURSES ARE NOW OPEN
-                            FOR ENROLLMENT IN OREGON CLASSES RUN EVERY 6 WEEKS
+                            <b>
+                                OUR NURSE ASSISTANT TRAINING COURSES ARE NOW
+                                OPEN FOR ENROLLMENT IN OREGON. CLASSES RUN EVERY
+                                6 WEEKS
+                            </b>
                         </h3>
                         <div className="mt-3" style={{ textAlign: "justify" }}>
                             Are you Passionate, Caring and interested in working
