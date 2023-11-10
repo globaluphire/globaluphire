@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
+import { Row } from "react-bootstrap";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -31,86 +32,15 @@ function loadAsyncScript(src) {
     });
 }
 
-const submitJobPost = async (fetchedJobData, setClonedJobData, user) => {
-    if (
-        fetchedJobData.job_title ||
-        fetchedJobData.job_desc ||
-        fetchedJobData.job_type ||
-        fetchedJobData.salary ||
-        fetchedJobData.salary_rate ||
-        fetchedJobData.education ||
-        fetchedJobData.experience ||
-        fetchedJobData.job_comp_add ||
-        fetchedJobData.facility_name
-    ) {
-        try {
-            const { data, error } = await supabase.from("jobs").insert([
-                {
-                    user_id: user.id,
-                    job_title: fetchedJobData.job_title,
-                    job_desc: fetchedJobData.job_desc,
-                    job_type: fetchedJobData.job_type,
-                    experience: fetchedJobData.experience,
-                    education: fetchedJobData.education,
-                    salary: fetchedJobData.salary,
-                    salary_rate: fetchedJobData.salary_rate,
-                    job_comp_add: fetchedJobData.job_comp_add,
-                    facility_name: fetchedJobData.facility_name,
-                    is_cloned: true,
-                },
-            ]);
-
-            // open toast
-            toast.success("Job Cloned and Posted successfully", {
-                position: "bottom-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-
-            // redirect to original page where user came from
-            setTimeout(() => {
-                Router.push("/employers-dashboard/manage-jobs");
-            }, 3000);
-        } catch (err) {
-            // open toast
-            toast.error(
-                "Error while saving your changes, Please try again later or contact tech support",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            // console.warn(err);
-        }
-    } else {
-        // open toast
-        toast.error("You do not have any changes to save", {
-            position: "top-center",
-            autoClose: false,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        });
-    }
-};
-
 const CloneJobView = () => {
     const user = useSelector((state) => state.candidate.user);
+    const [salaryType, setSalaryType] = useState("fixed");
+    const [lowerLimit, setLowerLimit] = useState("");
+    const [upperLimit, setUpperLimit] = useState("");
 
+    const handleSalaryTypeChange = (e) => {
+        setSalaryType(e.target.value);
+    };
     const router = useRouter();
     const jobId = router.query.id;
 
@@ -192,6 +122,7 @@ const CloneJobView = () => {
 
                 if (data) {
                     setFetchedJobData(data[0]);
+                    console.log(data[0]);
                 }
             }
         } catch (e) {
@@ -213,8 +144,23 @@ const CloneJobView = () => {
     };
 
     useEffect(() => {
+        if (fetchedJobData.salary?.includes("-")) {
+            setSalaryType("ranged");
+            const salaryRange = fetchedJobData.salary.split("-");
+            setLowerLimit(salaryRange[0].trim());
+            setUpperLimit(salaryRange[1].trim());
+        }
         fetchJob();
     }, [jobId]);
+
+    useEffect(() => {
+        if (fetchedJobData.salary?.includes("-")) {
+            setSalaryType("ranged");
+            const salaryRange = fetchedJobData.salary.split("-");
+            setLowerLimit(salaryRange[0].trim());
+            setUpperLimit(salaryRange[1].trim());
+        }
+    }, []);
 
     // init google map script
     const initMapScript = () => {
@@ -259,6 +205,90 @@ const CloneJobView = () => {
     // useEffect(() => {
     //   searchInput.current.value = fetchedJobData.job_address
     // }, [fetchedJobData.job_address]);
+
+    const submitJobPost = async (fetchedJobData, setClonedJobData, user) => {
+        if (salaryType === "ranged") {
+            if (!upperLimit || !lowerLimit) {
+                return;
+            }
+            fetchedJobData.salary = `${lowerLimit} - ${upperLimit}`;
+        }
+
+        if (
+            fetchedJobData.job_title ||
+            fetchedJobData.job_desc ||
+            fetchedJobData.job_type ||
+            fetchedJobData.salary ||
+            fetchedJobData.salary_rate ||
+            fetchedJobData.education ||
+            fetchedJobData.experience ||
+            fetchedJobData.job_comp_add ||
+            fetchedJobData.facility_name
+        ) {
+            try {
+                // const { data, error } = await supabase.from("jobs").insert([
+                //     {
+                //         user_id: user.id,
+                //         job_title: fetchedJobData.job_title,
+                //         job_desc: fetchedJobData.job_desc,
+                //         job_type: fetchedJobData.job_type,
+                //         experience: fetchedJobData.experience,
+                //         education: fetchedJobData.education,
+                //         salary: fetchedJobData.salary,
+                //         salary_rate: fetchedJobData.salary_rate,
+                //         job_comp_add: fetchedJobData.job_comp_add,
+                //         facility_name: fetchedJobData.facility_name,
+                //         is_cloned: true,
+                //     },
+                // ]);
+
+                // open toast
+                toast.success("Job Cloned and Posted successfully", {
+                    position: "bottom-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+
+                // redirect to original page where user came from
+                // setTimeout(() => {
+                //     Router.push("/employers-dashboard/manage-jobs");
+                // }, 3000);
+            } catch (err) {
+                // open toast
+                toast.error(
+                    "Error while saving your changes, Please try again later or contact tech support",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                // console.warn(err);
+            }
+        } else {
+            // open toast
+            toast.error("You do not have any changes to save", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    };
 
     return (
         <form className="default-form">
@@ -389,7 +419,6 @@ const CloneJobView = () => {
                             }));
                         }}
                     >
-                        <option></option>
                         <option>Full Time</option>
                         <option>Part Time</option>
                         <option>Both</option>
@@ -411,41 +440,88 @@ const CloneJobView = () => {
                             }));
                         }}
                     >
-                        <option></option>
-                        <option>1 year</option>
-                        <option>2 years</option>
-                        <option>3 years</option>
-                        <option>4 years</option>
-                        <option>5 years</option>
-                        <option>6 years</option>
-                        <option>7 years</option>
-                        <option>8 years</option>
-                        <option>9 years</option>
-                        <option>10+ years</option>
+                        <option>0 - 1 year</option>
+                        <option>1 - 3 years</option>
+                        <option>4 - 7 years</option>
+                        <option>7+ years</option>
                     </select>
                 </div>
                 {/* <!-- Input --> */}
                 <div className="form-group col-lg-6 col-md-12">
-                    <label>
-                        Offered Salary{" "}
-                        <span className="optional">(optional)</span>
-                    </label>
-                    <input
-                        type="text"
-                        name="immense-career-salary"
-                        value={fetchedJobData.salary}
-                        placeholder="$100,000.00"
-                        onChange={(e) => {
-                            setFetchedJobData((previousState) => ({
-                                ...previousState,
-                                salary: e.target.value,
-                            }));
-                        }}
-                    />
+                    <label>Offered Salary </label>
+                    <span className="required">(required)</span>
+                    <span style={{ marginLeft: "1em" }}>
+                        <label>
+                            <input
+                                type="radio"
+                                name="salaryType"
+                                value="fixed"
+                                checked={salaryType === "fixed"}
+                                onChange={handleSalaryTypeChange}
+                                style={{ marginRight: "0.5em" }}
+                            />
+                            Exact Amount
+                        </label>
+                        <label style={{ marginLeft: "2em" }}>
+                            <input
+                                type="radio"
+                                name="salaryType"
+                                value="ranged"
+                                checked={salaryType === "ranged"}
+                                onChange={handleSalaryTypeChange}
+                                style={{ marginRight: "0.5em" }}
+                            />
+                            Ranged
+                        </label>
+                    </span>
+                    {salaryType === "fixed" ? (
+                        <input
+                            type="text"
+                            name="globaluphire-salary"
+                            value={fetchedJobData.salary}
+                            placeholder=""
+                            onChange={(e) => {
+                                setFetchedJobData((previousState) => ({
+                                    ...previousState,
+                                    salary: e.target.value,
+                                }));
+                            }}
+                            required
+                        />
+                    ) : (
+                        <Row>
+                            <div className="col-6">
+                                <input
+                                    type="text"
+                                    name="lowerLimit"
+                                    value={lowerLimit}
+                                    placeholder="$80,000.00"
+                                    onChange={(e) =>
+                                        setLowerLimit(e.target.value)
+                                    }
+                                    required
+                                />
+                                <label>Lower Limit</label>
+                            </div>
+                            <div className="col-6">
+                                <input
+                                    type="text"
+                                    name="upperLimit"
+                                    value={upperLimit}
+                                    placeholder="$120,000.00"
+                                    onChange={(e) =>
+                                        setUpperLimit(e.target.value)
+                                    }
+                                    required
+                                />
+                                <label>Upper Limit</label>
+                            </div>
+                        </Row>
+                    )}
                 </div>
                 <div className="form-group col-lg-6 col-md-12">
                     <label>
-                        Salary Rate <span className="optional">(optional)</span>
+                        Salary Rate<span className="required"> (required)</span>
                     </label>
                     <select
                         className="chosen-single form-select"
@@ -456,10 +532,10 @@ const CloneJobView = () => {
                                 salary_rate: e.target.value,
                             }));
                         }}
+                        required
                     >
-                        <option></option>
                         <option>Per hour</option>
-                        <option>PRN</option>
+                        <option>Per diem</option>
                         <option>Per month</option>
                         <option>Per year</option>
                     </select>

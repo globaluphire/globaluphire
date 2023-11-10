@@ -490,6 +490,7 @@ const PostBoxForm = () => {
                 {/* <!-- Input --> */}
                 <div className="form-group col-lg-6 col-md-12">
                     <label>Offered Salary </label>
+                    <span className="required">(required)</span>
                     <span style={{ marginLeft: "1em" }}>
                         <label>
                             <input
@@ -500,7 +501,7 @@ const PostBoxForm = () => {
                                 onChange={handleSalaryTypeChange}
                                 style={{ marginRight: "0.5em" }}
                             />
-                            Fixed
+                            Exact Amount
                         </label>
                         <label style={{ marginLeft: "2em" }}>
                             <input
@@ -513,9 +514,6 @@ const PostBoxForm = () => {
                             />
                             Ranged
                         </label>
-                    </span>
-                    <span className="required" style={{ marginLeft: "1em" }}>
-                        (required)
                     </span>
                     {salaryType === "fixed" ? (
                         <input

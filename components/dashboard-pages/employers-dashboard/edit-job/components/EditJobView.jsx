@@ -8,6 +8,7 @@ import Router, { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import { envConfig } from "../../../../../config/env";
+import { Row } from "react-bootstrap";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -42,99 +43,20 @@ function loadAsyncScript(src) {
     });
 }
 
-const submitJobPost = async (
-    {
-        editedJobTitle,
-        editedJobDesc,
-        editedJobType,
-        editedSalary,
-        editedSalaryRate,
-        editedCareer,
-        editedExp,
-        editedAddress,
-        editedCompleteAddress,
-        editedFacility,
-    },
-    setEditedJobData,
-    user,
-    fetchedJobData
-) => {
-    if (editedJobTitle && editedJobDesc && editedJobType && editedExp) {
-        try {
-            const { data, error } = await supabase
-                .from("jobs")
-                .update({
-                    job_title: editedJobTitle,
-                    job_desc: editedJobDesc,
-                    job_type: editedJobType,
-                    experience: editedExp,
-                    education: editedCareer,
-                    salary: editedSalary,
-                    salary_rate: editedSalaryRate,
-                    change_dttm: new Date(),
-                    update_ver_nbr: fetchedJobData.update_ver_nbr + 1,
-                    is_edited: true,
-                })
-                .eq("job_id", fetchedJobData.job_id);
-            // .select() -- this will return the updated record in object
-
-            // reset all the edit form fields
-            setEditedJobData(JSON.parse(JSON.stringify(editedJobFields)));
-
-            // open toast
-            toast.success("Job edited successfully", {
-                position: "bottom-right",
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
-
-            // redirect to original page where user came from
-            setTimeout(() => {
-                Router.push("/employers-dashboard/manage-jobs");
-            }, 500);
-        } catch (err) {
-            // open toast
-            toast.error(
-                "Error while saving your changes, Please try again later or contact tech support",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            // console.warn(err);
-        }
-    } else {
-        // open toast
-        toast.error("You do not have any changes to save", {
-            position: "top-center",
-            autoClose: false,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        });
-    }
-};
-
 const EditJobView = ({ fetchedJobData }) => {
     // console.log(fetchedJobData);
     const user = useSelector((state) => state.candidate.user);
+    const [salaryType, setSalaryType] = useState("fixed");
+    const [lowerLimit, setLowerLimit] = useState("");
+    const [upperLimit, setUpperLimit] = useState("");
+
     const [editedJobData, setEditedJobData] = useState(
         JSON.parse(JSON.stringify(editedJobFields))
     );
+
+    const handleSalaryTypeChange = (e) => {
+        setSalaryType(e.target.value);
+    };
     const {
         editedJobTitle,
         editedJobDesc,
@@ -208,12 +130,117 @@ const EditJobView = ({ fetchedJobData }) => {
     };
 
     useEffect(() => {
+        if (fetchedJobData.salary?.includes("-")) {
+            setSalaryType("ranged");
+            const salaryRange = fetchedJobData.salary.split("-");
+            setLowerLimit(salaryRange[0].trim());
+            setUpperLimit(salaryRange[1].trim());
+        }
         assignJobData(fetchedJobData);
     }, [fetchedJobData]);
 
     // useEffect(() => {
     //   searchInput.current.value = fetchedJobData.job_address
     // }, [fetchedJobData.job_address]);
+
+    const submitJobPost = async (
+        {
+            editedJobTitle,
+            editedJobDesc,
+            editedJobType,
+            editedSalary,
+            editedSalaryRate,
+            editedCareer,
+            editedExp,
+            editedAddress,
+            editedCompleteAddress,
+            editedFacility,
+        },
+        setEditedJobData,
+        user,
+        fetchedJobData
+    ) => {
+        if (salaryType === "ranged") {
+            if (!upperLimit || !lowerLimit) {
+                return;
+            }
+            editedSalary = `${lowerLimit} - ${upperLimit}`;
+        }
+        if (
+            editedJobTitle &&
+            editedJobDesc &&
+            editedJobType &&
+            editedExp &&
+            editedSalary
+        ) {
+            try {
+                const { data, error } = await supabase
+                    .from("jobs")
+                    .update({
+                        job_title: editedJobTitle,
+                        job_desc: editedJobDesc,
+                        job_type: editedJobType,
+                        experience: editedExp,
+                        education: editedCareer,
+                        salary: editedSalary,
+                        salary_rate: editedSalaryRate,
+                        change_dttm: new Date(),
+                        update_ver_nbr: fetchedJobData.update_ver_nbr + 1,
+                        is_edited: true,
+                    })
+                    .eq("job_id", fetchedJobData.job_id);
+                // .select() -- this will return the updated record in object
+
+                // reset all the edit form fields
+                setEditedJobData(JSON.parse(JSON.stringify(editedJobFields)));
+
+                // open toast
+                toast.success("Job edited successfully", {
+                    position: "bottom-right",
+                    autoClose: false,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+
+                // redirect to original page where user came from
+                setTimeout(() => {
+                    Router.push("/employers-dashboard/manage-jobs");
+                }, 500);
+            } catch (err) {
+                // open toast
+                toast.error(
+                    "Error while saving your changes, Please try again later or contact tech support",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                // console.warn(err);
+            }
+        } else {
+            // open toast
+            toast.error("You do not have any changes to save", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    };
 
     return (
         <form className="default-form">
@@ -290,7 +317,6 @@ const EditJobView = ({ fetchedJobData }) => {
                             }));
                         }}
                     >
-                        <option></option>
                         <option>Full Time</option>
                         <option>Part Time</option>
                         <option>Both</option>
@@ -304,32 +330,97 @@ const EditJobView = ({ fetchedJobData }) => {
                     <select
                         className="chosen-single form-select"
                         value={editedExp}
-                        required
                         onChange={(e) => {
                             setEditedJobData((previousState) => ({
                                 ...previousState,
                                 editedExp: e.target.value,
                             }));
                         }}
+                        required
                     >
-                        <option></option>
-                        <option>1 year</option>
-                        <option>2 years</option>
-                        <option>3 years</option>
-                        <option>4 years</option>
-                        <option>5 years</option>
-                        <option>6 years</option>
-                        <option>7 years</option>
-                        <option>8 years</option>
-                        <option>9 years</option>
-                        <option>10+ years</option>
+                        <option>0 - 1 year</option>
+                        <option>1 - 3 years</option>
+                        <option>4 - 7 years</option>
+                        <option>7+ years</option>
                     </select>
                 </div>
                 {/* <!-- Input --> */}
                 <div className="form-group col-lg-6 col-md-12">
+                    <label>Offered Salary </label>{" "}
+                    <span className="required">(required)</span>
+                    <span style={{ marginLeft: "1em" }}>
+                        <label>
+                            <input
+                                type="radio"
+                                name="salaryType"
+                                value="fixed"
+                                checked={salaryType === "fixed"}
+                                onChange={handleSalaryTypeChange}
+                                style={{ marginRight: "0.5em" }}
+                            />
+                            Exact Amount
+                        </label>
+                        <label style={{ marginLeft: "2em" }}>
+                            <input
+                                type="radio"
+                                name="salaryType"
+                                value="ranged"
+                                checked={salaryType === "ranged"}
+                                onChange={handleSalaryTypeChange}
+                                style={{ marginRight: "0.5em" }}
+                            />
+                            Ranged
+                        </label>
+                    </span>
+                    {salaryType === "fixed" ? (
+                        <input
+                            type="text"
+                            name="globaluphire-salary"
+                            value={editedSalary}
+                            placeholder=""
+                            onChange={(e) => {
+                                setEditedJobData((previousState) => ({
+                                    ...previousState,
+                                    editedSalary: e.target.value,
+                                }));
+                            }}
+                            required
+                        />
+                    ) : (
+                        <Row>
+                            <div className="col-6">
+                                <input
+                                    type="text"
+                                    name="lowerLimit"
+                                    value={lowerLimit}
+                                    placeholder="$80,000.00"
+                                    onChange={(e) =>
+                                        setLowerLimit(e.target.value)
+                                    }
+                                    required
+                                />
+                                <label>Lower Limit</label>
+                            </div>
+                            <div className="col-6">
+                                <input
+                                    type="text"
+                                    name="upperLimit"
+                                    value={upperLimit}
+                                    placeholder="$120,000.00"
+                                    onChange={(e) =>
+                                        setUpperLimit(e.target.value)
+                                    }
+                                    required
+                                />
+                                <label>Upper Limit</label>
+                            </div>
+                        </Row>
+                    )}
+                </div>
+                {/* <div className="form-group col-lg-6 col-md-12">
                     <label>
                         Offered Salary{" "}
-                        <span className="optional">(optional)</span>
+                        <span className="required"> (required)</span>
                     </label>
                     <input
                         type="text"
@@ -342,11 +433,12 @@ const EditJobView = ({ fetchedJobData }) => {
                                 editedSalary: e.target.value,
                             }));
                         }}
+                        required
                     />
-                </div>
+                </div> */}
                 <div className="form-group col-lg-6 col-md-12">
                     <label>
-                        Salary Rate <span className="optional">(optional)</span>
+                        Salary Rate<span className="required"> (required)</span>
                     </label>
                     <select
                         className="chosen-single form-select"
@@ -358,9 +450,8 @@ const EditJobView = ({ fetchedJobData }) => {
                             }));
                         }}
                     >
-                        <option></option>
                         <option>Per hour</option>
-                        <option>PRN</option>
+                        <option>Per diem</option>
                         <option>Per month</option>
                         <option>Per year</option>
                     </select>
