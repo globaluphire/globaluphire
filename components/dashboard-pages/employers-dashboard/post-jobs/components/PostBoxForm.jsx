@@ -522,7 +522,7 @@ const PostBoxForm = () => {
                             type="text"
                             name="globaluphire-salary"
                             value={jobData.salary}
-                            placeholder=""
+                            placeholder="$100,000.00"
                             onChange={(e) => {
                                 setJobData((previousState) => ({
                                     ...previousState,
