@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import { Typeahead } from "react-bootstrap-typeahead";
 import { envConfig } from "../../../../../config/env";
+import { Row } from "react-bootstrap";
 
 const SunEditor = dynamic(() => import("suneditor-react"), {
     ssr: false,
@@ -43,123 +44,6 @@ const addJobFields = {
     facility: "",
 };
 
-const submitJobPost = async (
-    {
-        jobTitle,
-        jobDesc,
-        jobType,
-        salary,
-        salaryRate,
-        education,
-        exp,
-        completeAddress,
-        address,
-        facility,
-    },
-    setJobData,
-    user
-) => {
-    if (jobTitle && jobDesc && jobType && completeAddress && facility) {
-        try {
-            const { data: facilityData, error: facilityError } = await supabase
-                .from("facility")
-                .select("facility_id")
-                .eq("facility_name", facility)
-                .single();
-
-            if (facilityData) {
-                const { data, error } = await supabase.from("jobs").insert([
-                    {
-                        user_id: user.id,
-                        job_title: jobTitle,
-                        job_desc: jobDesc,
-                        job_type: jobType,
-                        experience: exp,
-                        education,
-                        salary,
-                        salary_rate: salaryRate,
-                        job_comp_add: completeAddress,
-                        facility_name: facility,
-                        facility_id: facilityData.facility_id,
-                    },
-                ]);
-              if (error) {
-                // open toast
-                toast.error(
-                  "Error while fetching facility details, Please try again later or contact tech support",
-                  {
-                      position: "bottom-right",
-                      autoClose: false,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                      theme: "colored",
-                  }
-                );
-              } else {
-                // open toast
-                toast.success("Job Posted successfully", {
-                    position: "bottom-right",
-                    autoClose: 8000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                });
-                setJobData(JSON.parse(JSON.stringify(addJobFields)));
-              }
-            } else {
-                // open toast
-                toast.error(
-                    "Error while saving your job application, Please try again later or contact tech support",
-                    {
-                        position: "bottom-right",
-                        autoClose: false,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    }
-                );
-            }
-        } catch (err) {
-            // open toast
-            toast.error(
-                "Error while saving your job application, Please try again later or contact tech support",
-                {
-                    position: "bottom-right",
-                    autoClose: false,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                }
-            );
-            // console.warn(err);
-        }
-    } else {
-        // open toast
-        toast.error("Please fill all the required fields.", {
-            position: "top-center",
-            autoClose: false,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-        });
-    }
-};
-
 const PostBoxForm = () => {
     // const [jobTitle, setJobTitle] = useState("");
     // const [jobDesc, setJobDesc] = useState("");
@@ -179,6 +63,14 @@ const PostBoxForm = () => {
     // const [city, setCity] = useState("");
     // const [address, setAddress] = useState("");
     const user = useSelector((state) => state.candidate.user);
+    const [salaryType, setSalaryType] = useState("fixed");
+    const [lowerLimit, setLowerLimit] = useState("");
+    const [upperLimit, setUpperLimit] = useState("");
+
+    const handleSalaryTypeChange = (e) => {
+        setSalaryType(e.target.value);
+    };
+
     const [jobData, setJobData] = useState(
         JSON.parse(JSON.stringify(addJobFields))
     );
@@ -306,6 +198,141 @@ const PostBoxForm = () => {
     { value: "Engineer", label: "Engineer" },
   ];
  */
+    const submitJobPost = async (
+        {
+            jobTitle,
+            jobDesc,
+            jobType,
+            salary,
+            salaryRate,
+            education,
+            exp,
+            completeAddress,
+            address,
+            facility,
+        },
+        setJobData,
+        user
+    ) => {
+        if (salaryType === "ranged") {
+            if (!upperLimit || !lowerLimit) {
+                return;
+            }
+            setJobData((previousState) => ({
+                ...previousState,
+                salary: `${upperLimit} - ${lowerLimit}`,
+            }));
+        }
+        if (
+            jobTitle &&
+            jobDesc &&
+            jobType &&
+            salary &&
+            salaryRate &&
+            exp &&
+            completeAddress &&
+            facility
+        ) {
+            try {
+                const { data: facilityData, error: facilityError } =
+                    await supabase
+                        .from("facility")
+                        .select("facility_id")
+                        .eq("facility_name", facility)
+                        .single();
+
+                if (facilityData) {
+                    const { data, error } = await supabase.from("jobs").insert([
+                        {
+                            user_id: user.id,
+                            job_title: jobTitle,
+                            job_desc: jobDesc,
+                            job_type: jobType,
+                            experience: exp,
+                            education,
+                            salary,
+                            salary_rate: salaryRate,
+                            job_comp_add: completeAddress,
+                            facility_name: facility,
+                            facility_id: facilityData.facility_id,
+                        },
+                    ]);
+                    if (error) {
+                        // open toast
+                        toast.error(
+                            "Error while fetching facility details, Please try again later or contact tech support",
+                            {
+                                position: "bottom-right",
+                                autoClose: false,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "colored",
+                            }
+                        );
+                    } else {
+                        // open toast
+                        toast.success("Job Posted successfully", {
+                            position: "bottom-right",
+                            autoClose: 8000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                        setJobData(JSON.parse(JSON.stringify(addJobFields)));
+                    }
+                } else {
+                    // open toast
+                    toast.error(
+                        "Error while saving your job application, Please try again later or contact tech support",
+                        {
+                            position: "bottom-right",
+                            autoClose: false,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        }
+                    );
+                }
+            } catch (err) {
+                // open toast
+                toast.error(
+                    "Error while saving your job application, Please try again later or contact tech support",
+                    {
+                        position: "bottom-right",
+                        autoClose: false,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    }
+                );
+                // console.warn(err);
+            }
+        } else {
+            // open toast
+            toast.error("Please fill all the required fields.", {
+                position: "top-center",
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+    };
 
     return (
         <form className="default-form">
@@ -435,7 +462,6 @@ const PostBoxForm = () => {
                             }));
                         }}
                     >
-                        <option></option>
                         <option>Full Time</option>
                         <option>Part Time</option>
                         <option>Both</option>
@@ -444,7 +470,7 @@ const PostBoxForm = () => {
                 </div>
                 <div className="form-group col-lg-6 col-md-12">
                     <label>
-                        Experience<span className="optional"> (optional)</span>
+                        Experience<span className="required"> (required)</span>
                     </label>
                     <select
                         className="chosen-single form-select"
@@ -455,39 +481,88 @@ const PostBoxForm = () => {
                                 exp: e.target.value,
                             }));
                         }}
+                        required
                     >
-                        <option></option>
-                        <option>1 year</option>
-                        <option>2 years</option>
-                        <option>3 years</option>
-                        <option>4 years</option>
-                        <option>5 years</option>
-                        <option>6 years</option>
-                        <option>7 years</option>
-                        <option>8 years</option>
-                        <option>9 years</option>
-                        <option>10+ years</option>
+                        <option>0 - 1 year</option>
+                        <option>1 - 3 years</option>
+                        <option>4 - 7 years</option>
+                        <option>7+ years</option>
                     </select>
                 </div>
                 {/* <!-- Input --> */}
                 <div className="form-group col-lg-6 col-md-12">
-                    <label>
-                        Offered Salary{" "}
-                        <span className="required">(required)</span>
-                    </label>
-                    <input
-                        type="text"
-                        name="globaluphire-salary"
-                        value={salary}
-                        placeholder="$100,000.00"
-                        onChange={(e) => {
-                            setJobData((previousState) => ({
-                                ...previousState,
-                                salary: e.target.value,
-                            }));
-                        }}
-                        required
-                    />
+                    <label>Offered Salary </label>
+                    <span style={{ marginLeft: "1em" }}>
+                        <label>
+                            <input
+                                type="radio"
+                                name="salaryType"
+                                value="fixed"
+                                checked={salaryType === "fixed"}
+                                onChange={handleSalaryTypeChange}
+                                style={{ marginRight: "0.5em" }}
+                            />
+                            Fixed
+                        </label>
+                        <label style={{ marginLeft: "2em" }}>
+                            <input
+                                type="radio"
+                                name="salaryType"
+                                value="ranged"
+                                checked={salaryType === "ranged"}
+                                onChange={handleSalaryTypeChange}
+                                style={{ marginRight: "0.5em" }}
+                            />
+                            Ranged
+                        </label>
+                    </span>
+                    <span className="required" style={{ marginLeft: "1em" }}>
+                        (required)
+                    </span>
+                    {salaryType === "fixed" ? (
+                        <input
+                            type="text"
+                            name="globaluphire-salary"
+                            value={jobData.salary}
+                            placeholder=""
+                            onChange={(e) => {
+                                setJobData((previousState) => ({
+                                    ...previousState,
+                                    salary: e.target.value,
+                                }));
+                            }}
+                            required
+                        />
+                    ) : (
+                        <Row>
+                            <div className="col-6">
+                                <input
+                                    type="text"
+                                    name="lowerLimit"
+                                    value={lowerLimit}
+                                    placeholder="$80,000.00"
+                                    onChange={(e) =>
+                                        setLowerLimit(e.target.value)
+                                    }
+                                    required
+                                />
+                                <label>Lower Limit</label>
+                            </div>
+                            <div className="col-6">
+                                <input
+                                    type="text"
+                                    name="upperLimit"
+                                    value={upperLimit}
+                                    placeholder="$120,000.00"
+                                    onChange={(e) =>
+                                        setUpperLimit(e.target.value)
+                                    }
+                                    required
+                                />
+                                <label>Upper Limit</label>
+                            </div>
+                        </Row>
+                    )}
                 </div>
                 <div className="form-group col-lg-6 col-md-12">
                     <label>
@@ -504,8 +579,8 @@ const PostBoxForm = () => {
                         }}
                         required
                     >
-                        <option></option>
                         <option>Per hour</option>
+                        <option>Per diem</option>
                         <option>Per month</option>
                         <option>Per year</option>
                     </select>
