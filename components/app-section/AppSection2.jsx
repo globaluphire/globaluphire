@@ -8,7 +8,7 @@ const AppSection2 = () => {
         },
         {
             id: 2,
-            icon: "icon-contact",
+            icon: "icon-contact", 
             title: "Search on the go",
             text: "Search through millions of jobs and find the right fit. Simply swipe right to apply.",
         },
