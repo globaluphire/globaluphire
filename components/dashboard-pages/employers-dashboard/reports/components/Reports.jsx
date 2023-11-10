@@ -142,7 +142,7 @@ const Reports = () => {
     };
 
     async function fetchReportItems() {
-        const response = await fetch("/api/report/getReportItems", {
+        const response = await fetch("/api/report/items", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -190,7 +190,7 @@ const Reports = () => {
                                 }}
                                 style={{ maxWidth: "300px" }}
                             >
-                                {reportItem.map((item) => {
+                                {reportItem?.map((item) => {
                                     return (
                                         <option
                                             key={item.reportId}
