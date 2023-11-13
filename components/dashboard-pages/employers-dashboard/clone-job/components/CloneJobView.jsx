@@ -122,11 +122,11 @@ const CloneJobView = () => {
 
                 if (data) {
                     setFetchedJobData(data[0]);
-                    if(data[0]?.facility_name){
-                        setFacilitySingleSelections([data[0].facility_name])
+                    if (data[0]?.facility_name) {
+                        setFacilitySingleSelections([data[0].facility_name]);
                     }
-                    if(data[0]?.job_comp_add){
-                        setSingleSelections([data[0].job_comp_add])
+                    if (data[0]?.job_comp_add) {
+                        setSingleSelections([data[0].job_comp_add]);
                     }
                 }
             }
