@@ -154,7 +154,6 @@ const Reports = () => {
     }
 
     useEffect(() => {
-        // fetchPost(reportItems);
         fetchReportItems();
     }, []);
 
@@ -190,16 +189,22 @@ const Reports = () => {
                                 }}
                                 style={{ maxWidth: "300px" }}
                             >
-                                {reportItem?.map((item) => {
-                                    return (
-                                        <option
-                                            key={item.reportId}
-                                            value={item.reportName}
-                                        >
-                                            {item.reportName}
-                                        </option>
-                                    );
-                                })}
+                                {reportItem ? (
+                                    reportItem?.map((item) => {
+                                        return (
+                                            <option
+                                                key={item.reportId}
+                                                value={item.reportName}
+                                            >
+                                                {item.reportName}
+                                            </option>
+                                        );
+                                    })
+                                ) : (
+                                    <option>
+                                        <Loader />
+                                    </option>
+                                )}
                             </Form.Select>
                         </Form.Group>
                     </Col>
