@@ -98,7 +98,7 @@ const HiredApplicationsWidgetContentBox = () => {
         setTotalRecords((await query).data.length);
 
         let { data, error } = await query
-            .order("hired_date", { ascending: false })
+            .order("hired_date", { ascending: false, nullsFirst: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         // if (facility) {
@@ -148,7 +148,7 @@ const HiredApplicationsWidgetContentBox = () => {
             setTotalRecords((await query).data.length);
 
             let { data: allApplicantsView, error } = await query
-                .order("hired_date", { ascending: false })
+                .order("hired_date", { ascending: false, nullsFirst: false })
                 .range(
                     (currentPage - 1) * pageSize,
                     currentPage * pageSize - 1

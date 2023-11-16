@@ -125,31 +125,17 @@ const UnpublishedJobListingsTable = () => {
         setTotalRecords((await query).data.length);
 
         let { data, error } = await query
-            .order("unpublished_date", { ascending: false })
+            .order("unpublished_date", { ascending: false, nullsFirst: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         // if (facility) {
         //     data = data.filter((i) => i.facility_name === facility);
         // }
 
-        data.sort((a, b) => {
-            if (a.unpublished_date === null && b.unpublished_date !== null) {
-                return 1;
-            } else if (
-                a.unpublished_date !== null &&
-                b.unpublished_date === null
-            ) {
-                return -1;
-            } else if (a.unpublished_date > b.unpublished_date) {
-                return -1;
-            } else if (a.unpublished_date < b.unpublished_date) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
+        data.forEach(
+            (job) => (job.published_date = dateFormat(job.published_date))
+        );
         data.forEach(
             (job) => (job.unpublished_date = dateFormat(job.unpublished_date))
         );
@@ -177,30 +163,17 @@ const UnpublishedJobListingsTable = () => {
         setTotalRecords((await query).data.length);
 
         let { data, error } = await query
-            .order("unpublished_date", { ascending: true })
+            .order("unpublished_date", { ascending: false, nullsFirst: false })
             .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         // if (facility) {
         //     data = data.filter((i) => i.facility_name === facility);
         // }
-        data.sort((a, b) => {
-            if (a.unpublished_date === null && b.unpublished_date !== null) {
-                return 1;
-            } else if (
-                a.unpublished_date !== null &&
-                b.unpublished_date === null
-            ) {
-                return -1;
-            } else if (a.unpublished_date > b.unpublished_date) {
-                return -1;
-            } else if (a.unpublished_date < b.unpublished_date) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
 
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
+        data.forEach(
+            (job) => (job.published_date = dateFormat(job.published_date))
+        );
         data.forEach(
             (job) => (job.unpublished_date = dateFormat(job.unpublished_date))
         );
@@ -344,6 +317,7 @@ const UnpublishedJobListingsTable = () => {
                                 <th>Job Title</th>
                                 <th>Facility</th>
                                 <th>Applications</th>
+                                <th>Published On</th>
                                 <th>Unpublished On</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -444,6 +418,15 @@ const UnpublishedJobListingsTable = () => {
                                             )}
                                         </td>
                                         <td>
+                                            {item.published_date ? (
+                                                <span>
+                                                    {item.published_date}
+                                                </span>
+                                            ) : (
+                                                <span>-</span>
+                                            )}
+                                        </td>
+                                        <td>
                                             {item.unpublished_date ? (
                                                 <span>
                                                     {item.unpublished_date}
@@ -452,18 +435,31 @@ const UnpublishedJobListingsTable = () => {
                                                 <span>-</span>
                                             )}
                                         </td>
-                                        {item?.status === "Published" ? (
-                                            <td className="status">
-                                                {item.status}
-                                            </td>
-                                        ) : (
-                                            <td
-                                                className="status"
-                                                style={{ color: "red" }}
-                                            >
-                                                {item.status}
-                                            </td>
-                                        )}
+                                        <td
+                                            className="status"
+                                            style={{
+                                                color:
+                                                    item?.status !==
+                                                        "Published" && "red",
+                                            }}
+                                        >
+                                            {item.status}
+                                            {item?.is_edited ? (
+                                                <div style={{ color: "green" }}>
+                                                    Edited
+                                                </div>
+                                            ) : (
+                                                ""
+                                            )}
+                                            {item?.is_cloned ? (
+                                                <div style={{ color: "green" }}>
+                                                    Cloned
+                                                </div>
+                                            ) : (
+                                                ""
+                                            )}
+                                        </td>
+
                                         <td>
                                             <div className="option-box">
                                                 <ul className="option-list">

@@ -532,7 +532,6 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                                 <select
                                                     className="chosen-single form-select"
                                                     value={applicant.status}
-                                                    disabled
                                                 >
                                                     {applicationStatusReferenceOptions.map(
                                                         (option) => (
