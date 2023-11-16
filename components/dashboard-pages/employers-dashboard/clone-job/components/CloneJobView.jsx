@@ -231,21 +231,21 @@ const CloneJobView = () => {
             fetchedJobData.facility_name
         ) {
             try {
-                // const { data, error } = await supabase.from("jobs").insert([
-                //     {
-                //         user_id: user.id,
-                //         job_title: fetchedJobData.job_title,
-                //         job_desc: fetchedJobData.job_desc,
-                //         job_type: fetchedJobData.job_type,
-                //         experience: fetchedJobData.experience,
-                //         education: fetchedJobData.education,
-                //         salary: fetchedJobData.salary,
-                //         salary_rate: fetchedJobData.salary_rate,
-                //         job_comp_add: fetchedJobData.job_comp_add,
-                //         facility_name: fetchedJobData.facility_name,
-                //         is_cloned: true,
-                //     },
-                // ]);
+                await supabase.from("jobs").insert([
+                    {
+                        user_id: user.id,
+                        job_title: fetchedJobData.job_title,
+                        job_desc: fetchedJobData.job_desc,
+                        job_type: fetchedJobData.job_type,
+                        experience: fetchedJobData.experience,
+                        education: fetchedJobData.education,
+                        salary: fetchedJobData.salary,
+                        salary_rate: fetchedJobData.salary_rate,
+                        job_comp_add: fetchedJobData.job_comp_add,
+                        facility_name: fetchedJobData.facility_name,
+                        is_cloned: true,
+                    },
+                ]);
 
                 // open toast
                 toast.success("Job Cloned and Posted successfully", {
@@ -260,9 +260,9 @@ const CloneJobView = () => {
                 });
 
                 // redirect to original page where user came from
-                // setTimeout(() => {
-                //     Router.push("/employers-dashboard/manage-jobs");
-                // }, 3000);
+                setTimeout(() => {
+                    Router.push("/employers-dashboard/manage-jobs");
+                }, 3000);
             } catch (err) {
                 // open toast
                 toast.error(
