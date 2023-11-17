@@ -1,6 +1,5 @@
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-undef */
-// import { supabase } from "../../../../config/supabaseClient";
 import { envConfig } from "../../../../config/env";
 import { reportItems } from "../../../../data/reports";
 import Papa from "papaparse";
