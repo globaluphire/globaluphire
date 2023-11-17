@@ -49,10 +49,11 @@ const JobListingsTable = () => {
     const user = useSelector((state) => state.candidate.user);
     const router = useRouter();
 
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [hidePagination, setHidePagination] = useState(false);
-    const [pageSize, setPageSize] = useState(10);
+    // For Pagination
+    // const [totalRecords, setTotalRecords] = useState(0);
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const [hidePagination, setHidePagination] = useState(false);
+    // const [pageSize, setPageSize] = useState(10);
 
     // global states
     const facility = useSelector((state) => state.employer.facility.payload);
@@ -483,15 +484,11 @@ const JobListingsTable = () => {
         if (facility) {
             query.ilike("facility_name", "%" + facility + "%");
         }
-        setTotalRecords((await query).data.length);
+        // setTotalRecords((await query).data.length);
         let { data, error } = await query.order("published_date", {
             ascending: false,
             nullsFirst: false,
         });
-
-        // if (facility) {
-        //     data = data.filter((i) => i.facility_name === facility);
-        // }
 
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
         data.forEach(
@@ -516,11 +513,13 @@ const JobListingsTable = () => {
         if (facility) {
             query.ilike("facility_name", "%" + facility + "%");
         }
-        setTotalRecords((await query).data.length);
+        // setTotalRecords((await query).data.length);
 
-        let { data, error } = await query
-            .order("published_date", { ascending: false, nullsFirst: false })
-            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+        let { data, error } = await query.order("published_date", {
+            ascending: false,
+            nullsFirst: false,
+        });
+        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         data.forEach((job) => (job.created_at = dateFormat(job.created_at)));
         data.forEach(
@@ -534,17 +533,17 @@ const JobListingsTable = () => {
         setjobs(data);
     }
 
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-    };
+    // const handlePageChange = (newPage) => {
+    //     setCurrentPage(newPage);
+    // };
 
-    function perPageHandler(event) {
-        setCurrentPage(1);
-        const selectedValue = JSON.parse(event.target.value);
-        const end = selectedValue.end;
+    // function perPageHandler(event) {
+    //     setCurrentPage(1);
+    //     const selectedValue = JSON.parse(event.target.value);
+    //     const end = selectedValue.end;
 
-        setPageSize(end);
-    }
+    //     setPageSize(end);
+    // }
 
     useEffect(() => {
         fetchPost({ jobTitle, jobType });
@@ -553,7 +552,11 @@ const JobListingsTable = () => {
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility, pageSize, currentPage]);
+    }, [
+        facility,
+        // pageSize,
+        // currentPage
+    ]);
 
     return (
         <div className="tabs-box">
@@ -623,6 +626,45 @@ const JobListingsTable = () => {
                             </Form.Select>
                         </Form.Group>
                     </Col>
+                    {/* <Form.Group
+                        className="mb-3 mx-3"
+                        style={{
+                            width: "20%",
+                        }}
+                    >
+                        <Form.Label className="chosen-single form-input chosen-container">
+                            Per Page Size
+                        </Form.Label>
+                        <Form.Select
+                            onChange={perPageHandler}
+                            className="chosen-single form-select"
+                        >
+                            <option
+                                value={JSON.stringify({
+                                    start: 0,
+                                    end: 10,
+                                })}
+                            >
+                                10 per page
+                            </option>
+                            <option
+                                value={JSON.stringify({
+                                    start: 0,
+                                    end: 20,
+                                })}
+                            >
+                                20 per page
+                            </option>
+                            <option
+                                value={JSON.stringify({
+                                    start: 0,
+                                    end: 30,
+                                })}
+                            >
+                                30 per page
+                            </option>
+                        </Form.Select>
+                    </Form.Group> */}
                 </Row>
                 <Row className="mx-3">
                     <Col>
@@ -660,8 +702,8 @@ const JobListingsTable = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({jobs.length}) Published Job(s) Out of ({totalRecords}){" "}
-                <br /> Page: {currentPage}
+                Showing ({jobs.length}) Published Job(s)
+                {/* Out of ({totalRecords})<br /> Page: {currentPage} */}
             </div>
             <div className="widget-content">
                 <div className="table-outer">
@@ -1135,14 +1177,14 @@ const JobListingsTable = () => {
                             {/* End .send-private-message-wrapper */}
                         </div>
                     </div>
-                    {!hidePagination ? (
+                    {/* {!hidePagination ? (
                         <Pagination
                             currentPage={currentPage}
                             totalRecords={totalRecords}
                             pageSize={pageSize}
                             onPageChange={handlePageChange}
                         />
-                    ) : null}
+                    ) : null} */}
                 </div>
             </div>
             {/* End table widget content */}

@@ -394,7 +394,7 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                 />
                             </Form.Group>
                         </Col>
-                        <Form.Group
+                        {/* <Form.Group
                             className="mb-3 mx-3"
                             style={{
                                 width: "20%",
@@ -403,7 +403,7 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                             <Form.Label className="chosen-single form-input chosen-container">
                                 Per Page Size
                             </Form.Label>
-                            {/* <Form.Select
+                            <Form.Select
                                 onChange={perPageHandler}
                                 className="chosen-single form-select"
                             >
@@ -431,8 +431,8 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                 >
                                     30 per page
                                 </option>
-                            </Form.Select> */}
-                        </Form.Group>
+                            </Form.Select>
+                        </Form.Group> */}
                     </Row>
                     <Row className="mx-3">
                         <Col>
