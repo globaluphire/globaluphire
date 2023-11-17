@@ -9,7 +9,8 @@
     "start-dev": "copy .env.dev .env && npm run start",
     "start-prod": "copy .env.prod .env && npm run start",
     "eslint": "eslint --fix --ext .js,.jsx .",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
