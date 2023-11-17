@@ -207,33 +207,43 @@ const DashboardHeader = () => {
                             </a>
 
                             <ul className="dropdown-menu">
-                                {menuOptions.map((item) => (
-                                    <li
-                                        className={`${
-                                            isActiveLink(
-                                                item.routePath,
-                                                router.asPath
-                                            )
-                                                ? "active"
-                                                : ""
-                                        } mb-1`}
-                                        key={item.id}
-                                    >
-                                        <Link
-                                            href={item.routePath}
-                                            onClick={(e) => {
-                                                if (item.name === "Logout") {
-                                                    logout(dispatch);
-                                                }
-                                            }}
+                                {menuOptions.map((item) => {
+                                    const isUserAllowed = item.access.includes(
+                                        user.role
+                                    );
+                                    if (!isUserAllowed) {
+                                        return null;
+                                    }
+                                    return (
+                                        <li
+                                            className={`${
+                                                isActiveLink(
+                                                    item.routePath,
+                                                    router.asPath
+                                                )
+                                                    ? "active"
+                                                    : ""
+                                            } mb-1`}
+                                            key={item.id}
                                         >
-                                            <i
-                                                className={`la ${item.icon}`}
-                                            ></i>{" "}
-                                            {item.name}
-                                        </Link>
-                                    </li>
-                                ))}
+                                            <Link
+                                                href={item.routePath}
+                                                onClick={(e) => {
+                                                    if (
+                                                        item.name === "Logout"
+                                                    ) {
+                                                        logout(dispatch);
+                                                    }
+                                                }}
+                                            >
+                                                <i
+                                                    className={`la ${item.icon}`}
+                                                ></i>{" "}
+                                                {item.name}
+                                            </Link>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                         {/* End dropdown */}

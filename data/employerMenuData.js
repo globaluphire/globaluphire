@@ -5,6 +5,7 @@ module.exports = [
         icon: "la-home",
         routePath: "/employers-dashboard/dashboard",
         active: "active",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     // {
     //   id: 2,
@@ -19,6 +20,7 @@ module.exports = [
         icon: "la-paper-plane",
         routePath: "/employers-dashboard/post-jobs",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     {
         id: 4,
@@ -26,6 +28,7 @@ module.exports = [
         icon: "la-briefcase",
         routePath: "/employers-dashboard/manage-jobs",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     {
         id: 5,
@@ -33,6 +36,7 @@ module.exports = [
         icon: "la-briefcase",
         routePath: "/employers-dashboard/unpublished-jobs",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     {
         id: 6,
@@ -40,6 +44,7 @@ module.exports = [
         icon: "la-file-invoice",
         routePath: "/employers-dashboard/all-applicants",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     {
         id: 7,
@@ -47,6 +52,7 @@ module.exports = [
         icon: "la-file-invoice",
         routePath: "/employers-dashboard/rejected-applications",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     {
         id: 8,
@@ -54,6 +60,7 @@ module.exports = [
         icon: "la-file-invoice",
         routePath: "/employers-dashboard/hired-applications",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     {
         id: 9,
@@ -61,6 +68,7 @@ module.exports = [
         icon: "la-file-invoice",
         routePath: "/employers-dashboard/withdrawal-applications",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     // {
     //   id: 6,
@@ -84,11 +92,20 @@ module.exports = [
     //   active: "",
     // },
     {
-        id: 9,
+        id: 10,
+        name: "Reports",
+        icon: "la-file-invoice",
+        routePath: "/employers-dashboard/reports",
+        active: "",
+        access: ["SUPER_ADMIN"],
+    },
+    {
+        id: 11,
         name: "Resume Alerts",
         icon: "la-bell",
         routePath: "/employers-dashboard/resume-alerts",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     // {
     //   id: 10,
@@ -98,11 +115,12 @@ module.exports = [
     //   active: "",
     // },
     {
-        id: 11,
+        id: 12,
         name: "Logout",
         icon: "la-sign-out",
         routePath: "/",
         active: "",
+        access: ["SUPER_ADMIN", "ADMIN", "MEMBER"],
     },
     // {
     //   id: 12,

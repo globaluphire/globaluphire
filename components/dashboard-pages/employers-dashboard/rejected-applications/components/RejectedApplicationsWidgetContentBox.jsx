@@ -32,10 +32,11 @@ const RejectedApplicationsWidgetContentBox = () => {
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
 
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [hidePagination, setHidePagination] = useState(false);
-    const [pageSize, setPageSize] = useState(10);
+    // For Pagination
+    // const [totalRecords, setTotalRecords] = useState(0);
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const [hidePagination, setHidePagination] = useState(false);
+    // const [pageSize, setPageSize] = useState(10);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -104,8 +105,8 @@ const RejectedApplicationsWidgetContentBox = () => {
             .eq("status", "Rejection")
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
-            .order("created_at", { ascending: false })
-            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+            .order("created_at", { ascending: false });
+        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -140,7 +141,7 @@ const RejectedApplicationsWidgetContentBox = () => {
 
     async function findApplicant() {
         // call reference to get applicantStatus options
-        setCurrentPage(1);
+        // setCurrentPage(1);
         const { data: refData, error: e } = await supabase
             .from("reference")
             .select("*")
@@ -164,11 +165,12 @@ const RejectedApplicationsWidgetContentBox = () => {
             query.ilike("facility_name", "%" + facility + "%");
         }
 
-        setTotalRecords((await query).data.length);
+        // setTotalRecords((await query).data.length);
 
-        let { data, error } = await query
-            .order("created_at", { ascending: false })
-            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+        let { data, error } = await query.order("created_at", {
+            ascending: false,
+        });
+        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         // if (facility) {
         //     data = data.filter((i) => i.facility_name === facility);
@@ -209,20 +211,16 @@ const RejectedApplicationsWidgetContentBox = () => {
                 query.ilike("facility_name", "%" + facility + "%");
             }
 
-            setTotalRecords((await query).data.length);
+            // setTotalRecords((await query).data.length);
 
-            let { data: allApplicantsView, error } = await query
-                .order("created_at", { ascending: false })
-                .range(
-                    (currentPage - 1) * pageSize,
-                    currentPage * pageSize - 1
-                );
-
-            // if (facility) {
-            //     allApplicantsView = allApplicantsView.filter(
-            //         (i) => i.facility_name === facility
-            //     );
-            // }
+            let { data: allApplicantsView, error } = await query.order(
+                "created_at",
+                { ascending: false }
+            );
+            // .range(
+            //     (currentPage - 1) * pageSize,
+            //     currentPage * pageSize - 1
+            // );
 
             if (allApplicantsView) {
                 allApplicantsView.forEach(
@@ -248,17 +246,17 @@ const RejectedApplicationsWidgetContentBox = () => {
         }
     }
 
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-    };
+    // const handlePageChange = (newPage) => {
+    //     setCurrentPage(newPage);
+    // };
 
-    function perPageHandler(event) {
-        setCurrentPage(1);
-        const selectedValue = JSON.parse(event.target.value);
-        const end = selectedValue.end;
+    // function perPageHandler(event) {
+    //     setCurrentPage(1);
+    //     const selectedValue = JSON.parse(event.target.value);
+    //     const end = selectedValue.end;
 
-        setPageSize(end);
-    }
+    //     setPageSize(end);
+    // }
 
     useEffect(() => {
         fetchedAllApplicantsView(searchFilters);
@@ -267,7 +265,11 @@ const RejectedApplicationsWidgetContentBox = () => {
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility, pageSize, currentPage]);
+    }, [
+        facility,
+        // pageSize,
+        // currentPage
+    ]);
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
@@ -456,7 +458,7 @@ const RejectedApplicationsWidgetContentBox = () => {
                                 />
                             </Form.Group>
                         </Col>
-                        <Form.Group
+                        {/* <Form.Group
                             className="mb-3 mx-3"
                             style={{
                                 width: "20%",
@@ -494,7 +496,7 @@ const RejectedApplicationsWidgetContentBox = () => {
                                     30 per page
                                 </option>
                             </Form.Select>
-                        </Form.Group>
+                        </Form.Group> */}
                     </Row>
                     <Row className="mx-3">
                         <Col>
@@ -537,8 +539,8 @@ const RejectedApplicationsWidgetContentBox = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({fetchedAllApplicants.length}) Rejection Applicants Out
-                of ({totalRecords}) <br /> Page: {currentPage}
+                Showing ({fetchedAllApplicants.length}) Rejection Applicants
+                {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
             </div>
 
             {/* Start table widget content */}
@@ -689,21 +691,42 @@ const RejectedApplicationsWidgetContentBox = () => {
                                                                 <span className="la la-download"></span>
                                                             </button>
                                                         </li>
-                                                        {/* <li onClick={()=>{ Qualified(applicant.application_id, applicant.status) }} >
-                                                    <button data-text="Qualified">
-                                                    <span className="la la-check"></span>
-                                                    </button>
-                                                </li>
-                                                <li onClick={()=>{ NotQualified(applicant.application_id, applicant.status) }} >
-                                                    <button data-text="Not Qualified">
-                                                    <span className="la la-times-circle"></span>
-                                                    </button>
-                                                </li>
-                                                <li onClick={()=>{ ResetStatus(applicant.application_id, applicant.status) }} >
-                                                    <button data-text="Reset Status">
-                                                    <span className="la la-undo-alt"></span>
-                                                    </button>
-                                                </li> */}
+                                                        {/* <li
+                                                            onClick={() => {
+                                                                Qualified(
+                                                                    applicant.application_id,
+                                                                    applicant.status
+                                                                );
+                                                            }}
+                                                        >
+                                                            <button data-text="Qualified">
+                                                                <span className="la la-check"></span>
+                                                            </button>
+                                                        </li>
+                                                        <li
+                                                            onClick={() => {
+                                                                NotQualified(
+                                                                    applicant.application_id,
+                                                                    applicant.status
+                                                                );
+                                                            }}
+                                                        >
+                                                            <button data-text="Not Qualified">
+                                                                <span className="la la-times-circle"></span>
+                                                            </button>
+                                                        </li>
+                                                        <li
+                                                            onClick={() => {
+                                                                ResetStatus(
+                                                                    applicant.application_id,
+                                                                    applicant.status
+                                                                );
+                                                            }}
+                                                        >
+                                                            <button data-text="Reset Status">
+                                                                <span className="la la-undo-alt"></span>
+                                                            </button>
+                                                        </li> */}
                                                     </ul>
                                                 </div>
                                             </td>
@@ -768,14 +791,14 @@ const RejectedApplicationsWidgetContentBox = () => {
                             {/* End .send-private-message-wrapper */}
                         </div>
                     </div>
-                    {!hidePagination ? (
+                    {/* {!hidePagination ? (
                         <Pagination
                             currentPage={currentPage}
                             totalRecords={totalRecords}
                             pageSize={pageSize}
                             onPageChange={handlePageChange}
                         />
-                    ) : null}
+                    ) : null} */}
                 </div>
             </div>
             {/* End table widget content */}

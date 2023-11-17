@@ -140,31 +140,41 @@ const Index = () => {
                 {/* <Sidebar> */}
                 {user ? (
                     <Menu>
-                        {menuOptions.map((menuItem, i) => (
-                            <MenuItem
-                                className={
-                                    isActiveLink(
-                                        menuItem.routePath,
-                                        router.asPath
-                                    )
-                                        ? "menu-active-link"
-                                        : ""
-                                }
-                                key={i}
-                                routerLink={
-                                    <Link
-                                        href={menuItem.routePath}
-                                        onClick={(e) => {
-                                            if (menuItem.name === "Logout") {
-                                                logout(dispatch);
-                                            }
-                                        }}
-                                    />
-                                }
-                            >
-                                {menuItem.name}
-                            </MenuItem>
-                        ))}
+                        {menuOptions.map((menuItem, i) => {
+                            const isUserAllowed = menuItem.access.includes(
+                                user.role
+                            );
+                            if (!isUserAllowed) {
+                                return null;
+                            }
+                            return (
+                                <MenuItem
+                                    className={
+                                        isActiveLink(
+                                            menuItem.routePath,
+                                            router.asPath
+                                        )
+                                            ? "menu-active-link"
+                                            : ""
+                                    }
+                                    key={i}
+                                    routerLink={
+                                        <Link
+                                            href={menuItem.routePath}
+                                            onClick={(e) => {
+                                                if (
+                                                    menuItem.name === "Logout"
+                                                ) {
+                                                    logout(dispatch);
+                                                }
+                                            }}
+                                        />
+                                    }
+                                >
+                                    {menuItem.name}
+                                </MenuItem>
+                            );
+                        })}
                     </Menu>
                 ) : (
                     ""

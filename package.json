@@ -9,13 +9,16 @@
     "start-dev": "copy .env.dev .env && npm run start",
     "start-prod": "copy .env.prod .env && npm run start",
     "eslint": "eslint --fix --ext .js,.jsx .",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
     "@popperjs/core": "^2.11.6",
+    "@prisma/client": "^5.5.0",
     "@reduxjs/toolkit": "^1.9.1",
     "@sendgrid/mail": "^7.7.0",
+    "@sentry/nextjs": "^7.77.0",
     "@supabase/supabase-js": "^2.20.0",
     "@supabase/ui": "^0.36.5",
     "aos": "^2.3.4",
@@ -27,12 +30,16 @@
     "docusign-esign": "^6.4.0",
     "draft-js": "^0.11.7",
     "eslint-config-next": "13.0.5",
+    "express": "^4.18.2",
     "firebase": "^9.22.0",
+    "formidable": "^3.5.1",
     "google-map-react": "^2.2.0",
     "jodit-react": "^1.3.39",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.29.4",
     "next": "^13.0.5",
+    "node-cron": "^3.0.2",
+    "papaparse": "^5.4.1",
     "photoswipe": "^5.3.4",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
@@ -73,6 +80,7 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
-    "prettier": "^3.0.3"
+    "prettier": "^3.0.3",
+    "prisma": "^5.5.0"
   }
 }

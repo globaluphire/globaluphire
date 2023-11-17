@@ -1,15 +1,41 @@
-import { envConfig } from "../../config/env";
+import { envConfig } from "../../../config/env";
+import Papa from "papaparse";
+const mail = require("@sendgrid/mail");
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
     if (req.method === "POST") {
-        const mail = require("@sendgrid/mail");
-        mail.setApiKey(envConfig.SENDGRID_API_KEY);
-        const msg = {
-            to: `${req.body.recipient}`,
-            from: "support@globaluphire.com",
-            subject: `[Volare Health] ${req.body.subject}`,
-            attachments: req.body.attachments,
-            html: `
+        try {
+            const response = await fetch(
+                `${req.body.url}/api/report/${req.body.id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            const responseData = await response.json();
+
+            const csv = Papa.unparse(responseData.data);
+
+            const base64EncodedContent = Buffer.from(csv).toString("base64");
+
+            mail.setApiKey(envConfig.SENDGRID_API_KEY);
+
+            const msg = {
+                to: req.body.recipient,
+                from: "support@globaluphire.com",
+                subject: `[Volare Health] Your report for ${req.body.reportName} is ready!`,
+                attachments: [
+                    {
+                        content: base64EncodedContent,
+                        filename: `${req.body.reportName}.csv`,
+                        type: "text/csv",
+                        disposition: "attachment",
+                    },
+                ],
+                html: `
             <html>
                 <head>
                 <style>
@@ -69,19 +95,22 @@ export default function handler(req, res) {
                     <body>
                         <div class="body">
                             <div class="content" style="box-shadow: 5px 5px 20px 0px rgba(0,0,0,0.3);">
-                                ${req.body.content}
+                                <h1>Please check your Report for "${req.body.reportName}" is attached to mail.</h1>
                             </div>
                         </div>
                     </body>
             </html>`,
-        };
-        mail.send(msg)
-            .then(() => {
-                return res.status(200).json({ status: "SUCCESS" });
-            })
-            .catch((error) => {
-                return res.status(400).json({ status: "FAILURE", error });
-            });
+            };
+
+            await mail.send(msg);
+
+            return res.status(200).json({ status: 200 });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ status: 500, message: "Internal Server Error!" });
+        }
     } else {
         return res
             .status(405)

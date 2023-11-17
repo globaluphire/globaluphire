@@ -31,10 +31,11 @@ const WithdrawalApplicationsWidgetContentBox = () => {
     const [noteText, setNoteText] = useState("");
     const [applicationId, setApplicationId] = useState("");
 
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [hidePagination, setHidePagination] = useState(false);
-    const [pageSize, setPageSize] = useState(10);
+    // For Pagination
+    // const [totalRecords, setTotalRecords] = useState(0);
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const [hidePagination, setHidePagination] = useState(false);
+    // const [pageSize, setPageSize] = useState(10);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -62,14 +63,14 @@ const WithdrawalApplicationsWidgetContentBox = () => {
 
     // clear all filters
     const clearAll = () => {
-        setCurrentPage(1);
+        // setCurrentPage(1);
         setSearchFilters(JSON.parse(JSON.stringify(addSearchFilters)));
         fetchedAllApplicantsView({ name: "", jobTitle: "" });
     };
 
     async function findApplicant() {
         // call reference to get applicantStatus options
-        setCurrentPage(1);
+        // setCurrentPage(1);
         const { data: refData, error: e } = await supabase
             .from("reference")
             .select("*")
@@ -94,11 +95,12 @@ const WithdrawalApplicationsWidgetContentBox = () => {
             query.ilike("facility_name", "%" + facility + "%");
         }
 
-        setTotalRecords((await query).data.length);
+        // setTotalRecords((await query).data.length);
 
-        let { data, error } = await query
-            .order("created_at", { ascending: false })
-            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+        let { data, error } = await query.order("created_at", {
+            ascending: false,
+        });
+        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         // if (facility) {
         //     data = data.filter((i) => i.facility_name === facility);
@@ -139,14 +141,16 @@ const WithdrawalApplicationsWidgetContentBox = () => {
             if (facility) {
                 query.ilike("facility_name", "%" + facility + "%");
             }
-            setTotalRecords((await query).data.length);
+            // setTotalRecords((await query).data.length);
 
-            let { data: allApplicantsView, error } = await query
-                .order("created_at", { ascending: false })
-                .range(
-                    (currentPage - 1) * pageSize,
-                    currentPage * pageSize - 1
-                );
+            let { data: allApplicantsView, error } = await query.order(
+                "created_at",
+                { ascending: false }
+            );
+            // .range(
+            //     (currentPage - 1) * pageSize,
+            //     currentPage * pageSize - 1
+            // );
 
             // if (facility) {
             //     allApplicantsView = allApplicantsView.filter(
@@ -178,17 +182,17 @@ const WithdrawalApplicationsWidgetContentBox = () => {
         }
     };
 
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-    };
+    // const handlePageChange = (newPage) => {
+    //     setCurrentPage(newPage);
+    // };
 
-    function perPageHandler(event) {
-        setCurrentPage(1);
-        const selectedValue = JSON.parse(event.target.value);
-        const end = selectedValue.end;
+    // function perPageHandler(event) {
+    //     setCurrentPage(1);
+    //     const selectedValue = JSON.parse(event.target.value);
+    //     const end = selectedValue.end;
 
-        setPageSize(end);
-    }
+    //     setPageSize(end);
+    // }
 
     useEffect(() => {
         fetchedAllApplicantsView({ name, jobTitle });
@@ -197,7 +201,11 @@ const WithdrawalApplicationsWidgetContentBox = () => {
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility, pageSize, currentPage]);
+    }, [
+        facility,
+        // pageSize,
+        // currentPage
+    ]);
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
@@ -386,7 +394,7 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                 />
                             </Form.Group>
                         </Col>
-                        <Form.Group
+                        {/* <Form.Group
                             className="mb-3 mx-3"
                             style={{
                                 width: "20%",
@@ -424,7 +432,7 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                     30 per page
                                 </option>
                             </Form.Select>
-                        </Form.Group>
+                        </Form.Group> */}
                     </Row>
                     <Row className="mx-3">
                         <Col>
@@ -467,8 +475,8 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({fetchedAllApplicants.length}) Withdraw Applicants Out
-                of ({totalRecords}) <br /> Page: {currentPage}
+                Showing ({fetchedAllApplicants.length}) Withdraw Applicants
+                {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
             </div>
 
             {/* Start table widget content */}
@@ -532,7 +540,6 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                                                 <select
                                                     className="chosen-single form-select"
                                                     value={applicant.status}
-                                                    disabled
                                                 >
                                                     {applicationStatusReferenceOptions.map(
                                                         (option) => (
@@ -692,14 +699,14 @@ const WithdrawalApplicationsWidgetContentBox = () => {
                             {/* End .send-private-message-wrapper */}
                         </div>
                     </div>
-                    {!hidePagination ? (
+                    {/* {!hidePagination ? (
                         <Pagination
                             currentPage={currentPage}
                             totalRecords={totalRecords}
                             pageSize={pageSize}
                             onPageChange={handlePageChange}
                         />
-                    ) : null}
+                    ) : null} */}
                 </div>
             </div>
             {/* End table widget content */}

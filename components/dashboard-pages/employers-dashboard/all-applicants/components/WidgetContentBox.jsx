@@ -39,10 +39,11 @@ const WidgetContentBox = () => {
     const [filterByNewMessage, setFilterByNewMessage] = useState(false);
     const [newMessageDot, setNewMessageDot] = useState(false);
 
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [hidePagination, setHidePagination] = useState(false);
-    const [pageSize, setPageSize] = useState(10);
+    // For Pagination
+    // const [totalRecords, setTotalRecords] = useState(0);
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const [hidePagination, setHidePagination] = useState(false);
+    // const [pageSize, setPageSize] = useState(10);
 
     // for search filters
     const [searchFilters, setSearchFilters] = useState(
@@ -130,8 +131,9 @@ const WidgetContentBox = () => {
             .ilike("name", "%" + name + "%")
             .ilike("job_title", "%" + jobTitle + "%")
             .ilike("status", "%" + status + "%")
-            .order("created_at", { ascending: false })
-            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+            .order("created_at", { ascending: false });
+        // For pagination uncomment this line
+        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (facility) {
             data = data.filter((i) => i.facility_name === facility);
@@ -165,7 +167,7 @@ const WidgetContentBox = () => {
     };
 
     async function findApplicant({ name, jobTitle, status }) {
-        setCurrentPage(1);
+        // setCurrentPage(1);
 
         let query = supabase
             .from("applicants_view")
@@ -181,11 +183,12 @@ const WidgetContentBox = () => {
             query.ilike("facility_name", "%" + facility + "%");
         }
 
-        setTotalRecords((await query).data.length);
+        // setTotalRecords((await query).data.length);
 
-        let { data, error } = await query
-            .order("created_at", { ascending: false })
-            .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
+        let { data, error } = await query.order("created_at", {
+            ascending: false,
+        });
+        // .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
 
         if (data) {
             data.forEach(
@@ -227,16 +230,16 @@ const WidgetContentBox = () => {
                 query.ilike("facility_name", "%" + facility + "%");
             }
 
-            setTotalRecords((await query).data.length);
+            // setTotalRecords((await query).data.length);
 
             // eslint-disable-next-line prefer-const
             let { data, error } = await query
                 .order("last_contacted_at", { ascending: true })
-                .order("created_at", { ascending: false })
-                .range(
-                    (currentPage - 1) * pageSize,
-                    currentPage * pageSize - 1
-                );
+                .order("created_at", { ascending: false });
+            // .range(
+            //     (currentPage - 1) * pageSize,
+            //     currentPage * pageSize - 1
+            // );
 
             data.sort((a, b) => {
                 if (b.last_contacted_at && a.last_contacted_at) {
@@ -264,13 +267,7 @@ const WidgetContentBox = () => {
         }
     }
 
-    useEffect(() => {
-        if (filterByNewMessage) {
-            newMessageFilter();
-        } else {
-            fetchedAllApplicantsView(searchFilters);
-        }
-    }, [filterByNewMessage, pageSize, currentPage]);
+    // useEffect(() => {}, [filterByNewMessage, pageSize, currentPage]);
 
     async function fetchedAllApplicantsView({ name, jobTitle, status }) {
         try {
@@ -305,14 +302,20 @@ const WidgetContentBox = () => {
                 query.ilike("facility_name", "%" + facility + "%");
             }
 
-            setTotalRecords((await query).data.length);
+            // setTotalRecords((await query).data.length);
 
-            let { data: allApplicantsView, error } = await query
-                .order("created_at", { ascending: false })
-                .range(
-                    (currentPage - 1) * pageSize,
-                    currentPage * pageSize - 1
-                );
+            let { data: allApplicantsView, error } = await query.order(
+                "created_at",
+                { ascending: false }
+            );
+            // .range(
+            //     (currentPage - 1) * pageSize,
+            //     currentPage * pageSize - 1
+            // );
+
+            setNewMessageDot(
+                data.some((el) => el.new_message_received === true)
+            );
 
             setNewMessageDot(
                 data.some((el) => el.new_message_received === true)
@@ -374,13 +377,22 @@ const WidgetContentBox = () => {
     }
 
     useEffect(() => {
-        fetchedAllApplicantsView(searchFilters);
+        if (filterByNewMessage) {
+            newMessageFilter();
+        } else {
+            fetchedAllApplicantsView(searchFilters);
+        }
         if (facility) {
             localStorage.setItem("facility", facility);
         } else {
             localStorage.setItem("facility", "");
         }
-    }, [facility, currentPage, pageSize]);
+    }, [
+        filterByNewMessage,
+        facility,
+        // currentPage,
+        // pageSize
+    ]);
 
     const setNoteData = async (applicationId) => {
         // reset NoteText
@@ -534,17 +546,18 @@ const WidgetContentBox = () => {
         }
     }, [isCommunicationModalOpen]);
 
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-    };
+    // const handlePageChange = (newPage) => {
+    //     setCurrentPage(newPage);
+    // };
 
-    function perPageHandler(event) {
-        setCurrentPage(1);
-        const selectedValue = JSON.parse(event.target.value);
-        const end = selectedValue.end;
+    // function perPageHandler(event) {
+    //     setCurrentPage(1);
+    //     const selectedValue = JSON.parse(event.target.value);
+    //     const end = selectedValue.end;
 
-        setPageSize(end);
-    }
+    //     setPageSize(end);
+    // }
+
     return (
         <div className="tabs-box">
             <div
@@ -641,7 +654,7 @@ const WidgetContentBox = () => {
                                 </Form.Select>
                             </Form.Group>
                         </Col>
-                        <Form.Group
+                        {/* <Form.Group
                             className="mb-3 mx-3"
                             style={{
                                 width: "20%",
@@ -679,7 +692,7 @@ const WidgetContentBox = () => {
                                     30 per page
                                 </option>
                             </Form.Select>
-                        </Form.Group>
+                        </Form.Group> */}
                     </Row>
                     <Row className="mx-3">
                         <Col>
@@ -721,8 +734,8 @@ const WidgetContentBox = () => {
                     marginBottom: "10px",
                 }}
             >
-                Showing ({fetchedAllApplicants.length}) Applicants Applied Out
-                of ({totalRecords}) <br /> Page: {currentPage}
+                Showing ({fetchedAllApplicants.length}) Applicants Applied
+                {/* Out of ({totalRecords}) <br /> Page: {currentPage} */}
             </div>
             <div className="widget-content">
                 <div className="table-outer">
@@ -1072,14 +1085,14 @@ const WidgetContentBox = () => {
                             setIsCommunicationModalOpen
                         }
                     />
-                    {!hidePagination ? (
+                    {/* {!hidePagination ? (
                         <Pagination
                             currentPage={currentPage}
                             totalRecords={totalRecords}
                             pageSize={pageSize}
                             onPageChange={handlePageChange}
                         />
-                    ) : null}
+                    ) : null} */}
                 </div>
             </div>
             {/* End table widget content */}

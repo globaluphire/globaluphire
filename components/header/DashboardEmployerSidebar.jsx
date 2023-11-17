@@ -10,6 +10,7 @@ import { logout } from "../../utils/logout";
 const DashboardEmployerSidebar = () => {
     const router = useRouter();
     const { menu } = useSelector((state) => state.toggle);
+    const user = useSelector((state) => state.candidate.user);
 
     const dispatch = useDispatch();
     // menu togggle handler
@@ -29,29 +30,35 @@ const DashboardEmployerSidebar = () => {
 
             <div className="sidebar-inner">
                 <ul className="navigation">
-                    {employerMenuData.map((item) => (
-                        <li
-                            className={`${
-                                isActiveLink(item.routePath, router.asPath)
-                                    ? "active"
-                                    : ""
-                            } mb-1`}
-                            key={item.id}
-                            onClick={menuToggleHandler}
-                        >
-                            <Link
-                                href={item.routePath}
-                                onClick={(e) => {
-                                    if (item.name === "Logout") {
-                                        logout(dispatch);
-                                    }
-                                }}
+                    {employerMenuData.map((item) => {
+                        const isUserAllowed = item.access.includes(user.role);
+                        if (!isUserAllowed) {
+                            return null;
+                        }
+                        return (
+                            <li
+                                className={`${
+                                    isActiveLink(item.routePath, router.asPath)
+                                        ? "active"
+                                        : ""
+                                } mb-1`}
+                                key={item.id}
+                                onClick={menuToggleHandler}
                             >
-                                <i className={`la ${item.icon}`}></i>{" "}
-                                {item.name}
-                            </Link>
-                        </li>
-                    ))}
+                                <Link
+                                    href={item.routePath}
+                                    onClick={(e) => {
+                                        if (item.name === "Logout") {
+                                            logout(dispatch);
+                                        }
+                                    }}
+                                >
+                                    <i className={`la ${item.icon}`}></i>{" "}
+                                    {item.name}
+                                </Link>
+                            </li>
+                        );
+                    })}
                 </ul>
             </div>
         </div>
