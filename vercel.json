@@ -1,6 +1,6 @@
 {
     "functions": {
-        "app/api/cron/mail/csv.js": {
+        "pages/api/cron/mail/csv.js": {
             "maxDuration": 60
         }
     },
