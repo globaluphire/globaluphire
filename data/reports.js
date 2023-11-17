@@ -30,28 +30,28 @@ export const reportItems = [
         columnNames: ["application_id"],
         query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Hired'",
     },
-    // {
-    //     reportName: "No of Active Employee",
-    //     reportId: "6",
-    //     columnNames: ["application_id"],
-    //     query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Hired'",
-    // },
     {
         reportName: "No of Employee Terminated",
-        reportId: "7",
+        reportId: "6",
         columnNames: ["application_id"],
         query: "SELECT * FROM APPLICATIONS WHERE termination_date <> NULL",
     },
     {
         reportName: "No of Unpublished Jobs",
-        reportId: "8",
+        reportId: "7",
         columnNames: ["job_id"],
         query: "SELECT * FROM JOBS WHERE STATUS = 'Unpublished'",
     },
     {
         reportName: "No of Published Jobs",
-        reportId: "9",
+        reportId: "8",
         columnNames: ["job_id"],
         query: "SELECT * FROM JOBS WHERE STATUS = 'Published'",
     },
+    // {
+    //     reportName: "No of Active Employee",
+    //     reportId: "9",
+    //     columnNames: ["application_id"],
+    //     query: "SELECT * FROM APPLICATIONS WHERE STATUS = 'Hired'",
+    // },
 ];
