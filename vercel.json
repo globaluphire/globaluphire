@@ -1,4 +1,9 @@
 {
+    "functions": {
+        "app/api/cron/mail/csv.js": {
+            "maxDuration": 60
+        }
+    },
     "crons": [
         {
             "path": "/api/cron/mail/csv",
