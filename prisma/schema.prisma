@@ -134,6 +134,8 @@ model jobs {
   facility_id      BigInt?
   unpublished_date DateTime?          @db.Timestamptz(6)
   published_date   DateTime?          @db.Timestamptz(6)
+  is_edited        Boolean?           @default(false)
+  is_cloned        Boolean?           @default(false)
   applications     applications[]
   facility         facility?          @relation(fields: [facility_id], references: [facility_id], onDelete: NoAction, onUpdate: NoAction)
   users            users              @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
