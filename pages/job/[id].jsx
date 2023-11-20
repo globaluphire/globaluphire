@@ -326,15 +326,30 @@ const JobSingleDynamicV1 = () => {
                     <div className="auto-container">
                         {showLoginButton ? (
                             <div className="row">
-                                <div className="sidebar-widget col-md-4">
-                                    {/* <!-- Job Overview --> */}
-                                    <h4 className="widget-title">
-                                        APPLY AS A GUEST
-                                    </h4>
-                                    <ApplyInstantView company={company} />
-                                </div>
                                 <div className="content-column col-md-8">
                                     <JobDetailsDescriptions company={company} />
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="sidebar-widget">
+                                        {/* <!-- Job Overview --> */}
+                                        <h4 className="widget-title">
+                                            LOGIN / REGISTER TO APPLY
+                                        </h4>
+                                        {/* <ApplyInstantView company={company} /> */}
+                                        <div className="outer-box">
+                                            <div className="btn-box">
+                                                <a
+                                                    href="#"
+                                                    className="theme-btn btn-style-one call-modal"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#loginPopupModal"
+                                                    style={{ display: "flex" }}
+                                                >
+                                                    Login / Register
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ) : (
