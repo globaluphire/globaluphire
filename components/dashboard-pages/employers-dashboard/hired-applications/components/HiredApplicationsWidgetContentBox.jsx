@@ -666,7 +666,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                                             }}
                                                         >
                                                             <button data-text="View CV">
-                                                                <span className="la la-file-download"></span>
+                                                                <span className="la la-file-download"> </span>
                                                             </button>
                                                         </li>
                                                         <li
