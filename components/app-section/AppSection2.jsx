@@ -2,7 +2,7 @@ const AppSection2 = () => {
     const featureList = [
         {
             id: 1,
-            icon: "icon-case",
+            icon: "icon-case", 
             title: "Job Search",
             text: "Search through millions of jobs and find the right fit. Simply swipe right to apply.",
         },
