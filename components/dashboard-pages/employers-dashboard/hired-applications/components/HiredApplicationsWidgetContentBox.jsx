@@ -669,7 +669,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                                                 <span className="la la-file-download"></span>
                                                             </button>
                                                         </li>
-                                                        {/* <li
+                                                        <li
                                                             onClick={() => {
                                                                 CSVSmartLinx(
                                                                     applicant
@@ -679,7 +679,7 @@ const HiredApplicationsWidgetContentBox = () => {
                                                             <button data-text="Transfer To Smartlinx">
                                                                 <span className="la la-file-csv"></span>
                                                             </button>
-                                                        </li> */}
+                                                        </li>
                                                         <li
                                                             onClick={() =>
                                                                 DownloadHandler(
